@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using Contracts;
     using Essentials;
     using Essentials.Collections;
     using Essentials.IO;
@@ -12,7 +13,7 @@
     using NLog;
     using UnityEngine;
 
-    public class GameDataReader
+    public class GameDataReader : IGameDataRuntimeResolver
     {
         private static readonly NLog.Logger Logger = LogManager.GetCurrentClassLogger();
         
@@ -71,7 +72,7 @@
             if (!this.IsLoaded)
             {
                 Logger.Warn("Game Data Not loaded");
-                return GameDataId.Invalid.Id;
+                return GameDataId.InvalidId;
             }
 
             uint result;
@@ -81,6 +82,22 @@
             }
 
             return GameDataId.InvalidId;
+        }
+        
+        public GameDataId GetRuntimeId(GameDataRuntimeRefBase runtimeRef)
+        {
+            if (!runtimeRef.IsValid())
+            {
+                return GameDataId.Invalid;
+            }
+
+            uint internalId = this.GetId(runtimeRef.RefGuid);
+            if (internalId == GameDataId.InvalidId)
+            {
+                return GameDataId.Invalid;
+            }
+
+            return new GameDataId(runtimeRef.RefGuid, internalId);
         }
         
         public bool GetAll<T>(IList<T> target)
