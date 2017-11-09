@@ -6,13 +6,29 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
     public class PanelBase 
     {
         // -------------------------------------------------------------------
+        // Constructor
+        // -------------------------------------------------------------------
+        public PanelBase(string title, params int[] workSpaces)
+            : this(title, null, workSpaces)
+        {
+            
+        }
+        
+        public PanelBase(string title, string subFolder, params int[] workSpaces)
+        {
+            this.Title = title;
+            this.SubFolder = subFolder;
+            this.WorkSpaces = workSpaces;
+        }
+
+        // -------------------------------------------------------------------
         // Public
         // -------------------------------------------------------------------
         [SerializeField]
         public string Title;
 
         [SerializeField]
-        public string Category;
+        public string SubFolder;
 
         [SerializeField]
         public bool Active;
@@ -20,22 +36,9 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         [SerializeField]
         public bool IsInit;
 
-        // -------------------------------------------------------------------
-        // Constructor
-        // -------------------------------------------------------------------
-        public PanelBase(string title, string category = null)
-        {
-            this.Title = title;
-
-            if (!string.IsNullOrEmpty(category))
-            {
-                this.Category = category;
-            }
-        }
-
-        // -------------------------------------------------------------------
-        // Public
-        // -------------------------------------------------------------------
+        [SerializeField]
+        public int[] WorkSpaces;
+        
         public virtual Texture Icon
         {
             get { return null; }

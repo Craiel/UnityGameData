@@ -3,6 +3,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using Builder;
     using Common;
     using Craiel.Editor.GameData;
@@ -14,15 +15,27 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
 
     public class GameDataEditorWindow : EditorWindow
     {
+        private const int DefaultWorkSpaceId = 0;
+        private const string DefaultWorkSpaceName = "None";
+        
         private static readonly NLog.Logger Logger = LogManager.GetCurrentClassLogger();
 
         private static readonly IList<PanelBase> Panels = new List<PanelBase>();
+
+        private static readonly IDictionary<int, string> WorkSpaces = new Dictionary<int, string>
+        {
+            { DefaultWorkSpaceId, DefaultWorkSpaceName }
+        };
 
         public static GameDataEditorWindow Instance { get; private set; }
 
         private readonly IList<GameDataObject> history;
 
         private float buttonsTotalWidth;
+
+        private PanelBase[] panelsSorted;
+
+        private int selectedWorkSpace;
 
         // -------------------------------------------------------------------
         // Constructor
@@ -95,6 +108,8 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
                     wordWrap = true
                 };
             }
+            
+            this.SortPanels();
         }
 
         public void OnDestroy()
@@ -106,7 +121,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         {
             Instance = null;
         }
-
+        
         public void OnGUI()
         {
             // Menu Tool Bar
@@ -122,6 +137,19 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
                     menu.ShowAsContext();
                     Event.current.Use();
                 }
+                
+                if (EditorGUILayout.DropdownButton(new GUIContent(string.Format("Workspace: {0}", WorkSpaces[this.selectedWorkSpace])), FocusType.Passive, "ToolbarDropDown"))
+                {
+                    var menu = new GenericMenu();
+
+                    foreach (int id in WorkSpaces.Keys)
+                    {
+                        menu.AddItem(new GUIContent(WorkSpaces[id]), this.selectedWorkSpace == id, () => this.SelectWorkSpace(id));
+                    }
+                    
+                    menu.ShowAsContext();
+                    Event.current.Use();
+                }
 
                 GUILayout.FlexibleSpace();
             }
@@ -134,33 +162,22 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             EditorGUILayout.BeginHorizontal();
             {
                 // GameData Buttons
-                var panelsSorted = Panels.GroupBy(p => p.Category);
-                
-                foreach (var p in panelsSorted)
+                foreach (var panel in panelsSorted)
                 {
-                    if (!string.IsNullOrEmpty(p.Key))
+                    var old = GUI.contentColor;
+                    GUI.contentColor = Styles.DefaulEditortTextColor;
+
+                    var active = GUILayout.Toggle(
+                        panel.Active,
+                        new GUIContent(panel.Title, panel.Icon, panel.Title),
+                        style);
+
+                    this.buttonsTotalWidth += this.ToolBarStyle.fixedWidth;
+
+                    GUI.contentColor = old;
+                    if (active != panel.Active)
                     {
-                        GUILayout.Label(p.Key, this.CategoryStyle);
-                        this.buttonsTotalWidth += this.CategoryStyle.fixedWidth;
-                    }
-
-                    foreach (var panel in p)
-                    {
-                        var old = GUI.contentColor;
-                        GUI.contentColor = Styles.DefaulEditortTextColor;
-
-                        var active = GUILayout.Toggle(
-                            panel.Active,
-                            new GUIContent(panel.Title, panel.Icon, panel.Title),
-                            style);
-
-                        this.buttonsTotalWidth += this.ToolBarStyle.fixedWidth;
-
-                        GUI.contentColor = old;
-                        if (active != panel.Active)
-                        {
-                            this.SetCurrentPane(panel);
-                        }
+                        this.SetCurrentPane(panel);
                     }
                 }
             }
@@ -232,19 +249,80 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             this.SelectRef(dataObject);
         }
 
-        public static void AddPanel<T>(string panelTitle, string panelCategory = null)
+        public static void AddPanel<T>(string panelTitle, string subFolder, params int[] workSpaces)
+            where T : GameDataObject
         {
+            AddPanel<T>(panelTitle, subFolder, true, workSpaces);
+        }
+        
+        public static void AddPanel<T>(string panelTitle, params int[] workSpaces)
+            where T : GameDataObject
+        {
+            AddPanel<T>(panelTitle, null, true, workSpaces);
+        }
+        
+        public static void AddPanel<T>(string panelTitle, string subFolder, bool canEditHierarchy, params int[] workSpaces)
+            where T : GameDataObject
+        {
+            IList<int> workSpaceList = workSpaces.ToList();
+            if (!workSpaceList.Contains(DefaultWorkSpaceId))
+            {
+                workSpaceList.Add(DefaultWorkSpaceId);
+            }
+            
             Type panelType = typeof(PanelTreeView<>).MakeGenericType(typeof(T));
-            var panel = Activator.CreateInstance(panelType, panelTitle, panelCategory ?? string.Empty, true);
+            var panel = Activator.CreateInstance(panelType, panelTitle, subFolder ?? string.Empty, canEditHierarchy, workSpaceList.ToArray());
             Panels.Add((PanelBase)panel);
+        }
+
+        public static void AddWorkSpace(int id, string title)
+        {
+            if (WorkSpaces.ContainsKey(id))
+            {
+                Logger.Error("Duplicate WorkSpace Registered: {0} {1} -> {2}", id, WorkSpaces[id], title);
+                return;
+            }
+            
+            WorkSpaces.Add(id, title);
         }
 
         // -------------------------------------------------------------------
         // Private
         // -------------------------------------------------------------------
+        private void SelectWorkSpace(int id)
+        {
+            this.selectedWorkSpace = id;
+            this.SortPanels();
+        }
+
+        private void SortPanels()
+        {
+            panelsSorted = Panels.Where(x => x.WorkSpaces.Contains(this.selectedWorkSpace)).ToArray();
+            if (this.panelsSorted.Length == 0)
+            {
+                this.ClearCurrentPane();
+            }
+            else
+            {
+                this.SetCurrentPane(this.panelsSorted[0]);
+            }
+            
+            this.Repaint();
+        }
+
+        private void ClearCurrentPane()
+        {
+            if (this.CurrentPanelIndex < 0)
+            {
+                return;
+            }
+            
+            this.DisposePanel(Panels[this.CurrentPanelIndex]);
+            this.CurrentPanelIndex = -1;
+        }
+        
         private void SetCurrentPane(PanelBase panel)
         {
-            
             for (var i = 0; i < Panels.Count; i++)
             {
                 if (Panels[i] == panel)
@@ -262,7 +340,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
                 return;
             }
 
-            this.DisposePanel(Panels[this.CurrentPanelIndex]);
+            this.ClearCurrentPane();
 
             if (Panels[index].IsInit == false)
             {

@@ -11,17 +11,18 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
 
     public class PanelTreeView<T> : PanelBase where T : GameDataObject
     {
+        private readonly bool canEditHierarchy;
+        
         private SearchField searchField;
         private Editor currentEditor;
         private Vector2 scrollPos;
         private float treeViewWidth = 300;
 
-        private readonly bool canEditHierarchy;
-
         // -------------------------------------------------------------------
         // Constructor
         // -------------------------------------------------------------------
-        public PanelTreeView(string title, string category = null, bool canEditHierarchy = true) : base(title, category)
+        public PanelTreeView(string title, string subFolder, bool canEditHierarchy, params int[] workSpaces) 
+            : base(title, subFolder, workSpaces)
         {
             this.TreeElements = new List<TreeElement>();
             this.canEditHierarchy = canEditHierarchy;
@@ -51,7 +52,6 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         {
             if (!this.IsInit)
             {
-                 
                 this.TreeViewState = new TreeViewState();
                 this.TreeView = new GameDataObjectTreeView<T>(this.TreeViewState);
                 this.TreeView.OnSelectionChanged.RemoveAllListeners();
@@ -165,9 +165,6 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
 
             this.currentEditor = Editor.CreateEditor(this.TreeView.SelectedData.ToArray());
 
-            
-
-//            var w = EditorWindow.GetWindow<GameDataEditorWindow>(); 
             if (GameDataEditorWindow.Instance != null)
             {
                 GameDataEditorWindow.Instance.AddToHistory(this.TreeView.SelectedData[0]);
@@ -268,7 +265,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             var prompt = EditorWindow.CreateInstance<PromptDialog>();
             prompt.Init(newName =>
             {
-                string folder = string.IsNullOrEmpty(this.Category) ? this.Title : this.Category + "/" + this.Title;
+                string folder = string.IsNullOrEmpty(this.SubFolder) ? this.Title : this.SubFolder + "/" + this.Title;
                 var newObject = GameDataHelpers.CreateAsset<T>(folder, newName.Trim());
                 this.TreeView.Reload();
                 this.TreeView.SelectItem(newObject);
@@ -286,10 +283,9 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
     {
         private string newName = string.Empty;
 
-        private bool focused = false;
+        private bool focused;
 
         private Action<string> callback;
-
 
         public void Init(Action<string> newCallback)
         {
