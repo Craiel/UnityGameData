@@ -49,6 +49,11 @@
         {
             this.data.Add(typeof(T), new List<RuntimeGameData>());
         }
+        
+        public void RegisterData(Type dataType)
+        {
+            this.data.Add(dataType, new List<RuntimeGameData>());
+        }
 
         public string GetGuid(uint id)
         {
