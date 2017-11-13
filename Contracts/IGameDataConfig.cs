@@ -1,7 +1,8 @@
 ﻿namespace Assets.Scripts.Craiel.GameData.Contracts
 {
-    public interface IGameDataConfig
+    using Essentials.Contracts;
+
+    public interface IGameDataConfig : IComponentConfig
     {
-        void Configure();
     }
 }
