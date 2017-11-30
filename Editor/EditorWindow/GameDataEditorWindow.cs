@@ -3,7 +3,6 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.CompilerServices;
     using Builder;
     using Common;
     using Craiel.Editor.GameData;
@@ -17,7 +16,8 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
     {
         private const int DefaultWorkSpaceId = 0;
         private const string DefaultWorkSpaceName = "None";
-        
+        private const string SelectedWorkSpaceSaveKey = "gameDataEditorWorkSpace";
+
         private static readonly NLog.Logger Logger = LogManager.GetCurrentClassLogger();
 
         private static readonly IList<PanelBase> Panels = new List<PanelBase>();
@@ -108,7 +108,8 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
                     wordWrap = true
                 };
             }
-            
+
+            this.selectedWorkSpace = EditorPrefs.GetInt(SelectedWorkSpaceSaveKey, DefaultWorkSpaceId);
             this.SortPanels();
         }
 
@@ -119,6 +120,8 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
 
         public void OnDisable()
         {
+            EditorPrefs.SetInt(SelectedWorkSpaceSaveKey, this.selectedWorkSpace);
+
             Instance = null;
         }
         
@@ -127,24 +130,32 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             // Menu Tool Bar
             EditorGUILayout.BeginHorizontal("Toolbar");
             {
-                if (EditorGUILayout.DropdownButton(new GUIContent("Menu"), FocusType.Passive, "ToolbarDropDown"))
+                if (EditorGUILayout.DropdownButton(new GUIContent("Data"), FocusType.Passive, "ToolbarDropDown"))
                 {
                     var menu = new GenericMenu();
                     menu.AddItem(new GUIContent("Validate"), false, ValidateGameData);
                     menu.AddItem(new GUIContent("Export"), false, ExportGameData);
+                    menu.ShowAsContext();
+                    Event.current.Use();
+                }
+
+                if (EditorGUILayout.DropdownButton(new GUIContent("Tools"), FocusType.Passive, "ToolbarDropDown"))
+                {
+                    var menu = new GenericMenu();
                     menu.AddItem(new GUIContent("Upgrade"), false, UpgradeGameData);
                     menu.AddItem(new GUIContent("Normalize ScriptableObjects Name"), false, this.NormalizeNames);
                     menu.ShowAsContext();
                     Event.current.Use();
                 }
-                
+
                 if (EditorGUILayout.DropdownButton(new GUIContent(string.Format("Workspace: {0}", WorkSpaces[this.selectedWorkSpace])), FocusType.Passive, "ToolbarDropDown"))
                 {
                     var menu = new GenericMenu();
 
                     foreach (int id in WorkSpaces.Keys)
                     {
-                        menu.AddItem(new GUIContent(WorkSpaces[id]), this.selectedWorkSpace == id, () => this.SelectWorkSpace(id));
+                        int closure = id;
+                        menu.AddItem(new GUIContent(WorkSpaces[id]), this.selectedWorkSpace == id, () => this.SelectWorkSpace(closure));
                     }
                     
                     menu.ShowAsContext();
