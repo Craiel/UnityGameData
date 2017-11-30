@@ -323,7 +323,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
 
         private void ClearCurrentPane()
         {
-            if (this.CurrentPanelIndex < 0)
+            if (this.CurrentPanelIndex < 0 || Panels.Count == 0)
             {
                 return;
             }
