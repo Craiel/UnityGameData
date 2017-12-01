@@ -83,9 +83,8 @@
             }
             
             this.IsLoaded = true;
-
-            var abilityTriggeredEvent = new EventGameDataLoaded();
-            GameEvents.Instance.Send(abilityTriggeredEvent);
+            
+            GameEvents.Instance.Send(new EventGameDataLoaded());
         }
 
         public static void RegisterData<T>()
