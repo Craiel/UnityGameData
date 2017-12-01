@@ -77,8 +77,6 @@
 
         public void Load(byte[] data)
         {
-            Logger.Info("Loading Game data: {0} bytes", data.Length);
-
             using (var stream = new MemoryStream(data))
             {
                 this.reader.Load(stream);

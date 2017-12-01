@@ -1,7 +1,7 @@
 ﻿namespace Assets.Scripts.Craiel.GameData.Editor
 {
     using Contracts;
-    using Essentials.UnityComponent;
+    using Essentials.Component;
 
     public static class GameDataEditorCore
     {
@@ -17,7 +17,7 @@
                 return;
             }
             
-            new UnityComponentConfigurator<IGameDataConfig>().Configure();
+            new CraielComponentConfigurator<IGameDataConfig>().Configure();
 
             IsInitialized = true;
         }

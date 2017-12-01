@@ -2,7 +2,7 @@
 {
     using Essentials.Contracts;
 
-    public interface IGameDataConfig : IComponentConfig
+    public interface IGameDataConfig : ICraielComponentConfig
     {
     }
 }
