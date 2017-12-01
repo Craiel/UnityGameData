@@ -6,6 +6,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
     using Builder;
     using Common;
     using Craiel.Editor.GameData;
+    using Enums;
     using Essentials.Editor.UserInterface;
     using Essentials.IO;
     using NLog;
@@ -16,7 +17,6 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
     {
         private const int DefaultWorkSpaceId = 0;
         private const string DefaultWorkSpaceName = "None";
-        private const string SelectedWorkSpaceSaveKey = "gameDataEditorWorkSpace";
 
         private static readonly NLog.Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -36,6 +36,8 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         private PanelBase[] panelsSorted;
 
         private int selectedWorkSpace;
+
+        private GameDataEditorViewMode selectedViewMode;
 
         // -------------------------------------------------------------------
         // Constructor
@@ -108,8 +110,9 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
                     wordWrap = true
                 };
             }
-
-            this.selectedWorkSpace = EditorPrefs.GetInt(SelectedWorkSpaceSaveKey, DefaultWorkSpaceId);
+            
+            this.selectedWorkSpace = GameDataEditorCore.Config.GetWorkspace(DefaultWorkSpaceId);
+            this.selectedViewMode = GameDataEditorCore.Config.GetViewMode();
             this.SortPanels();
         }
 
@@ -120,7 +123,8 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
 
         public void OnDisable()
         {
-            EditorPrefs.SetInt(SelectedWorkSpaceSaveKey, this.selectedWorkSpace);
+            GameDataEditorCore.Config.SetWorkspace(this.selectedWorkSpace);
+            GameDataEditorCore.Config.SetViewMode(this.selectedViewMode);
 
             Instance = null;
         }
@@ -162,6 +166,20 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
                     Event.current.Use();
                 }
 
+                if (EditorGUILayout.DropdownButton(new GUIContent(string.Format("ViewMode: {0}", this.selectedViewMode)), FocusType.Passive, "ToolbarDropDown"))
+                {
+                    var menu = new GenericMenu();
+
+                    foreach (GameDataEditorViewMode viewMode in GameDataEditorEnumValues.GameDataEditorViewModeValues)
+                    {
+                        var closure = viewMode;
+                        menu.AddItem(new GUIContent(viewMode.ToString()), this.selectedViewMode == viewMode, () => this.SelectViewMode(closure));
+                    }
+
+                    menu.ShowAsContext();
+                    Event.current.Use();
+                }
+                
                 GUILayout.FlexibleSpace();
             }
 
@@ -304,6 +322,11 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         {
             this.selectedWorkSpace = id;
             this.SortPanels();
+        }
+
+        private void SelectViewMode(GameDataEditorViewMode mode)
+        {
+            this.selectedViewMode = mode;
         }
 
         private void SortPanels()

@@ -10,15 +10,19 @@
         // -------------------------------------------------------------------
         public static bool IsInitialized { get; private set; }
 
+        public static GameDataEditorConfig Config { get; private set; }
+
         public static void Initialize()
         {
             if (IsInitialized)
             {
                 return;
             }
-            
-            new CraielComponentConfigurator<IGameDataConfig>().Configure();
 
+            Config = new GameDataEditorConfig();
+
+            new CraielComponentConfigurator<IGameDataConfig>().Configure();
+            
             IsInitialized = true;
         }
     }
