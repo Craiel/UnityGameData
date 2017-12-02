@@ -20,6 +20,7 @@
             }
 
             Config = new GameDataEditorConfig();
+            Config.Load();
 
             new CraielComponentConfigurator<IGameDataConfig>().Configure();
             
