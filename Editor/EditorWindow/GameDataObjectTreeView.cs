@@ -140,16 +140,6 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             this.OnSelectionChanged.Invoke();
         }
 
-        protected override void SetupDragAndDrop(SetupDragAndDropArgs args)
-        {
-            base.SetupDragAndDrop(args);
-        }
-
-        protected override bool CanStartDrag(CanStartDragArgs args)
-        {
-            return false;
-        }
-
         // -------------------------------------------------------------------
         // Private
         // -------------------------------------------------------------------

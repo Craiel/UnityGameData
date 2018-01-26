@@ -20,7 +20,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
 
         private static readonly NLog.Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private static readonly IList<PanelBase> Panels = new List<PanelBase>();
+        private static readonly IList<GameDataPanelBase> Panels = new List<GameDataPanelBase>();
 
         private static readonly IDictionary<int, string> WorkSpaces = new Dictionary<int, string>
         {
@@ -33,7 +33,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
 
         private float buttonsTotalWidth;
 
-        private PanelBase[] panelsSorted;
+        private GameDataPanelBase[] panelsSorted;
 
         private int selectedWorkSpace;
 
@@ -232,7 +232,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         
         public void SelectRef(GameDataObject refObject)
         {
-            PanelBase panel = Panels.FirstOrDefault(p => p.GameDataObjectType.Name == refObject.GetType().Name);
+            GameDataPanelBase panel = Panels.FirstOrDefault(p => p.GameDataObjectType.Name == refObject.GetType().Name);
             if (panel == null)
             {
                 Debug.LogErrorFormat("Can't find panel for type: {0}", refObject.GetType().Name);
@@ -277,20 +277,14 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
 
             this.SelectRef(dataObject);
         }
-
-        public static void AddPanel<T>(string panelTitle, string subFolder, params int[] workSpaces)
-            where T : GameDataObject
-        {
-            AddPanel<T>(panelTitle, subFolder, true, workSpaces);
-        }
         
         public static void AddPanel<T>(string panelTitle, params int[] workSpaces)
             where T : GameDataObject
         {
-            AddPanel<T>(panelTitle, null, true, workSpaces);
+            AddPanel<T>(panelTitle, null, workSpaces);
         }
         
-        public static void AddPanel<T>(string panelTitle, string subFolder, bool canEditHierarchy, params int[] workSpaces)
+        public static void AddPanel<T>(string panelTitle, string subFolder, params int[] workSpaces)
             where T : GameDataObject
         {
             IList<int> workSpaceList = workSpaces.ToList();
@@ -299,9 +293,9 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
                 workSpaceList.Add(DefaultWorkSpaceId);
             }
             
-            Type panelType = typeof(PanelTreeView<>).MakeGenericType(typeof(T));
-            var panel = Activator.CreateInstance(panelType, panelTitle, subFolder ?? string.Empty, canEditHierarchy, workSpaceList.ToArray());
-            Panels.Add((PanelBase)panel);
+            Type panelType = typeof(GameDataPanel<>).MakeGenericType(typeof(T));
+            var panel = Activator.CreateInstance(panelType, panelTitle, subFolder ?? string.Empty, workSpaceList.ToArray());
+            Panels.Add((GameDataPanelBase)panel);
         }
 
         public static void AddWorkSpace(int id, string title)
@@ -327,6 +321,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         private void SelectViewMode(GameDataEditorViewMode mode)
         {
             this.selectedViewMode = mode;
+            GameDataEditorCore.Config.SetViewMode(mode);
         }
 
         private void SortPanels()
@@ -355,7 +350,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             this.CurrentPanelIndex = -1;
         }
         
-        private void SetCurrentPane(PanelBase panel)
+        private void SetCurrentPane(GameDataPanelBase panel)
         {
             for (var i = 0; i < Panels.Count; i++)
             {
@@ -388,7 +383,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             Panels[this.CurrentPanelIndex].OnFocus();
         }
 
-        private void DisposePanel(PanelBase panel)
+        private void DisposePanel(GameDataPanelBase panel)
         {
             if (panel == null)
             {

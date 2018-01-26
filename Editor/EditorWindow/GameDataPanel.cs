@@ -3,16 +3,15 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
     using System;
     using System.Collections.Generic;
     using Common;
+    using Enums;
     using Essentials.Editor.UserInterface;
     using TreeViewHelpers;
     using UnityEditor;
     using UnityEditor.IMGUI.Controls;
     using UnityEngine;
 
-    public class PanelTreeView<T> : PanelBase where T : GameDataObject
+    public class GameDataPanel<T> : GameDataPanelBase where T : GameDataObject
     {
-        private readonly bool canEditHierarchy;
-        
         private SearchField searchField;
         private Editor currentEditor;
         private Vector2 scrollPos;
@@ -21,11 +20,10 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         // -------------------------------------------------------------------
         // Constructor
         // -------------------------------------------------------------------
-        public PanelTreeView(string title, string subFolder, bool canEditHierarchy, params int[] workSpaces) 
+        public GameDataPanel(string title, string subFolder, params int[] workSpaces) 
             : base(title, subFolder, workSpaces)
         {
             this.TreeElements = new List<TreeElement>();
-            this.canEditHierarchy = canEditHierarchy;
         }
 
         // -------------------------------------------------------------------
@@ -92,16 +90,39 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
 
         public override void OnInspectorGUI()
         {
+            switch (GameDataEditorCore.Config.GetViewMode())
+            {
+                case GameDataEditorViewMode.Compact:
+                {
+                    this.DrawCompact();
+                    break;
+                }
+
+                case GameDataEditorViewMode.Full:
+                {
+                    this.DrawFull();
+                    break;
+                }
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // Private
+        // -------------------------------------------------------------------
+        private void DrawCompact()
+        {
+        }
+
+        private void DrawFull()
+        {
             EditorGUILayout.BeginHorizontal();
             {
                 // Left
                 EditorGUILayout.BeginVertical("box", GUILayout.Width(this.treeViewWidth), GUILayout.ExpandHeight(true));
                 {
-                    if (this.canEditHierarchy)
-                    {
-                        GUILayout.Space(5);
-                        this.ToolBar();
-                    }
+                    GUILayout.Space(5);
+                    this.ToolBar();
+                    
                     GUILayout.Space(5);
                     this.TreeView.searchString = this.searchField.OnGUI(this.TreeView.searchString);
                     GUILayout.Space(5);
@@ -118,7 +139,15 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
                     
                     this.scrollPos = EditorGUILayout.BeginScrollView(this.scrollPos);
 
-                    this.DrawEditor();
+                    if (this.currentEditor != null)
+                    {
+                        Layout.SetExtendedLabelSize();
+                        EditorGUI.BeginChangeCheck();
+                        this.currentEditor.OnInspectorGUI();
+
+                        Layout.SetDefaultLabelSize();
+                    }
+                    
                     EditorGUILayout.EndScrollView();
                 }
 
@@ -139,22 +168,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
                 }
             }
         }
-
-        public void DrawEditor()
-        {
-            if (this.currentEditor != null)
-            {
-                Layout.SetExtendedLabelSize();
-                EditorGUI.BeginChangeCheck();
-                this.currentEditor.OnInspectorGUI();
-
-                Layout.SetDefaultLabelSize();
-            }
-        }
-
-        // -------------------------------------------------------------------
-        // Private
-        // -------------------------------------------------------------------
+        
         private void BuildSelection()
         {
             if (this.TreeView.SelectedData == null || this.TreeView.SelectedData.Count == 0)
@@ -262,7 +276,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             {
                 this.CopySelectedObject();
             }
-            var prompt = EditorWindow.CreateInstance<PromptDialog>();
+            var prompt = EditorWindow.CreateInstance<GameDataCreatePrompt>();
             prompt.Init(newName =>
             {
                 string folder = string.IsNullOrEmpty(this.SubFolder) ? this.Title : this.SubFolder + "/" + this.Title;
@@ -276,93 +290,6 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
                     this.PastCopyObjectToSelected();
                 }
             });
-        }
-    }
-
-    public class PromptDialog : EditorWindow
-    {
-        private string newName = string.Empty;
-
-        private bool focused;
-
-        private Action<string> callback;
-
-        public void Init(Action<string> newCallback)
-        {
-            this.callback = newCallback;
-
-            this.minSize = this.maxSize = new Vector2(450, 100);
-
-            this.titleContent = new GUIContent("New Item");
-            this.ShowAuxWindow();
-            this.Focus();
-        }
-
-        public void OnGUI()
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-
-            GUILayout.BeginVertical(GUILayout.Width(400));
-            GUILayout.FlexibleSpace();
-            GUI.SetNextControlName("newNameTextField");
-            this.newName = EditorGUILayout.TextField("Name", this.newName);
-            GUILayout.Space(10);
-            GUILayout.BeginHorizontal();
-            if (GUILayout.Button("OK (Return)", GUILayout.Height(30)))
-            {
-                this.CreateItem();
-            }
-
-            if (GUILayout.Button("CANCEL (ESC)", GUILayout.Height(30)))
-            {
-                this.Close();
-            }
-            GUILayout.EndHorizontal();
-            GUILayout.FlexibleSpace();
-            GUILayout.EndVertical();
-
-
-            GUILayout.FlexibleSpace();
-            GUILayout.EndHorizontal();
-            if (!this.focused)
-            {
-                this.FocusTextField();
-                this.focused = true;
-            }
-
-            if (Event.current.isKey)
-            {
-                switch (Event.current.keyCode)
-                {
-                    case KeyCode.Return:
-                    case KeyCode.KeypadEnter:
-                        this.CreateItem();
-                        Event.current.Use();
-                        break;
-
-                    case KeyCode.Escape:
-                        Event.current.Use();
-                        this.Close();
-                        break;
-                }
-            }
-        }
-
-        private void CreateItem()
-        {
-            var s = this.newName.Trim();
-            if (!string.IsNullOrEmpty(s))
-            {
-                this.callback(s);
-            }
-
-            this.Close();
-        }
-
-        private void FocusTextField()
-        {
-            EditorGUI.FocusTextInControl("newNameTextField");
         }
     }
 }
