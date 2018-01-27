@@ -146,8 +146,8 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
                 if (EditorGUILayout.DropdownButton(new GUIContent("Tools"), FocusType.Passive, "ToolbarDropDown"))
                 {
                     var menu = new GenericMenu();
-                    menu.AddItem(new GUIContent("Upgrade"), false, UpgradeGameData);
-                    menu.AddItem(new GUIContent("Normalize ScriptableObjects Name"), false, this.NormalizeNames);
+                    menu.AddItem(new GUIContent("Upgrade Data"), false, UpgradeGameData);
+                    menu.AddItem(new GUIContent("Normalize Data Filenames"), false, this.NormalizeNames);
                     menu.ShowAsContext();
                     Event.current.Use();
                 }
@@ -416,9 +416,9 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         private void NormalizeNames()
         {
             if (!EditorUtility.DisplayDialog(
-                "Rename ScriptablesObjects",
-                "This will rename every GameData ScriptableObjects to be in sync with the name.\nYou should only doing that if you have SourceControl activated.\nAsk before doing that :).",
-                "Do it !",
+                "Normalize Game Data Filenames",
+                "This will rename all GameData files to match their respective data Names.",
+                "Confirm",
                 "Cancel"))
             {
                 return;
