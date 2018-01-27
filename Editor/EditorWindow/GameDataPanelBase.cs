@@ -3,18 +3,18 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
     using System;
     using UnityEngine;
 
-    public class PanelBase 
+    public class GameDataPanelBase 
     {
         // -------------------------------------------------------------------
         // Constructor
         // -------------------------------------------------------------------
-        public PanelBase(string title, params int[] workSpaces)
+        public GameDataPanelBase(string title, params int[] workSpaces)
             : this(title, null, workSpaces)
         {
             
         }
         
-        public PanelBase(string title, string subFolder, params int[] workSpaces)
+        public GameDataPanelBase(string title, string subFolder, params int[] workSpaces)
         {
             this.Title = title;
             this.SubFolder = subFolder;
