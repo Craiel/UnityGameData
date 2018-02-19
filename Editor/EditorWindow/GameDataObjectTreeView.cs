@@ -1,5 +1,6 @@
 namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Common;
@@ -8,17 +9,20 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
     using UnityEngine;
     using UnityEngine.Events;
 
-    public class GameDataObjectTreeView<T> : TreeView where T : GameDataObject
+    public class GameDataObjectTreeView : TreeView
     {
+        private readonly Type dataObjectType;
+        
         private TreeViewItem root;
 
         // -------------------------------------------------------------------
         // Constructor
         // -------------------------------------------------------------------
-        public GameDataObjectTreeView(TreeViewState state)
+        public GameDataObjectTreeView(TreeViewState state, Type dataObjectType)
             : base(state)
         {
-            this.SelectedData = new List<T>();
+            this.dataObjectType = dataObjectType;
+            this.SelectedData = new List<GameDataObject>();
             this.OnSelectionChanged = new UnityEvent();
             this.showAlternatingRowBackgrounds = true;
             this.Reload();
@@ -27,14 +31,11 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         // -------------------------------------------------------------------
         // Public
         // -------------------------------------------------------------------
-        [SerializeField]
-        public List<T> Data;
+        public IList<GameDataObject> Data { get; private set; }
 
-        [SerializeField]
-        public readonly List<T> SelectedData;
+        public IList<GameDataObject> SelectedData { get; private set; }
 
-        [SerializeField]
-        public readonly UnityEvent OnSelectionChanged;
+        public UnityEvent OnSelectionChanged { get; private set; }
 
         public void SelectFirstItem()
         {
@@ -47,11 +48,10 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             }
         }
 
-        public void SelectItem(T item)
+        public void SelectItem(GameDataObject item)
         {
             if (this.Data != null && this.Data.Count > 0)
             {
-
                 for (int i = 0; i < this.Data.Count; i++)
                 {
                     if (this.Data[i] == item)
@@ -65,6 +65,38 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
                 }
             }
         }
+        
+        public void SelectItemByGuid(string itemGuid)
+        {
+            if (this.Data != null)
+            {
+                for (int i = 0; i < this.Data.Count; i++)
+                {
+                    var obj = this.GetObject(i);
+                    if (itemGuid == obj.Guid)
+                    {
+                        this.SelectItem(obj);
+                        break;
+                    }
+                }
+            }
+        }
+        
+        public void SelectItemByObject(object target)
+        {
+            if (this.Data != null)
+            {
+                for (int i = 0; i < this.Data.Count; i++)
+                {
+                    var entry = this.GetObject(i);
+                    if (ReferenceEquals(entry, target))
+                    {
+                        this.SelectItem(entry);
+                        break;
+                    }
+                }
+            }
+        }
 
         // -------------------------------------------------------------------
         // Protected
@@ -73,16 +105,8 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         {
             this.root = new TreeViewItem {id = 0, depth = -1, displayName = "Root"};
 
-            var stuff = GameDataHelpers.FindGameDataList<T>();
-
-            if (stuff != null)
-            {
-                this.Data = stuff.OrderBy(x => x.Name).ToList();
-            }
-            else
-            {
-                this.Data = null;
-            }
+            var entries = GameDataHelpers.FindGameDataList(this.dataObjectType);
+            this.Data = entries != null ? entries.OrderBy(x => x.Name).ToList() : null;
 
             var rows = new List<TreeViewItem>();
             rows.Clear();
@@ -143,41 +167,9 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         // -------------------------------------------------------------------
         // Private
         // -------------------------------------------------------------------
-        private T GetObject(int index)
+        private GameDataObject GetObject(int index)
         {
             return this.Data[index];
-        }
-
-        public void SelectItemByGuid(string itemGuid)
-        {
-            if (this.Data != null)
-            {
-                for (int i = 0; i < this.Data.Count; i++)
-                {
-                    var obj = this.GetObject(i);
-                    if (itemGuid == obj.Guid)
-                    {
-                        this.SelectItem(obj);
-                        break;
-                    }
-                }
-            }
-        }
-        
-        public void SelectItemByObject(object target)
-        {
-            if (this.Data != null)
-            {
-                for (int i = 0; i < this.Data.Count; i++)
-                {
-                    var entry = this.GetObject(i);
-                    if (ReferenceEquals(entry, target))
-                    {
-                        this.SelectItem(entry);
-                        break;
-                    }
-                }
-            }
         }
     }
 }

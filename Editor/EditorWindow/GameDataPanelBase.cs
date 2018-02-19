@@ -1,6 +1,7 @@
 namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
 {
     using System;
+    using Essentials.IO;
     using UnityEngine;
 
     public class GameDataPanelBase 
@@ -8,36 +9,28 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         // -------------------------------------------------------------------
         // Constructor
         // -------------------------------------------------------------------
-        public GameDataPanelBase(string title, params int[] workSpaces)
-            : this(title, null, workSpaces)
-        {
-            
-        }
-        
-        public GameDataPanelBase(string title, string subFolder, params int[] workSpaces)
+        public GameDataPanelBase(Type dataObjectType, string title, CarbonDirectory subFolder, params int[] workSpaces)
         {
             this.Title = title;
             this.SubFolder = subFolder;
             this.WorkSpaces = workSpaces;
+            this.DataObjectType = dataObjectType;
         }
 
         // -------------------------------------------------------------------
         // Public
         // -------------------------------------------------------------------
-        [SerializeField]
-        public string Title;
+        public string Title { get; private set; }
 
-        [SerializeField]
-        public string SubFolder;
+        public CarbonDirectory SubFolder { get; private set; }
 
-        [SerializeField]
-        public bool Active;
+        public bool Active { get; protected set; }
 
-        [SerializeField]
-        public bool IsInit;
+        public bool IsInit { get; protected set; }
 
-        [SerializeField]
-        public int[] WorkSpaces;
+        public int[] WorkSpaces { get; private set; }
+        
+        public Type DataObjectType { get; private set; }
         
         public virtual Texture Icon
         {
@@ -56,17 +49,17 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         {
         }
 
-        public virtual Type GameDataObjectType
-        {
-            get { return null; }
-        }
-
         public virtual void SelectItemByGuid(string itemGuid)
         {
         }
 
         public virtual void SelectItemByObject(object target)
         {
+        }
+
+        public void SetActive(bool active = true)
+        {
+            this.Active = active;
         }
     }
 }

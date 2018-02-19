@@ -1,5 +1,6 @@
 namespace Assets.Scripts.Craiel.GameData.Editor.Common
 {
+    using Enums;
     using Essentials.Editor.UserInterface;
     using UnityEditor;
 
@@ -17,17 +18,8 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Common
             get { return false; }
         }
 
-        public virtual void OnEnable()
-        {
-        }
-
         public override void OnInspectorGUI()
         {
-            if (this.serializedObject == null)
-            {
-                return;
-            }
-
             this.serializedObject.Update();
             if (this.UseDefaultInspector)
             {
@@ -35,7 +27,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Common
             }
             else
             {
-                if (this.DrawFoldout("Object", ref this.objectFoldout))
+                if (this.DrawFoldout("Object Properties", ref this.objectFoldout))
                 {
                     this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Guid));
                     this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Name));
@@ -49,8 +41,24 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Common
             this.serializedObject.ApplyModifiedProperties();
         }
 
-        public abstract void DrawGUI();
-        
+        public void DrawGUI()
+        {
+            switch (GameDataEditorCore.Config.GetViewMode())
+            {
+                case GameDataEditorViewMode.Compact:
+                {
+                    this.DrawCompact();
+                    break;
+                }
+                    
+                case GameDataEditorViewMode.Full:
+                {
+                    this.DrawFull();
+                    break;
+                }
+            }
+        }
+
         public bool DrawFoldout(string title, ref bool toggle)
         {
             toggle = Layout.DrawSectionHeaderToggleWithSection(title, toggle);
@@ -65,6 +73,17 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Common
         public void DrawProperty(string propName, bool includeChildren = true)
         {
             EditorGUILayout.PropertyField(this.serializedObject.FindProperty(propName), includeChildren);
+        }
+        
+        // -------------------------------------------------------------------
+        // Protected
+        // -------------------------------------------------------------------
+        protected virtual void DrawCompact()
+        {
+        }
+
+        protected virtual void DrawFull()
+        {
         }
     }
 }

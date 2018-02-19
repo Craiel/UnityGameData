@@ -16,22 +16,22 @@ namespace Assets.Scripts.Craiel.GameData.Editor
         // -------------------------------------------------------------------
         // Public
         // -------------------------------------------------------------------
-        public static List<T> FindGameDataList<T>() where T : GameDataObject
+        public static List<GameDataObject> FindGameDataList(Type dataObjectType)
         {
-            var guids = AssetDatabase.FindAssets("t:" + typeof(T));
+            var guids = AssetDatabase.FindAssets("t:" + dataObjectType);
 
             if (guids.Length == 0)
             {
                 return null;
             }
 
-            var list = new List<T>();
+            var list = new List<GameDataObject>();
 
             foreach (var guid in guids)
             {
                 var path = AssetDatabase.GUIDToAssetPath(guid);
-                var obj = AssetDatabase.LoadAssetAtPath<T>(path);
-                list.Add(obj);
+                var obj = AssetDatabase.LoadAssetAtPath(path, dataObjectType);
+                list.Add((GameDataObject)obj);
             }
 
             return list;
@@ -59,45 +59,48 @@ namespace Assets.Scripts.Craiel.GameData.Editor
             return AssetDatabase.LoadAssetAtPath<GameDataObject>(path);
         }
 
-        public static T CreateAsset<T>(string subFolder = null, string nameForced = null, bool createUniqueIfExists = true) where T : GameDataObject
+        public static GameDataObject CreateAsset(Type assetType, CarbonDirectory subFolder = null, string forceName = null, bool createUniqueIfExists = true)
         {
-            var obj = CreateScriptableObject<T>(GameDataCore.GameDataPath.ToDirectory(subFolder).GetPath(), nameForced, createUniqueIfExists);
+            CarbonDirectory directory = subFolder == null
+                ? GameDataCore.GameDataPath
+                : GameDataCore.GameDataPath.ToDirectory(subFolder);
+            
+            var asset = CreateScriptableObject(assetType, directory, forceName, createUniqueIfExists);
 
-            obj.Guid = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(obj));
-            obj.Name = Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(obj));
+            asset.Guid = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(asset));
+            asset.Name = Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(asset));
 
-            EditorUtility.SetDirty(obj);
+            EditorUtility.SetDirty(asset);
 
             AssetDatabase.SaveAssets();
 
-            return obj;
+            return asset;
         }
         
-        public static T CreateScriptableObject<T>(string dirPath, string nameForced = null, bool createUniqueIfExists = true) where T : ScriptableObject
+        public static GameDataObject CreateScriptableObject(Type assetType, CarbonDirectory directory, string forceName = null, bool createUniqueIfExists = true)
         {
-            var newObject = ScriptableObject.CreateInstance<T>();
+            var newObject = ScriptableObject.CreateInstance(assetType);
             
-            string name = nameForced;
+            string name = forceName;
 
             if (string.IsNullOrEmpty(name))
             {
-                name = typeof(T).ToString().Split("."[0]).LastOrDefault();
+                name = assetType.ToString().Split("."[0]).LastOrDefault();
             }
 
-            var dataDir = new CarbonDirectory(dirPath);
-            if (!dataDir.Exists)
+            if (!directory.Exists)
             {
-                dataDir.Create();
+                directory.Create();
             }
 
-            var finalFilePath = dataDir.ToFile(name + ".asset").GetPath();
+            var finalFilePath = directory.ToFile(name + ".asset").GetPath();
 
             if (createUniqueIfExists == false)
             {
-                var existingAsset = AssetDatabase.LoadAssetAtPath<T>(finalFilePath);
+                var existingAsset = AssetDatabase.LoadAssetAtPath(finalFilePath, assetType);
                 if (existingAsset != null)
                 {
-                    return existingAsset;
+                    return (GameDataObject)existingAsset;
                 }
             }
             
@@ -108,13 +111,13 @@ namespace Assets.Scripts.Craiel.GameData.Editor
             AssetDatabase.Refresh();
             AssetDatabase.ImportAsset(newObjectPath);
 
-            var obj = AssetDatabase.LoadAssetAtPath<T>(newObjectPath);
+            var asset = AssetDatabase.LoadAssetAtPath(newObjectPath, assetType);
 
-            EditorUtility.SetDirty(obj);
+            EditorUtility.SetDirty(asset);
 
             AssetDatabase.SaveAssets();
 
-            return obj;
+            return (GameDataObject)asset;
         }
         
         public static void DeleteAsset(GameDataObject item)

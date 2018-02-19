@@ -2,47 +2,52 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Common;
     using Enums;
     using Essentials.Editor.UserInterface;
+    using Essentials.IO;
     using TreeViewHelpers;
     using UnityEditor;
     using UnityEditor.IMGUI.Controls;
     using UnityEngine;
 
-    public class GameDataPanel<T> : GameDataPanelBase where T : GameDataObject
+    public class GameDataPanel : GameDataPanelBase
     {
         private SearchField searchField;
         private Editor currentEditor;
         private Vector2 scrollPos;
         private float treeViewWidth = 300;
+        
+        private SerializedObject copyObject;
+
+        private Texture icon;
 
         // -------------------------------------------------------------------
         // Constructor
         // -------------------------------------------------------------------
-        public GameDataPanel(string title, string subFolder, params int[] workSpaces) 
-            : base(title, subFolder, workSpaces)
+        public GameDataPanel(Type dataObjectType, string title, CarbonDirectory subFolder, params int[] workSpaces) 
+            : base(dataObjectType, title, subFolder, workSpaces)
         {
-            this.TreeElements = new List<TreeElement>();
         }
 
         // -------------------------------------------------------------------
         // Public
         // -------------------------------------------------------------------
-        [SerializeField] public readonly List<TreeElement> TreeElements;
-        private SerializedObject copyObject;
-
-        public override Type GameDataObjectType
-        {
-            get { return typeof(T); }
-        }
-
         public override Texture Icon
         {
-            get { return GameDataHelpers.GetIconForBaseType(typeof(T)); }
+            get
+            {
+                if (this.icon == null)
+                {
+                    this.icon = GameDataHelpers.GetIconForBaseType(this.DataObjectType);
+                }
+
+                return this.icon;
+            }
         }
 
-        public GameDataObjectTreeView<T> TreeView { get; set; }
+        public GameDataObjectTreeView TreeView { get; private set; }
 
         public TreeViewState TreeViewState { get; private set; }
 
@@ -51,7 +56,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             if (!this.IsInit)
             {
                 this.TreeViewState = new TreeViewState();
-                this.TreeView = new GameDataObjectTreeView<T>(this.TreeViewState);
+                this.TreeView = new GameDataObjectTreeView(this.TreeViewState, this.DataObjectType);
                 this.TreeView.OnSelectionChanged.RemoveAllListeners();
                 this.TreeView.OnSelectionChanged.AddListener(this.BuildSelection);
                 this.searchField = new SearchField();
@@ -90,6 +95,8 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
 
         public override void OnInspectorGUI()
         {
+            this.HandleKeyboardShortcuts();
+            
             switch (GameDataEditorCore.Config.GetViewMode())
             {
                 case GameDataEditorViewMode.Compact:
@@ -111,6 +118,14 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         // -------------------------------------------------------------------
         private void DrawCompact()
         {
+            EditorGUILayout.BeginHorizontal();
+
+            foreach (GameDataObject dataObject in this.TreeView.Data)
+            {
+                // TODO
+            }
+            
+            EditorGUILayout.EndHorizontal();
         }
 
         private void DrawFull()
@@ -136,7 +151,6 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
                 // Right
                 EditorGUILayout.BeginVertical("box");
                 {
-                    
                     this.scrollPos = EditorGUILayout.BeginScrollView(this.scrollPos);
 
                     if (this.currentEditor != null)
@@ -155,8 +169,10 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             }
 
             EditorGUILayout.EndHorizontal();
+        }
 
-            // Events
+        private void HandleKeyboardShortcuts()
+        {
             if (Event.current.isKey && Event.current.type == EventType.KeyUp)
             {
                 switch (Event.current.keyCode)
@@ -178,27 +194,20 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             }
 
             this.currentEditor = Editor.CreateEditor(this.TreeView.SelectedData.ToArray());
-
-            if (GameDataEditorWindow.Instance != null)
-            {
-                GameDataEditorWindow.Instance.AddToHistory(this.TreeView.SelectedData[0]);
-            }
         }
 
         private void ToolBar()
         { 
             EditorGUILayout.BeginHorizontal();
             {
-                var style = "button";
-
-                if (GUILayout.Button("Add (F2)", style, GUILayout.Height(30)))
+                if (GUILayout.Button("Add (F2)", "button", GUILayout.Height(30)))
                 {
                     this.OpenCreateItemDialog(); 
                 }
 
-                if (GUILayout.Button("Delete Selected", style, GUILayout.Height(30)))
+                if (GUILayout.Button("Delete Selected", "button", GUILayout.Height(30)))
                 {
-                    if (EditorUtility.DisplayDialog("Delete Selection", "Are you sure ? (NOT Undoable)", "yes", "no"))
+                    if (EditorUtility.DisplayDialog("Delete Selection", "This operation can not be undone, continue?", "yes", "no"))
                     {
                         this.currentEditor = null;
                         var selectedData = this.TreeView.SelectedData;
@@ -230,11 +239,13 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             {
                 this.CopySelectedObject();
             }
+            
             GUI.enabled = this.copyObject != null;
             if (GUILayout.Button("Paste " + (GUI.enabled ? string.Format("({0})", this.copyObject.FindProperty("Name").stringValue) : "")))
             {
                 this.PastCopyObjectToSelected();
             }
+            
             GUI.enabled = true;
 
             GUILayout.EndHorizontal();
@@ -243,26 +254,27 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         private void PastCopyObjectToSelected()
         {
             this.copyObject.Update();
-            var s = new SerializedObject(this.TreeView.SelectedData[0]);
-            s.Update();
+            var copy = new SerializedObject(this.TreeView.SelectedData[0]);
+            copy.Update();
 
-            SerializedProperty prop = this.copyObject.GetIterator();
-            if (prop.NextVisible(true))
+            SerializedProperty property = this.copyObject.GetIterator();
+            if (property.NextVisible(true))
             {
                 do
                 {
                     // Draw movePoints property manually.
-                    if (prop.name == "Guid" || prop.name == "Name")
+                    if (property.name == "Guid" || property.name == "Name")
                     {
                         continue;
                     }
 
-                    s.CopyFromSerializedProperty(this.copyObject.FindProperty(prop.name));
+                    copy.CopyFromSerializedProperty(this.copyObject.FindProperty(property.name));
 
                 }
-                while (prop.NextVisible(false));
+                while (property.NextVisible(false));
             }
-            s.ApplyModifiedProperties();
+            
+            copy.ApplyModifiedProperties();
         }
 
         private void CopySelectedObject()
@@ -276,11 +288,12 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             {
                 this.CopySelectedObject();
             }
-            var prompt = EditorWindow.CreateInstance<GameDataCreatePrompt>();
+            
+            var prompt = ScriptableObject.CreateInstance<GameDataCreatePrompt>();
             prompt.Init(newName =>
             {
-                string folder = string.IsNullOrEmpty(this.SubFolder) ? this.Title : this.SubFolder + "/" + this.Title;
-                var newObject = GameDataHelpers.CreateAsset<T>(folder, newName.Trim());
+                CarbonDirectory folder = this.SubFolder == null ? new CarbonDirectory(this.Title) : this.SubFolder.ToDirectory(this.Title);
+                var newObject = GameDataHelpers.CreateAsset(this.DataObjectType, folder, newName.Trim());
                 this.TreeView.Reload();
                 this.TreeView.SelectItem(newObject);
                 EditorWindow.GetWindow<GameDataEditorWindow>().Focus();

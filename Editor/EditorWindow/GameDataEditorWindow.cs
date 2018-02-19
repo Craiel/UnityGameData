@@ -1,6 +1,5 @@
 namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Builder;
@@ -27,10 +26,6 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             { DefaultWorkSpaceId, DefaultWorkSpaceName }
         };
 
-        public static GameDataEditorWindow Instance { get; private set; }
-
-        private readonly IList<GameDataObject> history;
-
         private float buttonsTotalWidth;
 
         private GameDataPanelBase[] panelsSorted;
@@ -40,16 +35,10 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         private GameDataEditorViewMode selectedViewMode;
 
         // -------------------------------------------------------------------
-        // Constructor
-        // -------------------------------------------------------------------
-        public GameDataEditorWindow()
-        {
-            this.history = new List<GameDataObject>();
-        }
-
-        // -------------------------------------------------------------------
         // Public
         // -------------------------------------------------------------------
+        public static GameDataEditorWindow Instance { get; private set; }
+        
         [SerializeField]
         public GUIStyle ToolBarStyle;
 
@@ -232,7 +221,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         
         public void SelectRef(GameDataObject refObject)
         {
-            GameDataPanelBase panel = Panels.FirstOrDefault(p => p.GameDataObjectType.Name == refObject.GetType().Name);
+            GameDataPanelBase panel = Panels.FirstOrDefault(p => p.DataObjectType.Name == refObject.GetType().Name);
             if (panel == null)
             {
                 Debug.LogErrorFormat("Can't find panel for type: {0}", refObject.GetType().Name);
@@ -284,7 +273,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             AddPanel<T>(panelTitle, null, workSpaces);
         }
         
-        public static void AddPanel<T>(string panelTitle, string subFolder, params int[] workSpaces)
+        public static void AddPanel<T>(string panelTitle, CarbonDirectory subFolder, params int[] workSpaces)
             where T : GameDataObject
         {
             IList<int> workSpaceList = workSpaces.ToList();
@@ -293,9 +282,8 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
                 workSpaceList.Add(DefaultWorkSpaceId);
             }
             
-            Type panelType = typeof(GameDataPanel<>).MakeGenericType(typeof(T));
-            var panel = Activator.CreateInstance(panelType, panelTitle, subFolder ?? string.Empty, workSpaceList.ToArray());
-            Panels.Add((GameDataPanelBase)panel);
+            var panel = new GameDataPanel(typeof(T), panelTitle, subFolder, workSpaceList.ToArray());
+            Panels.Add(panel);
         }
 
         public static void AddWorkSpace(int id, string title)
@@ -376,7 +364,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
                 Panels[index].Init();
             }
 
-            Panels[index].Active = true;
+            Panels[index].SetActive();
 
             this.CurrentPanelIndex = index;
 
@@ -390,7 +378,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
                 return;
             }
 
-            panel.Active = false;
+            panel.SetActive(false);
         }
 
         public static void ExportGameData()
@@ -446,20 +434,6 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
                 {
                     Debug.LogErrorFormat("Error Renaming: {0}", rename);
                 }
-            }
-        }
-        
-        public void AddToHistory(GameDataObject gameDataObject)
-        {
-            if (this.history.Contains(gameDataObject))
-            {
-                this.history.Remove(gameDataObject);
-            }
-
-            this.history.Add(gameDataObject);
-            if (this.history.Count > 10)
-            {
-                this.history.RemoveAt(0);
             }
         }
     }
