@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
+﻿namespace Assets.Scripts.Craiel.GameData.Editor.Window
 {
     using System;
     using UnityEditor;

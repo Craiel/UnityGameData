@@ -1,4 +1,4 @@
-namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
+namespace Assets.Scripts.Craiel.GameData.Editor.Window
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -19,7 +19,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
 
         private static readonly NLog.Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private static readonly IList<GameDataPanelBase> Panels = new List<GameDataPanelBase>();
+        private static readonly IList<GameDataEditorContent> Content = new List<GameDataEditorContent>();
 
         private static readonly IDictionary<int, string> WorkSpaces = new Dictionary<int, string>
         {
@@ -28,11 +28,13 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
 
         private float buttonsTotalWidth;
 
-        private GameDataPanelBase[] panelsSorted;
+        private GameDataEditorContent[] contentSorted;
 
         private int selectedWorkSpace;
 
         private GameDataEditorViewMode selectedViewMode;
+
+        private IGameDataContentPresenter activePresenter;
 
         // -------------------------------------------------------------------
         // Public
@@ -63,7 +65,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             GameDataEditorCore.Initialize();
 
             Instance = this;
-            this.SetCurrentPane(this.CurrentPanelIndex);
+            this.SetActiveContent(this.CurrentPanelIndex);
 
             this.autoRepaintOnSceneChange = true;
 
@@ -102,7 +104,8 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             
             this.selectedWorkSpace = GameDataEditorCore.Config.GetWorkspace(DefaultWorkSpaceId);
             this.selectedViewMode = GameDataEditorCore.Config.GetViewMode();
-            this.SortPanels();
+            this.SortContent();
+            this.UpdateContentPresenter();
         }
 
         public void OnDestroy()
@@ -180,56 +183,57 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             EditorGUILayout.BeginHorizontal();
             {
                 // GameData Buttons
-                foreach (var panel in panelsSorted)
+                foreach (var content in this.contentSorted)
                 {
-                    var old = GUI.contentColor;
+                    Color currentContentColor = GUI.contentColor;
                     GUI.contentColor = Styles.DefaulEditortTextColor;
 
                     var active = GUILayout.Toggle(
-                        panel.Active,
-                        new GUIContent(panel.Title, panel.Icon, panel.Title),
+                        content.IsActive,
+                        new GUIContent(content.Title, content.Icon, content.Title),
                         style);
 
                     this.buttonsTotalWidth += this.ToolBarStyle.fixedWidth;
 
-                    GUI.contentColor = old;
-                    if (active != panel.Active)
+                    GUI.contentColor = currentContentColor;
+                    if (active != content.IsActive)
                     {
-                        this.SetCurrentPane(panel);
+                        this.SetActiveContent(content);
                     }
                 }
             }
 
             EditorGUILayout.EndHorizontal();
             
-            // Panel
-            if (Panels.Count > 0 && this.CurrentPanelIndex != -1 && Panels[this.CurrentPanelIndex].IsInit)
+            // Content
+            if (this.activePresenter != null && Content.Count > 0 && this.CurrentPanelIndex != -1)
             {
-                Panels[this.CurrentPanelIndex].OnInspectorGUI();
+                this.activePresenter.Draw(Content[this.CurrentPanelIndex]);
             }
         }
 
         public bool IsCurrentPane(string pane)
         {
-            if (Panels == null || Panels.Count <= this.CurrentPanelIndex || Panels[this.CurrentPanelIndex] == null || string.IsNullOrEmpty(Panels[this.CurrentPanelIndex].Title))
+            if (Content == null || Content.Count <= this.CurrentPanelIndex || Content[this.CurrentPanelIndex] == null || string.IsNullOrEmpty(Content[this.CurrentPanelIndex].Title))
             {
                 return false;
             }
 
-            return Panels[this.CurrentPanelIndex].Title.Equals(pane);
+            return Content[this.CurrentPanelIndex].Title.Equals(pane);
         }
         
-        public void SelectRef(GameDataObject refObject)
+        public bool SelectRef(GameDataObject refObject)
         {
-            GameDataPanelBase panel = Panels.FirstOrDefault(p => p.DataObjectType.Name == refObject.GetType().Name);
-            if (panel == null)
+            string typeName = refObject.GetType().Name;
+            GameDataEditorContent editorContent = Content.FirstOrDefault(p => p.IsOfType(typeName));
+            if (editorContent == null)
             {
                 Debug.LogErrorFormat("Can't find panel for type: {0}", refObject.GetType().Name);
-                return;
+                return false;
             }
 
-            this.SetCurrentPane(panel);
-            panel.SelectItemByObject(refObject);
+            this.SetActiveContent(editorContent);
+            return editorContent.SelectEntry(refObject);
         }
         
         public void SelectRef(GameDataRefBase refData)
@@ -267,13 +271,13 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
             this.SelectRef(dataObject);
         }
         
-        public static void AddPanel<T>(string panelTitle, params int[] workSpaces)
+        public static void AddContent<T>(string contentTitle, params int[] workSpaces)
             where T : GameDataObject
         {
-            AddPanel<T>(panelTitle, null, workSpaces);
+            AddContent<T>(contentTitle, null, workSpaces);
         }
         
-        public static void AddPanel<T>(string panelTitle, CarbonDirectory subFolder, params int[] workSpaces)
+        public static void AddContent<T>(string contentTitle, CarbonDirectory subFolder, params int[] workSpaces)
             where T : GameDataObject
         {
             IList<int> workSpaceList = workSpaces.ToList();
@@ -282,8 +286,9 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
                 workSpaceList.Add(DefaultWorkSpaceId);
             }
             
-            var panel = new GameDataPanel(typeof(T), panelTitle, subFolder, workSpaceList.ToArray());
-            Panels.Add(panel);
+            var content = new GameDataEditorContent(typeof(T));
+            content.Initialize(contentTitle, subFolder, workSpaceList.ToArray());
+            Content.Add(content);
         }
 
         public static void AddWorkSpace(int id, string title)
@@ -303,75 +308,96 @@ namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
         private void SelectWorkSpace(int id)
         {
             this.selectedWorkSpace = id;
-            this.SortPanels();
+            this.SortContent();
         }
 
         private void SelectViewMode(GameDataEditorViewMode mode)
         {
+            if (this.selectedViewMode == mode)
+            {
+                return;
+            }
+
             this.selectedViewMode = mode;
+
             GameDataEditorCore.Config.SetViewMode(mode);
+
+            this.UpdateContentPresenter();
         }
 
-        private void SortPanels()
+        private void UpdateContentPresenter()
         {
-            panelsSorted = Panels.Where(x => x.WorkSpaces.Contains(this.selectedWorkSpace)).ToArray();
-            if (this.panelsSorted.Length == 0)
+            switch (this.selectedViewMode)
             {
-                this.ClearCurrentPane();
+                case GameDataEditorViewMode.Full:
+                {
+                    this.activePresenter = new GameDataTreeContentPresenter();
+                    break;
+                }
+
+                case GameDataEditorViewMode.Compact:
+                {
+                    this.activePresenter = new GameDataNodeContentPresenter();
+                    break;
+                }
+            }
+        }
+
+        private void SortContent()
+        {
+            this.contentSorted = Content.Where(x => x.WorkSpaces.Contains(this.selectedWorkSpace)).ToArray();
+            if (this.contentSorted.Length == 0)
+            {
+                this.ClearActiveContent();
             }
             else
             {
-                this.SetCurrentPane(this.panelsSorted[0]);
+                this.SetActiveContent(this.contentSorted[0]);
             }
             
             this.Repaint();
         }
 
-        private void ClearCurrentPane()
+        private void ClearActiveContent()
         {
-            if (this.CurrentPanelIndex < 0 || Panels.Count == 0)
+            if (this.CurrentPanelIndex < 0 || Content.Count == 0)
             {
                 return;
             }
             
-            this.DisposePanel(Panels[this.CurrentPanelIndex]);
+            this.DisposeContent(Content[this.CurrentPanelIndex]);
             this.CurrentPanelIndex = -1;
         }
         
-        private void SetCurrentPane(GameDataPanelBase panel)
+        private void SetActiveContent(GameDataEditorContent panel)
         {
-            for (var i = 0; i < Panels.Count; i++)
+            for (var i = 0; i < Content.Count; i++)
             {
-                if (Panels[i] == panel)
+                if (Content[i] == panel)
                 {
-                    this.SetCurrentPane(i);
+                    this.SetActiveContent(i);
                 }
             }
         }
 
-        private void SetCurrentPane(int index)
+        private void SetActiveContent(int index)
         {
-            if (Panels.Count <= index)
+            if (Content.Count <= index)
             {
                 Logger.Warn("SetCurrentPane called with index out of bounds, did you forget to add panel definitions?");
                 return;
             }
 
-            this.ClearCurrentPane();
-
-            if (Panels[index].IsInit == false)
-            {
-                Panels[index].Init();
-            }
-
-            Panels[index].SetActive();
+            this.ClearActiveContent();
+            
+            Content[index].SetActive();
 
             this.CurrentPanelIndex = index;
 
-            Panels[this.CurrentPanelIndex].OnFocus();
+            Content[this.CurrentPanelIndex].Focus();
         }
 
-        private void DisposePanel(GameDataPanelBase panel)
+        private void DisposeContent(GameDataEditorContent panel)
         {
             if (panel == null)
             {

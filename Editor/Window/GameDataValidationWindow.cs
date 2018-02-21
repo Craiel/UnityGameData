@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.EditorWindow
+﻿namespace Assets.Scripts.Craiel.GameData.Editor.Window
 {
     using System;
     using System.Collections.Generic;
@@ -174,7 +174,7 @@
             {
                 if (GUILayout.Button("Fix All", GUILayout.Width(70)))
                 {
-                    FixIssues(issueGroup);
+                    this.FixIssues(issueGroup);
                 }
             }
             GUILayout.Label(issueGroup.Count.ToString(), ColumnWidth);
@@ -200,7 +200,7 @@
                     {
                         if (GUILayout.Button("Fix", GUILayout.Width(50)))
                         {
-                            FixIssue(issue);
+                            this.FixIssue(issue);
                         }
                     }
                     
@@ -210,7 +210,7 @@
                     }
                     else
                     {
-                        if (!DrawGameObjectLink(issue.Owner) && !DrawStaticDataRef(issue.Owner) && !DrawStaticDataLink(issue.Owner))
+                        if (!this.DrawGameObjectLink(issue.Owner) && !this.DrawStaticDataRef(issue.Owner) && !this.DrawStaticDataLink(issue.Owner))
                         {
                             GUILayout.Label(issue.Owner.GetType().Name);
                         }
@@ -285,7 +285,7 @@
         {
             foreach (ValidationIssueGroup issueGroup in this.issueGroups)
             {
-                FixIssues(issueGroup);
+                this.FixIssues(issueGroup);
             }
         }
 
@@ -293,7 +293,7 @@
         {
             for (var i = 0; i < issueGroup.Count; i++)
             {
-                FixIssue(issueGroup.GetInfo(i), true);
+                this.FixIssue(issueGroup.GetInfo(i), true);
             }
 
             issueGroup.UpdateCanFix();

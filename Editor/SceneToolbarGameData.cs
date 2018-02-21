@@ -1,9 +1,9 @@
 ﻿namespace Assets.Scripts.Craiel.GameData.Editor
 {
-    using EditorWindow;
     using Essentials.Editor;
     using UnityEditor;
     using UnityEngine;
+    using Window;
 
     public class SceneToolbarGameData : SceneToolbarWidget
     {

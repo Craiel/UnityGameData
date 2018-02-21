@@ -2,11 +2,10 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Common
 {
     using System.Linq;
     using Craiel.Editor.GameData;
-    using EditorWindow;
     using Essentials.Editor.UserInterface;
-    using GameData;
     using UnityEditor;
     using UnityEngine;
+    using Window;
 
     [CustomPropertyDrawer(typeof(GameDataRefBase), true)]
     public class GameDataRefEditor : BaseRefEditor

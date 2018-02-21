@@ -33,7 +33,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Common
         [SerializeField]
         [Multiline]
         public string Description;
-
+        
         public bool IsValid()
         {
             return !string.IsNullOrEmpty(this.Guid);
