@@ -176,7 +176,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Window
             }
 
             EditorGUILayout.EndHorizontal();
-
+            
             var style = this.buttonsTotalWidth > this.position.width ? this.ToolBarStyleSmall : this.ToolBarStyle;
             this.buttonsTotalWidth = 0;
 
@@ -204,11 +204,19 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Window
             }
 
             EditorGUILayout.EndHorizontal();
-            
+
             // Content
             if (this.activePresenter != null && Content.Count > 0 && this.CurrentPanelIndex != -1)
             {
-                this.activePresenter.Draw(Content[this.CurrentPanelIndex]);
+                Rect contentRect = new Rect(10, 80, position.width - 20, position.height - 90);
+                this.activePresenter.Draw(contentRect, Content[this.CurrentPanelIndex]);
+            }
+
+            ProcessEvents(Event.current);
+
+            if (GUI.changed)
+            {
+                Repaint();
             }
         }
 
@@ -453,12 +461,25 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Window
                     Debug.LogErrorFormat("Can't rename file {0} to {1}, path already exists", oldPath, newPath);
                     continue;
                 }
-
+                
                 var rename = AssetDatabase.RenameAsset(oldPath.GetUnityPath(), newPath.FileNameWithoutExtension);
 
                 if (!string.IsNullOrEmpty(rename))
                 {
                     Debug.LogErrorFormat("Error Renaming: {0}", rename);
+                }
+            }
+        }
+
+        private void ProcessEvents(Event eventData)
+        {
+            if (this.activePresenter != null)
+            {
+                this.activePresenter.ProcessEvent(eventData);
+
+                if (GUI.changed)
+                {
+                    this.Repaint();
                 }
             }
         }

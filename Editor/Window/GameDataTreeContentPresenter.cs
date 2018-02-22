@@ -29,6 +29,8 @@
 
         private Editor currentEditor;
 
+        private bool createOnNextRepaint;
+
         // -------------------------------------------------------------------
         // Constructor
         // -------------------------------------------------------------------
@@ -47,13 +49,19 @@
         // -------------------------------------------------------------------
         // Public
         // -------------------------------------------------------------------
-        public void Draw(GameDataEditorContent content)
+        public void Draw(Rect drawArea, GameDataEditorContent content)
         {
             if (this.activeContent != content)
             {
                 this.activeContent = content;
                 this.Reload();
                 this.RebuildEditor();
+            }
+
+            if (this.createOnNextRepaint)
+            {
+                this.createOnNextRepaint = false;
+                this.OpenCreateItemDialog(content);
             }
 
             EditorGUILayout.BeginHorizontal();
@@ -96,7 +104,23 @@
 
             EditorGUILayout.EndHorizontal();
         }
-        
+
+        public bool ProcessEvent(Event eventData)
+        {
+            switch (eventData.type)
+            {
+                case EventType.KeyUp:
+                {
+                    return this.ProcessEventKeyUp(eventData.keyCode);
+                }
+
+                default:
+                {
+                    return false;
+                }
+            }
+        }
+
         // -------------------------------------------------------------------
         // Protected
         // -------------------------------------------------------------------
@@ -321,6 +345,24 @@
 
             this.currentEditor = Editor.CreateEditor(this.entryTempList.ToArray());
             this.entryTempList.Clear();
+        }
+
+        private bool ProcessEventKeyUp(KeyCode key)
+        {
+            switch (key)
+            {
+                case KeyCode.F2:
+                {
+                    this.createOnNextRepaint = true;
+                    GUI.changed = true;
+                    return true;
+                }
+
+                default:
+                {
+                    return false;
+                }
+            }
         }
     }
 }

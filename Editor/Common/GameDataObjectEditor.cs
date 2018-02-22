@@ -1,8 +1,11 @@
 namespace Assets.Scripts.Craiel.GameData.Editor.Common
 {
     using Enums;
+    using Essentials.Editor.NodeEditor;
     using Essentials.Editor.UserInterface;
     using UnityEditor;
+    using UnityEngine;
+    using Window;
 
     [CustomEditor(typeof(GameDataObject))]
     [CanEditMultipleObjects]
@@ -21,21 +24,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Common
         public override void OnInspectorGUI()
         {
             this.serializedObject.Update();
-            if (this.UseDefaultInspector)
-            {
-                base.OnInspectorGUI();
-            }
-            else
-            {
-                if (this.DrawFoldout("Object Properties", ref this.objectFoldout))
-                {
-                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Guid));
-                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Name));
-                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.DisplayName));
-                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Notes));
-                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Description));
-                }
-            }
+            
 
             this.DrawGUI();
             this.serializedObject.ApplyModifiedProperties();
@@ -80,10 +69,29 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Common
         // -------------------------------------------------------------------
         protected virtual void DrawCompact()
         {
+            var typedTarget = (GameDataObject)this.target;
+            GUILayout.BeginVertical();
+            GUILayout.Box(typedTarget.Name, GameDataNodeStyle.Content);
+            GUILayout.EndVertical();
         }
 
         protected virtual void DrawFull()
         {
+            if (this.UseDefaultInspector)
+            {
+                base.OnInspectorGUI();
+            }
+            else
+            {
+                if (this.DrawFoldout("Object Properties", ref this.objectFoldout))
+                {
+                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Guid));
+                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Name));
+                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.DisplayName));
+                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Notes));
+                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Description));
+                }
+            }
         }
     }
 }
