@@ -9,25 +9,36 @@
     {
         private readonly GameDataObject entry;
 
-        private readonly Editor editor;
+        private readonly IGameDataCompactEditor editor;
 
+        // -------------------------------------------------------------------
+        // Constructor
+        // -------------------------------------------------------------------
         public GameDataCompactNode(GameDataObject entry)
         {
             this.entry = entry;
 
-            this.editor = UnityEditor.Editor.CreateEditor(this.entry);
+            this.editor = UnityEditor.Editor.CreateEditor(this.entry) as IGameDataCompactEditor;
 
-            this.SetSize(400, 300);
+            this.EnableDrag = false;
         }
 
+        // -------------------------------------------------------------------
+        // Public
+        // -------------------------------------------------------------------
         public override void Draw(Rect drawArea)
         {
             base.Draw(drawArea);
 
-            //GUI.Box(this.NodeRect, this.entry.Name, ScriptableNodeStyleDefault.Instance.Style);
+            if (this.editor == null)
+            {
+                return;
+            }
 
-            GUILayout.BeginArea(this.NodeRect);
-            this.editor.OnInspectorGUI();
+            this.SetSize(this.editor.GetCompactWidth(), this.editor.GetCompactHeight());
+
+            GUILayout.BeginArea(this.NodeRect, EditorStyles.helpBox);
+            this.editor.DrawCompact();
             GUILayout.EndArea();
         }
     }

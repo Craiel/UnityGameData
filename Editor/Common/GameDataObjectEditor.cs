@@ -1,15 +1,12 @@
 namespace Assets.Scripts.Craiel.GameData.Editor.Common
 {
-    using Enums;
-    using Essentials.Editor.NodeEditor;
     using Essentials.Editor.UserInterface;
     using UnityEditor;
     using UnityEngine;
-    using Window;
 
     [CustomEditor(typeof(GameDataObject))]
     [CanEditMultipleObjects]
-    public abstract class GameDataObjectEditor : Editor
+    public abstract class GameDataObjectEditor : Editor, IGameDataCompactEditor
     {
         private bool objectFoldout = true;
 
@@ -24,28 +21,26 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Common
         public override void OnInspectorGUI()
         {
             this.serializedObject.Update();
-            
-
-            this.DrawGUI();
+            this.DrawFull();
             this.serializedObject.ApplyModifiedProperties();
         }
-
-        public void DrawGUI()
+        
+        public virtual int GetCompactWidth()
         {
-            switch (GameDataEditorCore.Config.GetViewMode())
-            {
-                case GameDataEditorViewMode.Compact:
-                {
-                    this.DrawCompact();
-                    break;
-                }
-                    
-                case GameDataEditorViewMode.Full:
-                {
-                    this.DrawFull();
-                    break;
-                }
-            }
+            return 200;
+        }
+
+        public virtual int GetCompactHeight()
+        {
+            return 100;
+        }
+
+        public virtual void DrawCompact()
+        {
+            this.serializedObject.Update();
+            
+            var typedTarget = (GameDataObject)this.target;
+            GUILayout.Label(typedTarget.Name, EditorStyles.boldLabel);
         }
 
         public bool DrawFoldout(string title, ref bool toggle)
@@ -67,13 +62,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Common
         // -------------------------------------------------------------------
         // Protected
         // -------------------------------------------------------------------
-        protected virtual void DrawCompact()
-        {
-            var typedTarget = (GameDataObject)this.target;
-            GUILayout.BeginVertical();
-            GUILayout.Box(typedTarget.Name, GameDataNodeStyle.Content);
-            GUILayout.EndVertical();
-        }
+        
 
         protected virtual void DrawFull()
         {
