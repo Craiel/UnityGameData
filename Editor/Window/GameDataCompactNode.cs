@@ -41,5 +41,38 @@
             this.editor.DrawCompact();
             GUILayout.EndArea();
         }
+
+        public override bool ProcessEvent(Event eventData)
+        {
+            if (base.ProcessEvent(eventData))
+            {
+                return true;
+            }
+
+            if (!this.NodeRect.Contains(eventData.mousePosition))
+            {
+                return false;
+            }
+
+            switch (eventData.type)
+            {
+                case EventType.MouseUp:
+                {
+                    if (eventData.button == 0)
+                    {
+                        // Select this data object in inspector
+                        Selection.activeObject = this.entry;
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                default:
+                {
+                    return false;
+                }
+            }
+        }
     }
 }

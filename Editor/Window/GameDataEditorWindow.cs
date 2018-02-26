@@ -6,13 +6,14 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Window
     using Common;
     using Craiel.Editor.GameData;
     using Enums;
+    using Essentials.Editor;
     using Essentials.Editor.UserInterface;
     using Essentials.IO;
     using NLog;
     using UnityEditor;
     using UnityEngine;
 
-    public class GameDataEditorWindow : EditorWindow
+    public class GameDataEditorWindow : EssentialEditorWindow<GameDataEditorWindow>
     {
         private const int DefaultWorkSpaceId = 0;
         private const string DefaultWorkSpaceName = "None";
@@ -39,14 +40,6 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Window
         // -------------------------------------------------------------------
         // Public
         // -------------------------------------------------------------------
-        public static GameDataEditorWindow Instance { get; private set; }
-        
-        [SerializeField]
-        public GUIStyle ToolBarStyle;
-
-        [SerializeField]
-        public GUIStyle ToolBarStyleSmall;
-
         [SerializeField]
         public GUIStyle CategoryStyle;
 
@@ -55,41 +48,18 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Window
         
         public static void OpenWindow()
         {
-            var window = (GameDataEditorWindow)GetWindow(typeof(GameDataEditorWindow));
-            window.titleContent = new GUIContent("GameData Editor");
-            window.Show();
+            OpenWindow("GameData Editor");
         }
 
-        public void OnEnable()
+        public override void OnEnable()
         {
+            base.OnEnable();
+            
             GameDataEditorCore.Initialize();
 
-            Instance = this;
             this.SetActiveContent(this.CurrentPanelIndex);
 
             this.autoRepaintOnSceneChange = true;
-
-            if (this.ToolBarStyle == null)
-            {
-                this.ToolBarStyle = new GUIStyle(EditorStyles.toolbarButton)
-                {
-                    imagePosition = ImagePosition.ImageAbove,
-                    fixedHeight = 50,
-                    fixedWidth = 80,
-                    wordWrap = true
-                };
-            }
-
-            if (this.ToolBarStyleSmall == null)
-            {
-                this.ToolBarStyleSmall = new GUIStyle(EditorStyles.toolbarButton)
-                {
-                    imagePosition = ImagePosition.ImageOnly,
-                    fixedHeight = 50,
-                    fixedWidth = 50,
-                    wordWrap = false
-                };
-            }
 
             if (this.CategoryStyle == null)
             {
@@ -108,17 +78,12 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Window
             this.UpdateContentPresenter();
         }
 
-        public void OnDestroy()
-        {
-            Instance = null;
-        }
-
-        public void OnDisable()
+        public override void OnDisable()
         {
             GameDataEditorCore.Config.SetWorkspace(this.selectedWorkSpace);
             GameDataEditorCore.Config.SetViewMode(this.selectedViewMode);
-
-            Instance = null;
+            
+            base.OnDisable();
         }
         
         public void OnGUI()
