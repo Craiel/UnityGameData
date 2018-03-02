@@ -1,7 +1,10 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.Window
+﻿using EditorEventGameDataSelectionChanged = Craiel.GameData.Editor.Events.EditorEventGameDataSelectionChanged;
+
+namespace Assets.Scripts.Craiel.GameData.Editor.Window
 {
     using Common;
     using Essentials.Editor.NodeEditor;
+    using Essentials.Event.Editor;
     using UnityEditor;
     using UnityEngine;
 
@@ -62,6 +65,9 @@
                     {
                         // Select this data object in inspector
                         Selection.activeObject = this.entry;
+                        
+                        EditorEvents.Send(new EditorEventGameDataSelectionChanged(this.entry));
+                        
                         return true;
                     }
 

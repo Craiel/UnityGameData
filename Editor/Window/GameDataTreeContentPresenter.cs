@@ -1,10 +1,13 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.Window
+﻿using EditorEventGameDataSelectionChanged = Craiel.GameData.Editor.Events.EditorEventGameDataSelectionChanged;
+
+namespace Assets.Scripts.Craiel.GameData.Editor.Window
 {
     using System.Collections.Generic;
     using System.Linq;
     using Common;
     using Essentials.Collections;
     using Essentials.Editor.UserInterface;
+    using Essentials.Event.Editor;
     using UnityEditor;
     using UnityEditor.IMGUI.Controls;
     using UnityEngine;
@@ -159,12 +162,35 @@
                 this.selection.Add(index);
             }
 
+            this.SendSelectedEvent();
+
             this.RebuildEditor();
         }
 
         // -------------------------------------------------------------------
         // Private
         // -------------------------------------------------------------------
+        private void SendSelectedEvent()
+        {
+            if (this.selection.Count == 0)
+            {
+                EditorEvents.Send(new EditorEventGameDataSelectionChanged());
+                return;
+            }
+            
+            IList<GameDataObject> selectedObjects = new List<GameDataObject>();
+            foreach (int id in this.selection)
+            {
+                GameDataObject entry;
+                if(this.idObjectMap.TryGetValue(id, out entry))
+                {
+                    selectedObjects.Add(entry);
+                }
+            }
+            
+            EditorEvents.Send(new EditorEventGameDataSelectionChanged(selectedObjects.ToArray()));
+        }
+        
         private void DrawToolBar(GameDataEditorContent content)
         {
             EditorGUILayout.BeginHorizontal();
