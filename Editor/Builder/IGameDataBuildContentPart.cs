@@ -1,9 +1,10 @@
 ﻿namespace Assets.Scripts.Craiel.GameData.Editor.Builder
 {
-    public interface IGameDataBuildContentPart
+    public interface IGameDataBuildContentPart<out T>
+        where T : RuntimeGameDataPart
     {
         void Validate(object owner, GameDataBuildValidationContext context);
 
-        RuntimeGameDataPart Build(object owner, GameDataBuildContext context);
+        T Build(object owner, GameDataBuildContext context);
     }
 }
