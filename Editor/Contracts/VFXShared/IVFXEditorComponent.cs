@@ -1,9 +1,7 @@
 ﻿namespace Craiel.GameData.Editor.Contracts.VFXShared
 {
-    public interface IVFXEditorComponent
+    public interface IVFXEditorComponent : IGameDataVFXNode
     {
-        string Category { get; }
-        
-        string Name { get; }
+        string Name { get; set; }
     }
 }
