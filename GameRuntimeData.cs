@@ -1,13 +1,16 @@
-﻿namespace Assets.Scripts.Craiel.GameData
+﻿using GameEvents = Craiel.UnityEssentials.Event.GameEvents;
+using ResourceKey = Craiel.UnityEssentials.Resource.ResourceKey;
+using ResourceProvider = Craiel.UnityEssentials.Resource.ResourceProvider;
+using SceneObjectController = Craiel.UnityEssentials.Scene.SceneObjectController;
+using SceneRootCategory = Craiel.UnityEssentials.Enums.SceneRootCategory;
+
+namespace Assets.Scripts.Craiel.GameData
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using Essentials;
-    using Essentials.Enums;
     using Essentials.Event;
-    using Essentials.Resource;
-    using Essentials.Scene;
     using Events;
     using NLog;
     using UnityEngine;

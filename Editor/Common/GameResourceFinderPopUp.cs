@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.Common
+﻿using EssentialsCore = Craiel.UnityEssentials.EssentialsCore;
+
+namespace Assets.Scripts.Craiel.GameData.Editor.Common
 {
     using System;
     using System.Collections.Generic;

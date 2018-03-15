@@ -1,6 +1,6 @@
 ﻿namespace Craiel.GameData.Editor.Contracts
 {
-    using Assets.Scripts.Craiel.Essentials.Contracts;
+    using UnityEssentials.Contracts;
 
     public interface IGameDataEditorConfig : ICraielComponentConfig
     {

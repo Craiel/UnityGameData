@@ -1,11 +1,13 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.Window
+﻿using CollectionExtensions = Craiel.UnityEssentials.Extensions.CollectionExtensions;
+using ManagedDirectory = Craiel.UnityEssentials.IO.ManagedDirectory;
+
+namespace Assets.Scripts.Craiel.GameData.Editor.Window
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Common;
     using Essentials;
-    using Essentials.IO;
     using UnityEngine;
 
     public class GameDataEditorContent
@@ -32,7 +34,7 @@
 
         public string Title { get; private set; }
 
-        public CarbonDirectory SubFolder { get; private set; }
+        public ManagedDirectory SubFolder { get; private set; }
 
         public IList<GameDataObject> Entries { get; private set; }
 
@@ -41,7 +43,7 @@
             get { return this.workSpaces; }
         }
 
-        public void Initialize(string title, CarbonDirectory subFolder, int[] newWorkSpaces)
+        public void Initialize(string title, ManagedDirectory subFolder, int[] newWorkSpaces)
         {
             this.Title = title;
             this.SubFolder = subFolder;
@@ -85,13 +87,13 @@
                 return;
             }
 
-            this.Entries.AddRange(data.OrderBy(x => x.Name));
+            CollectionExtensions.AddRange(this.Entries, data.OrderBy(x => x.Name));
         }
 
         public GameDataObject CreateEntry(string name)
         {
-            CarbonDirectory folder = this.SubFolder == null 
-                ? new CarbonDirectory(this.Title) 
+            ManagedDirectory folder = this.SubFolder == null 
+                ? new ManagedDirectory(this.Title) 
                 : this.SubFolder.ToDirectory(this.Title);
 
             GameDataObject entry = GameDataHelpers.CreateAsset(this.dataObjectType, folder, name.Trim());

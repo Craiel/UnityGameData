@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor
+﻿using SceneToolbarWidget = Craiel.UnityEssentials.Editor.SceneToolbarWidget;
+
+namespace Assets.Scripts.Craiel.GameData.Editor
 {
     using Essentials.Editor;
     using UnityEditor;

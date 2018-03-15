@@ -1,13 +1,12 @@
 ﻿using EditorEventGameDataSelectionChanged = Craiel.GameData.Editor.Events.EditorEventGameDataSelectionChanged;
+using EditorEvents = Craiel.UnityEssentials.Event.Editor.EditorEvents;
+using Layout = Craiel.UnityEssentials.Editor.UserInterface.Layout;
 
 namespace Assets.Scripts.Craiel.GameData.Editor.Window
 {
     using System.Collections.Generic;
     using System.Linq;
     using Common;
-    using Essentials.Collections;
-    using Essentials.Editor.UserInterface;
-    using Essentials.Event.Editor;
     using UnityEditor;
     using UnityEditor.IMGUI.Controls;
     using UnityEngine;

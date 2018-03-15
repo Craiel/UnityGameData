@@ -1,10 +1,11 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.Common
+﻿using ManagedDirectory = Craiel.UnityEssentials.IO.ManagedDirectory;
+using Styles = Craiel.UnityEssentials.Editor.UserInterface.Styles;
+
+namespace Assets.Scripts.Craiel.GameData.Editor.Common
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Essentials.Editor.UserInterface;
-    using Essentials.IO;
     using UnityEditor;
     using UnityEditor.IMGUI.Controls;
     using UnityEngine;
@@ -128,7 +129,7 @@
 
         protected string TypeFilter { get; set; }
 
-        protected CarbonDirectory Root { get; set; }
+        protected ManagedDirectory Root { get; set; }
 
         protected UnityObjectNameSelectorDelegate NameSelector { get; set; }
 

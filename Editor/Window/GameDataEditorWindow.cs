@@ -1,3 +1,7 @@
+using ManagedDirectory = Craiel.UnityEssentials.IO.ManagedDirectory;
+using ManagedFile = Craiel.UnityEssentials.IO.ManagedFile;
+using Styles = Craiel.UnityEssentials.Editor.UserInterface.Styles;
+
 namespace Assets.Scripts.Craiel.GameData.Editor.Window
 {
     using System.Collections.Generic;
@@ -7,8 +11,6 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Window
     using Craiel.Editor.GameData;
     using Enums;
     using Essentials.Editor;
-    using Essentials.Editor.UserInterface;
-    using Essentials.IO;
     using NLog;
     using UnityEditor;
     using UnityEngine;
@@ -250,7 +252,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Window
             AddContent<T>(contentTitle, null, workSpaces);
         }
         
-        public static void AddContent<T>(string contentTitle, CarbonDirectory subFolder, params int[] workSpaces)
+        public static void AddContent<T>(string contentTitle, ManagedDirectory subFolder, params int[] workSpaces)
             where T : GameDataObject
         {
             IList<int> workSpaceList = workSpaces.ToList();
@@ -410,7 +412,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Window
 
             foreach (var guid in guids)
             {
-                var oldPath = new CarbonFile(AssetDatabase.GUIDToAssetPath(guid));
+                var oldPath = new ManagedFile(AssetDatabase.GUIDToAssetPath(guid));
                 var obj = AssetDatabase.LoadAssetAtPath<GameDataObject>(oldPath.GetUnityPath());
 
                 var newPath = oldPath.GetDirectory().ToFile(obj.Name + ".asset");

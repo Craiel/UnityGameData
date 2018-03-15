@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.Builder
+﻿using ManagedFile = Craiel.UnityEssentials.IO.ManagedFile;
+
+namespace Assets.Scripts.Craiel.GameData.Editor.Builder
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +8,6 @@
     using System.Text;
     using Common;
     using Craiel.Editor.GameData;
-    using Essentials.IO;
     using GameData;
     using NLog;
     using UnityEngine;
@@ -20,7 +21,7 @@
         // -------------------------------------------------------------------
         // Constructor
         // -------------------------------------------------------------------
-        public GameDataBuildContext(CarbonFile targetFile)
+        public GameDataBuildContext(ManagedFile targetFile)
             : this()
         {
             this.TargetFile = targetFile;
@@ -35,7 +36,7 @@
         // -------------------------------------------------------------------
         // Public
         // -------------------------------------------------------------------
-        public CarbonFile TargetFile { get; private set; }
+        public ManagedFile TargetFile { get; private set; }
         
         public IDictionary<Type, IList<byte[]>> BuildData { get; private set; }
 

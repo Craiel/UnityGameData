@@ -1,7 +1,8 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor
+﻿using ManagedFile = Craiel.UnityEssentials.IO.ManagedFile;
+
+namespace Assets.Scripts.Craiel.GameData.Editor
 {
     using System;
-    using Essentials.IO;
     using UnityEditor;
     using UnityEngine;
     using Object = UnityEngine.Object;
@@ -57,13 +58,13 @@
                 strippedPath = path.Replace(root, string.Empty).Trim('/');
             }
 
-            CarbonFile relativePath = new CarbonFile(strippedPath);
+            ManagedFile relativePath = new ManagedFile(strippedPath);
             return relativePath.GetDirectory().ToFile(sourceObject.name).GetUnityPath();
         }
 
         public static string AnimationNameSelector(Object sourceObject, string path, string root)
         {
-            CarbonFile file = new CarbonFile(path);
+            ManagedFile file = new ManagedFile(path);
             string fileName = file.FileNameWithoutExtension;
             string[] parts = fileName.Split(AnimationFileSplitParameters, StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length > 0 && !parts[0].Equals(sourceObject.name, StringComparison.OrdinalIgnoreCase))

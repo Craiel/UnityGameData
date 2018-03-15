@@ -1,14 +1,16 @@
-﻿namespace Assets.Scripts.Craiel.GameData
+﻿using EssentialsCore = Craiel.UnityEssentials.EssentialsCore;
+using ManagedDirectory = Craiel.UnityEssentials.IO.ManagedDirectory;
+
+namespace Assets.Scripts.Craiel.GameData
 {
     using Essentials;
-    using Essentials.IO;
 
     public static class GameDataCore
     {
-        public static readonly CarbonDirectory GameDataListPath = new CarbonDirectory("ScriptableObjects");
+        public static readonly ManagedDirectory GameDataListPath = new ManagedDirectory("ScriptableObjects");
 
         public const string GameDataListExtension = ".blst";
 
-        public static readonly CarbonDirectory GameDataPath = EssentialsCore.AssetsPath.ToDirectory("Data");
+        public static readonly ManagedDirectory GameDataPath = EssentialsCore.AssetsPath.ToDirectory("Data");
     }
 }

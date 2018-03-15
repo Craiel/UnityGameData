@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Events
+﻿using IGameEvent = Craiel.UnityEssentials.Contracts.IGameEvent;
+
+namespace Assets.Scripts.Craiel.GameData.Events
 {
-    using Essentials.Contracts;
-    
     public class EventGameDataLoaded : IGameEvent
     {
     }

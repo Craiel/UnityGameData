@@ -1,3 +1,5 @@
+using ManagedDirectory = Craiel.UnityEssentials.IO.ManagedDirectory;
+
 namespace Assets.Scripts.Craiel.GameData.Editor
 {
     using System;
@@ -7,7 +9,6 @@ namespace Assets.Scripts.Craiel.GameData.Editor
     using System.Reflection;
     using Attributes;
     using Common;
-    using Essentials.IO;
     using UnityEditor;
     using UnityEngine;
 
@@ -59,9 +60,9 @@ namespace Assets.Scripts.Craiel.GameData.Editor
             return AssetDatabase.LoadAssetAtPath<GameDataObject>(path);
         }
 
-        public static GameDataObject CreateAsset(Type assetType, CarbonDirectory subFolder = null, string forceName = null, bool createUniqueIfExists = true)
+        public static GameDataObject CreateAsset(Type assetType, ManagedDirectory subFolder = null, string forceName = null, bool createUniqueIfExists = true)
         {
-            CarbonDirectory directory = subFolder == null
+            ManagedDirectory directory = subFolder == null
                 ? GameDataCore.GameDataPath
                 : GameDataCore.GameDataPath.ToDirectory(subFolder);
             
@@ -77,7 +78,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor
             return asset;
         }
         
-        public static GameDataObject CreateScriptableObject(Type assetType, CarbonDirectory directory, string forceName = null, bool createUniqueIfExists = true)
+        public static GameDataObject CreateScriptableObject(Type assetType, ManagedDirectory directory, string forceName = null, bool createUniqueIfExists = true)
         {
             var newObject = ScriptableObject.CreateInstance(assetType);
             

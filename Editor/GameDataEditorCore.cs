@@ -2,8 +2,6 @@
 
 namespace Assets.Scripts.Craiel.GameData.Editor
 {
-    using Essentials.Component;
-
     public static class GameDataEditorCore
     {
         // -------------------------------------------------------------------

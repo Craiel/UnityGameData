@@ -1,8 +1,9 @@
-﻿#if UNITY_EDITOR
+﻿using ManagedFile = Craiel.UnityEssentials.IO.ManagedFile;
+
+#if UNITY_EDITOR
 namespace Assets.Scripts.Craiel.GameData.Editor.Builder
 {
     using Common;
-    using Essentials.IO;
     using NLog;
     using UnityEditor;
 
@@ -23,7 +24,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Builder
         // -------------------------------------------------------------------
         // Public
         // -------------------------------------------------------------------
-        public static CarbonFile TargetFile { get; set; }
+        public static ManagedFile TargetFile { get; set; }
 
         public static void Build()
         {

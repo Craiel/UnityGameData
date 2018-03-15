@@ -1,4 +1,7 @@
-﻿namespace Assets.Scripts.Craiel.GameData
+﻿using CollectionExtensions = Craiel.UnityEssentials.Extensions.CollectionExtensions;
+using ManagedFile = Craiel.UnityEssentials.IO.ManagedFile;
+
+namespace Assets.Scripts.Craiel.GameData
 {
     using System;
     using System.Collections.Generic;
@@ -7,8 +10,6 @@
     using System.Text;
     using Contracts;
     using Essentials;
-    using Essentials.Collections;
-    using Essentials.IO;
     using LiteDB;
     using NLog;
     using UnityEngine;
@@ -115,7 +116,7 @@
             IList<object> entries;
             if (this.gameDataTypeLookup.TryGetValue(typeof(T), out entries))
             {
-                target.AddRange(entries.Cast<T>());
+                CollectionExtensions.AddRange(target, entries.Cast<T>());
                 return target.Count > 0;
             }
 
@@ -184,7 +185,7 @@
         private void LoadBinaryList(Type type, LiteDatabase db, IList<RuntimeGameData> target)
         {
             target.Clear();
-            CarbonFile listProtoFile = GameDataCore.GameDataListPath.ToFile(type.Name + GameDataCore.GameDataListExtension);
+            ManagedFile listProtoFile = GameDataCore.GameDataListPath.ToFile(type.Name + GameDataCore.GameDataListExtension);
             string id = listProtoFile.GetPathUsingAlternativeSeparator();
             if (db.FileStorage.Exists(id))
             {

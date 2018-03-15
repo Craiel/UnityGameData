@@ -1,7 +1,9 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.Window
+﻿using ScriptableNodeEditor = Craiel.UnityEssentials.Editor.NodeEditor.ScriptableNodeEditor;
+using ScriptableNodeGridLayouter = Craiel.UnityEssentials.Editor.NodeEditor.ScriptableNodeGridLayouter;
+
+namespace Assets.Scripts.Craiel.GameData.Editor.Window
 {
     using Common;
-    using Essentials.Editor.NodeEditor;
     using UnityEngine;
 
     // TODO: http://gram.gs/gramlog/creating-node-based-editor-unity/

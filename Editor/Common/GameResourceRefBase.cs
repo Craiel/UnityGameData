@@ -1,10 +1,13 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.Common
+﻿using EssentialsCore = Craiel.UnityEssentials.EssentialsCore;
+using ManagedDirectory = Craiel.UnityEssentials.IO.ManagedDirectory;
+using ManagedFile = Craiel.UnityEssentials.IO.ManagedFile;
+
+namespace Assets.Scripts.Craiel.GameData.Editor.Common
 {
     using System;
     using System.Collections.Generic;
     using Builder;
     using Essentials;
-    using Essentials.IO;
     using NLog;
     using UnityEngine;
 
@@ -87,10 +90,10 @@
                 return this.cachedPath;
             }
 
-            var path = new CarbonFile(assetPath);
+            var path = new ManagedFile(assetPath);
 
             // Format the path for better processing
-            path = new CarbonDirectory(path.GetDirectory().GetPathUsingDefaultSeparator()).ToFile(path.FileNameWithoutExtension);
+            path = new ManagedDirectory(path.GetDirectory().GetPathUsingDefaultSeparator()).ToFile(path.FileNameWithoutExtension);
 
             // Contains check first since the FindParent call is somewhat heavy
             if (path.GetPath().Contains(EssentialsCore.ResourcesFolderName))
@@ -100,7 +103,7 @@
                 {
                     // This file is a resource, we only save the relative path from there
                     var relativePath = path.GetPath().Replace(resourceParent.GetPath(), string.Empty);
-                    path = new CarbonFile(relativePath);
+                    path = new ManagedFile(relativePath);
                 }
             }
 

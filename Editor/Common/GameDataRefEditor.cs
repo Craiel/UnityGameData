@@ -1,10 +1,12 @@
+using GuiUtils = Craiel.UnityEssentials.Editor.UserInterface.GuiUtils;
+
 namespace Assets.Scripts.Craiel.GameData.Editor.Common
 {
     using System.Linq;
     using Craiel.Editor.GameData;
-    using Essentials.Editor.UserInterface;
     using UnityEditor;
     using UnityEngine;
+    using UserInterface;
     using Window;
 
     [CustomPropertyDrawer(typeof(GameDataRefBase), true)]
@@ -23,7 +25,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Common
         // -------------------------------------------------------------------
         protected override string GetActiveObjectString(SerializedProperty property)
         {
-            return property.FindPropertyRelative<GameDataRefBase>(x => x.RefGuid).stringValue;
+            return GuiUtils.FindPropertyRelative<GameDataRefBase>(property, x => x.RefGuid).stringValue;
         }
 
         protected override Object GetActiveObject(SerializedProperty property)
@@ -65,7 +67,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Common
         private static void SetObject(SerializedProperty property, GameDataObject obj)
         {
             var key = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(obj));
-            property.FindPropertyRelative<GameDataRefBase>(x => x.RefGuid).stringValue = key;
+            GuiUtils.FindPropertyRelative<GameDataRefBase>(property, x => x.RefGuid).stringValue = key;
             property.serializedObject.ApplyModifiedProperties();
         }
     }

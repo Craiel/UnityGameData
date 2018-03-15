@@ -1,9 +1,10 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor
+﻿using ManagedFile = Craiel.UnityEssentials.IO.ManagedFile;
+
+namespace Assets.Scripts.Craiel.GameData.Editor
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using Essentials.IO;
     using LiteDB;
     using NLog;
 
@@ -11,27 +12,27 @@
     {
         private static readonly NLog.Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly IDictionary<CarbonFile, CarbonFile> customDataFiles;
-        private readonly IDictionary<CarbonFile, Action<BinaryWriter>> customDataContent;
+        private readonly IDictionary<ManagedFile, ManagedFile> customDataFiles;
+        private readonly IDictionary<ManagedFile, Action<BinaryWriter>> customDataContent;
 
         // -------------------------------------------------------------------
         // Constructor
         // -------------------------------------------------------------------
         public GameDataWriter()
         {
-            this.customDataFiles = new Dictionary<CarbonFile, CarbonFile>();
-            this.customDataContent = new Dictionary<CarbonFile, Action<BinaryWriter>>();
+            this.customDataFiles = new Dictionary<ManagedFile, ManagedFile>();
+            this.customDataContent = new Dictionary<ManagedFile, Action<BinaryWriter>>();
         }
 
         // -------------------------------------------------------------------
         // Public
         // -------------------------------------------------------------------
-        public void AddCustomFile(CarbonFile fileInDb, CarbonFile fileOnDisk)
+        public void AddCustomFile(ManagedFile fileInDb, ManagedFile fileOnDisk)
         {
             this.customDataFiles.Add(fileInDb, fileOnDisk);
         }
 
-        public void AddCustomFileContent(CarbonFile fileInDb, Action<BinaryWriter> content)
+        public void AddCustomFileContent(ManagedFile fileInDb, Action<BinaryWriter> content)
         {
             this.customDataContent.Add(fileInDb, content);
         }
@@ -41,15 +42,15 @@
            this.AddCustomFileContent(GameDataCore.GameDataListPath.ToFile(string.Concat(name, GameDataCore.GameDataListExtension)), content);
         }
 
-        public void Save(CarbonFile file)
+        public void Save(ManagedFile file)
         {
             file.DeleteIfExists();
             using (var db = new LiteDatabase(file.GetPath()))
             {
-                IList<CarbonFile> fileCheck = new List<CarbonFile>();
+                IList<ManagedFile> fileCheck = new List<ManagedFile>();
 
                 // Store the custom files
-                foreach (CarbonFile fileInDb in this.customDataFiles.Keys)
+                foreach (ManagedFile fileInDb in this.customDataFiles.Keys)
                 {
                     if (fileCheck.Contains(fileInDb))
                     {
@@ -59,7 +60,7 @@
 
                     fileCheck.Add(fileInDb);
 
-                    CarbonFile dataFile = this.customDataFiles[fileInDb];
+                    ManagedFile dataFile = this.customDataFiles[fileInDb];
                     if (!dataFile.Exists)
                     {
                         Logger.Error("Could not save data file {0}: does not exist", dataFile);
@@ -73,7 +74,7 @@
                 }
 
                 // Store custom content
-                foreach (CarbonFile fileInDb in this.customDataContent.Keys)
+                foreach (ManagedFile fileInDb in this.customDataContent.Keys)
                 {
                     if (fileCheck.Contains(fileInDb))
                     {

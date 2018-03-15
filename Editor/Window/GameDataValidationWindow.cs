@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.Window
+﻿using CollectionExtensions = Craiel.UnityEssentials.Extensions.CollectionExtensions;
+
+namespace Assets.Scripts.Craiel.GameData.Editor.Window
 {
     using System;
     using System.Collections.Generic;
@@ -83,7 +85,7 @@
                 this.ProcessResultEntry(processingDictionary, result, false);
             }
             
-            this.issueGroups.AddRange(processingDictionary.Values);
+            CollectionExtensions.AddRange(this.issueGroups, processingDictionary.Values);
 
             foreach (ValidationIssueGroup issueGroup in this.issueGroups)
             {
