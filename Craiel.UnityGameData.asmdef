@@ -1,0 +1,8 @@
+{
+    "name": "Craiel.UnityGameData",
+    "references": [
+        "Craiel.UnityEssentials"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": []
+}
