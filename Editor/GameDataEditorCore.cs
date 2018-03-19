@@ -1,7 +1,8 @@
-﻿using IGameDataEditorConfig = Craiel.GameData.Editor.Contracts.IGameDataEditorConfig;
-
-namespace Assets.Scripts.Craiel.GameData.Editor
+﻿namespace Craiel.UnityGameData.Editor
 {
+    using GameData.Editor.Contracts;
+    using UnityEssentials.Component;
+
     public static class GameDataEditorCore
     {
         // -------------------------------------------------------------------

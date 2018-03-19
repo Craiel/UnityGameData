@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.Builder
+﻿namespace Craiel.UnityGameData.Editor.Builder
 {
     public interface IGameDataBuildContent
     {

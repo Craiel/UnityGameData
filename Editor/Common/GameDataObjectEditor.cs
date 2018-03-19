@@ -1,14 +1,8 @@
-using GuiUtils = Craiel.UnityEssentials.Editor.UserInterface.GuiUtils;
-using Layout = Craiel.UnityEssentials.Editor.UserInterface.Layout;
-
-namespace Assets.Scripts.Craiel.GameData.Editor.Common
+namespace Craiel.UnityGameData.Editor.Common
 {
     using UnityEditor;
     using UnityEngine;
-    using UserInterface;
-    using UserInterface;
-    using UserInterface;
-    using UserInterface;
+    using UnityEssentials.Editor.UserInterface;
 
     [CustomEditor(typeof(GameDataObject))]
     [CanEditMultipleObjects]
@@ -80,11 +74,11 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Common
             {
                 if (this.DrawFoldout("Object Properties", ref this.objectFoldout))
                 {
-                    this.DrawProperty(GuiUtils.FindProperty<GameDataObject>(this.serializedObject, x => x.Guid));
-                    this.DrawProperty(GuiUtils.FindProperty<GameDataObject>(this.serializedObject, x => x.Name));
-                    this.DrawProperty(GuiUtils.FindProperty<GameDataObject>(this.serializedObject, x => x.DisplayName));
-                    this.DrawProperty(GuiUtils.FindProperty<GameDataObject>(this.serializedObject, x => x.Notes));
-                    this.DrawProperty(GuiUtils.FindProperty<GameDataObject>(this.serializedObject, x => x.Description));
+                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Guid));
+                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Name));
+                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.DisplayName));
+                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Notes));
+                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Description));
                 }
             }
         }

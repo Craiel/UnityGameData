@@ -1,6 +1,6 @@
 ﻿using IGameEvent = Craiel.UnityEssentials.Contracts.IGameEvent;
 
-namespace Assets.Scripts.Craiel.GameData.Events
+namespace Craiel.UnityGameData.Events
 {
     public class EventGameDataLoaded : IGameEvent
     {

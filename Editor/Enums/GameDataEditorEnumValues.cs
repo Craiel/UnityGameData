@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.Enums
+﻿namespace Craiel.UnityGameData.Editor.Enums
 {
     using System;
     using System.Collections.Generic;

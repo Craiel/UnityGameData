@@ -2,7 +2,7 @@
 using EditorEvents = Craiel.UnityEssentials.Event.Editor.EditorEvents;
 using ScriptableNodeBase = Craiel.UnityEssentials.Editor.NodeEditor.ScriptableNodeBase;
 
-namespace Assets.Scripts.Craiel.GameData.Editor.Window
+namespace Craiel.UnityGameData.Editor.Window
 {
     using Common;
     using UnityEditor;

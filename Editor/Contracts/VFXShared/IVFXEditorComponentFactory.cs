@@ -1,8 +1,9 @@
-﻿namespace Craiel.GameData.Editor.Contracts.VFXShared
+﻿namespace Craiel.UnityGameData.Editor.Contracts.VFXShared
 {
     using System.Collections.Generic;
-    using Assets.Scripts.Craiel.VFX.Editor.Components;
+    using GameData.Editor.Contracts.VFXShared;
     using UnityEngine;
+    using UnityGameData.VFXShared;
 
     public interface IVFXEditorComponentFactory
     {

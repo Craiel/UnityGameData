@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.Builder
+﻿using RuntimeGameDataPart = Craiel.UnityGameData.RuntimeGameDataPart;
+
+namespace Craiel.UnityGameData.Editor.Builder
 {
     public interface IGameDataBuildContentPart<out T>
         where T : RuntimeGameDataPart

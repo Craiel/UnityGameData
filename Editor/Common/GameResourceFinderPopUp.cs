@@ -1,13 +1,11 @@
-﻿using EssentialsCore = Craiel.UnityEssentials.EssentialsCore;
-
-namespace Assets.Scripts.Craiel.GameData.Editor.Common
+﻿namespace Craiel.UnityGameData.Editor.Common
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using Essentials;
     using UnityEditor;
     using UnityEngine;
+    using UnityEssentials;
     using Object = UnityEngine.Object;
 
     public class StaticResourceFinderPopUp : BaseFinderPopUp<Object>

@@ -1,6 +1,7 @@
-﻿using ManagedFile = Craiel.UnityEssentials.IO.ManagedFile;
+﻿using GameDataCore = Craiel.UnityGameData.GameDataCore;
+using ManagedFile = Craiel.UnityEssentials.IO.ManagedFile;
 
-namespace Assets.Scripts.Craiel.GameData.Editor
+namespace Craiel.UnityGameData.Editor
 {
     using System;
     using System.Collections.Generic;

@@ -1,14 +1,11 @@
-namespace Assets.Scripts.Craiel.GameData.Editor.Common
+namespace Craiel.UnityGameData.Editor.Common
 {
     using System;
     using Attributes;
     using Builder;
-    using Contracts;
-    using UnityEngine;
-
-#if UNITY_EDITOR
     using UnityEditor;
-#endif
+    using UnityEngine;
+    using UnityGameData.Contracts;
 
     [Serializable]
     public abstract class GameDataObject : ScriptableObject, IGameDataBuildContent, IGameDataObject

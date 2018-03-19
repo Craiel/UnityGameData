@@ -3,7 +3,7 @@
 <#@ assembly name="EnvDTE" #>
 <#@ import namespace="EnvDTE" #>
 <#@ import namespace="System.Collections.Generic" #>
-namespace Assets.Scripts.Craiel.GameData.Editor.Enums
+namespace Craiel.UnityGameData.Editor.Enums
 {
     using System;
     using System.Collections.Generic;

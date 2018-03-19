@@ -1,7 +1,7 @@
 ﻿using ScriptableNodeEditor = Craiel.UnityEssentials.Editor.NodeEditor.ScriptableNodeEditor;
 using ScriptableNodeGridLayouter = Craiel.UnityEssentials.Editor.NodeEditor.ScriptableNodeGridLayouter;
 
-namespace Assets.Scripts.Craiel.GameData.Editor.Window
+namespace Craiel.UnityGameData.Editor.Window
 {
     using Common;
     using UnityEngine;

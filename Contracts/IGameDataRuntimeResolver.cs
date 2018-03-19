@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Contracts
+﻿namespace Craiel.UnityGameData.Contracts
 {
     using System.Collections.Generic;
 

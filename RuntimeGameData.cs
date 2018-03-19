@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Craiel.GameData
+﻿namespace Craiel.UnityGameData
 {
     using System;
     using UnityEngine;

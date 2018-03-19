@@ -1,7 +1,7 @@
 ﻿using ManagedFile = Craiel.UnityEssentials.IO.ManagedFile;
 
 #if UNITY_EDITOR
-namespace Assets.Scripts.Craiel.GameData.Editor.Builder
+namespace Craiel.UnityGameData.Editor.Builder
 {
     using Common;
     using NLog;

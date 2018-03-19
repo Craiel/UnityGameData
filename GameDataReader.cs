@@ -1,7 +1,4 @@
-﻿using CollectionExtensions = Craiel.UnityEssentials.Extensions.CollectionExtensions;
-using ManagedFile = Craiel.UnityEssentials.IO.ManagedFile;
-
-namespace Assets.Scripts.Craiel.GameData
+﻿namespace Craiel.UnityGameData
 {
     using System;
     using System.Collections.Generic;
@@ -9,10 +6,12 @@ namespace Assets.Scripts.Craiel.GameData
     using System.Linq;
     using System.Text;
     using Contracts;
-    using Essentials;
     using LiteDB;
     using NLog;
     using UnityEngine;
+    using UnityEssentials.Collections;
+    using UnityEssentials.Extensions;
+    using UnityEssentials.IO;
 
     public class GameDataReader : IGameDataRuntimeResolver
     {
@@ -116,7 +115,7 @@ namespace Assets.Scripts.Craiel.GameData
             IList<object> entries;
             if (this.gameDataTypeLookup.TryGetValue(typeof(T), out entries))
             {
-                CollectionExtensions.AddRange(target, entries.Cast<T>());
+                target.AddRange(entries.Cast<T>());
                 return target.Count > 0;
             }
 

@@ -1,4 +1,10 @@
 ﻿using CollectionExtensions = Craiel.UnityEssentials.Extensions.CollectionExtensions;
+using GameDataBuilder = Craiel.UnityGameData.Editor.Builder.GameDataBuilder;
+using GameDataBuildValidationContext = Craiel.UnityGameData.Editor.Builder.GameDataBuildValidationContext;
+using GameDataBuildValidationFixers = Craiel.UnityGameData.Editor.Builder.GameDataBuildValidationFixers;
+using GameDataEditorWindow = Craiel.UnityGameData.Editor.Window.GameDataEditorWindow;
+using GameDataObject = Craiel.UnityGameData.Editor.Common.GameDataObject;
+using GameDataValidationFixDelegate = Craiel.UnityGameData.Contracts.GameDataValidationFixDelegate;
 
 namespace Assets.Scripts.Craiel.GameData.Editor.Window
 {
@@ -6,8 +12,6 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Window
     using System.Collections.Generic;
     using System.Linq;
     using Builder;
-    using Common;
-    using Contracts;
     using Craiel.Editor.GameData;
     using Essentials;
     using UnityEditor;

@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor
+﻿namespace Craiel.UnityGameData.Editor
 {
     using Enums;
-    using Essentials.Editor;
+    using UnityEssentials.Editor;
 
     public class GameDataEditorConfig : EditorConfig<GameDataEditorConfigKeys>
     {

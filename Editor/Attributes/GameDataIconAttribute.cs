@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.Attributes
+﻿namespace Craiel.UnityGameData.Editor.Attributes
 {
     using System;
     

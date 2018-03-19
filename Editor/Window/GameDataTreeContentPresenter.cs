@@ -1,15 +1,15 @@
-﻿using EditorEventGameDataSelectionChanged = Craiel.GameData.Editor.Events.EditorEventGameDataSelectionChanged;
-using EditorEvents = Craiel.UnityEssentials.Event.Editor.EditorEvents;
-using Layout = Craiel.UnityEssentials.Editor.UserInterface.Layout;
-
-namespace Assets.Scripts.Craiel.GameData.Editor.Window
+﻿namespace Craiel.UnityGameData.Editor.Window
 {
     using System.Collections.Generic;
     using System.Linq;
     using Common;
+    using GameData.Editor.Events;
     using UnityEditor;
     using UnityEditor.IMGUI.Controls;
     using UnityEngine;
+    using UnityEssentials.Collections;
+    using UnityEssentials.Editor.UserInterface;
+    using UnityEssentials.Event.Editor;
 
     public class GameDataTreeContentPresenter : TreeView, IGameDataContentPresenter
     {

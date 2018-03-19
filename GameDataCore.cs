@@ -1,10 +1,8 @@
 ﻿using EssentialsCore = Craiel.UnityEssentials.EssentialsCore;
 using ManagedDirectory = Craiel.UnityEssentials.IO.ManagedDirectory;
 
-namespace Assets.Scripts.Craiel.GameData
+namespace Craiel.UnityGameData
 {
-    using Essentials;
-
     public static class GameDataCore
     {
         public static readonly ManagedDirectory GameDataListPath = new ManagedDirectory("ScriptableObjects");

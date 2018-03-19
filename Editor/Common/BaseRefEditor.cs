@@ -1,4 +1,8 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.Common
+﻿using UnityObjectHelper = Craiel.UnityGameData.Editor.UnityObjectHelper;
+using UnityObjectIconSelectorDelegate = Craiel.UnityGameData.Editor.UnityObjectIconSelectorDelegate;
+using UnityObjectNameSelectorDelegate = Craiel.UnityGameData.Editor.UnityObjectNameSelectorDelegate;
+
+namespace Craiel.UnityGameData.Editor.Common
 {
     using UnityEditor;
     using UnityEngine;

@@ -1,6 +1,8 @@
+using GameDataCore = Craiel.UnityGameData.GameDataCore;
 using ManagedDirectory = Craiel.UnityEssentials.IO.ManagedDirectory;
+using UnityObjectHelper = Craiel.UnityGameData.Editor.UnityObjectHelper;
 
-namespace Assets.Scripts.Craiel.GameData.Editor
+namespace Craiel.UnityGameData.Editor
 {
     using System;
     using System.Collections.Generic;

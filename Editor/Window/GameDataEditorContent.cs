@@ -1,14 +1,12 @@
-﻿using CollectionExtensions = Craiel.UnityEssentials.Extensions.CollectionExtensions;
-using ManagedDirectory = Craiel.UnityEssentials.IO.ManagedDirectory;
-
-namespace Assets.Scripts.Craiel.GameData.Editor.Window
+﻿namespace Craiel.UnityGameData.Editor.Window
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Common;
-    using Essentials;
     using UnityEngine;
+    using UnityEssentials.Extensions;
+    using UnityEssentials.IO;
 
     public class GameDataEditorContent
     {

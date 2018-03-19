@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.AttributeDrawers
+﻿namespace Craiel.UnityGameData.Editor.AttributeDrawers
 {
     using Attributes;
     using NLog;

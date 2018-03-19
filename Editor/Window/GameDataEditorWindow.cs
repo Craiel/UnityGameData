@@ -1,19 +1,18 @@
-using ManagedDirectory = Craiel.UnityEssentials.IO.ManagedDirectory;
-using ManagedFile = Craiel.UnityEssentials.IO.ManagedFile;
-using Styles = Craiel.UnityEssentials.Editor.UserInterface.Styles;
-
-namespace Assets.Scripts.Craiel.GameData.Editor.Window
+namespace Craiel.UnityGameData.Editor.Window
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Assets.Scripts.Craiel.Editor.GameData;
+    using Assets.Scripts.Craiel.GameData.Editor.Window;
     using Builder;
     using Common;
-    using Craiel.Editor.GameData;
     using Enums;
-    using Essentials.Editor;
     using NLog;
     using UnityEditor;
     using UnityEngine;
+    using UnityEssentials.Editor;
+    using UnityEssentials.Editor.UserInterface;
+    using UnityEssentials.IO;
 
     public class GameDataEditorWindow : EssentialEditorWindow<GameDataEditorWindow>
     {

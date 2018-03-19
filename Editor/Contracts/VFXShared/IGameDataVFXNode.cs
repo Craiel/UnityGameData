@@ -1,8 +1,8 @@
-﻿namespace Craiel.GameData.Editor.Contracts.VFXShared
+﻿namespace Craiel.UnityGameData.Editor.Contracts.VFXShared
 {
-    using Assets.Scripts.Craiel.GameData.Editor.Builder;
-    using Assets.Scripts.Craiel.GameData.VFXShared;
+    using Builder;
     using UnityEngine;
+    using UnityGameData.VFXShared;
 
     public interface IGameDataVFXNode : IGameDataBuildContentPart<RuntimeVFXNodeData>
     {

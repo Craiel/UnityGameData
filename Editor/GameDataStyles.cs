@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor
+﻿namespace Craiel.UnityGameData.Editor
 {
     using UnityEngine;
 

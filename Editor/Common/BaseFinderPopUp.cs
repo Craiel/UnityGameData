@@ -1,7 +1,10 @@
 ﻿using ManagedDirectory = Craiel.UnityEssentials.IO.ManagedDirectory;
 using Styles = Craiel.UnityEssentials.Editor.UserInterface.Styles;
+using UnityObjectHelper = Craiel.UnityGameData.Editor.UnityObjectHelper;
+using UnityObjectIconSelectorDelegate = Craiel.UnityGameData.Editor.UnityObjectIconSelectorDelegate;
+using UnityObjectNameSelectorDelegate = Craiel.UnityGameData.Editor.UnityObjectNameSelectorDelegate;
 
-namespace Assets.Scripts.Craiel.GameData.Editor.Common
+namespace Craiel.UnityGameData.Editor.Common
 {
     using System;
     using System.Collections.Generic;

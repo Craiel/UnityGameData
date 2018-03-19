@@ -1,8 +1,8 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.Builder
+﻿namespace Craiel.UnityGameData.Editor.Builder
 {
     using System.Collections;
     using System.Collections.Generic;
-    using Craiel.Editor.GameData;
+    using Assets.Scripts.Craiel.Editor.GameData;
 #if UNITY_EDITOR
     using UnityEditor;
 #endif

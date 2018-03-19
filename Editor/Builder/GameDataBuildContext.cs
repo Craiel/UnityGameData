@@ -1,16 +1,14 @@
-﻿using ManagedFile = Craiel.UnityEssentials.IO.ManagedFile;
-
-namespace Assets.Scripts.Craiel.GameData.Editor.Builder
+﻿namespace Craiel.UnityGameData.Editor.Builder
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Text;
+    using Assets.Scripts.Craiel.Editor.GameData;
     using Common;
-    using Craiel.Editor.GameData;
-    using GameData;
     using NLog;
     using UnityEngine;
+    using UnityEssentials.IO;
 
     public class GameDataBuildContext : GameDataBuildBaseContext
     {

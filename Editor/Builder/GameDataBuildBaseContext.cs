@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.Builder
+﻿namespace Craiel.UnityGameData.Editor.Builder
 {
     using System.Collections.Generic;
     using Common;

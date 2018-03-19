@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.Window
+﻿namespace Craiel.UnityGameData.Editor.Window
 {
     using UnityEngine;
 

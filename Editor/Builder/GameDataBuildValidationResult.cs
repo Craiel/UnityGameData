@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Craiel.GameData.Editor.Builder
-{
-    using Contracts;
+﻿using GameDataValidationFixDelegate = Craiel.UnityGameData.Contracts.GameDataValidationFixDelegate;
 
+namespace Assets.Scripts.Craiel.GameData.Editor.Builder
+{
     public class GameDataBuildValidationResult
     {
         // -------------------------------------------------------------------

@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Craiel.GameData
+﻿namespace Craiel.UnityGameData
 {
     public static class GameDataRuntimeValidationFixers
     {

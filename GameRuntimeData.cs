@@ -1,19 +1,16 @@
-﻿using GameEvents = Craiel.UnityEssentials.Event.GameEvents;
-using ResourceKey = Craiel.UnityEssentials.Resource.ResourceKey;
-using ResourceProvider = Craiel.UnityEssentials.Resource.ResourceProvider;
-using SceneObjectController = Craiel.UnityEssentials.Scene.SceneObjectController;
-using SceneRootCategory = Craiel.UnityEssentials.Enums.SceneRootCategory;
-
-namespace Assets.Scripts.Craiel.GameData
+﻿namespace Craiel.UnityGameData
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using Essentials;
-    using Essentials.Event;
     using Events;
     using NLog;
     using UnityEngine;
+    using UnityEssentials.Enums;
+    using UnityEssentials.Event;
+    using UnityEssentials.Resource;
+    using UnityEssentials.Scene;
+    using UnityEssentials.Singletons;
 
     public class GameRuntimeData : UnitySingletonBehavior<GameRuntimeData>
     {
@@ -74,7 +71,7 @@ namespace Assets.Scripts.Craiel.GameData
                     return;
                 }
                 
-                Load(resource.Data.bytes);
+                this.Load(resource.Data.bytes);
             }
         }
 

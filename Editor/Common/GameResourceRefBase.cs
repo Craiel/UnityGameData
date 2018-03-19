@@ -1,16 +1,12 @@
-﻿using EssentialsCore = Craiel.UnityEssentials.EssentialsCore;
-using ManagedDirectory = Craiel.UnityEssentials.IO.ManagedDirectory;
-using ManagedFile = Craiel.UnityEssentials.IO.ManagedFile;
-
-namespace Assets.Scripts.Craiel.GameData.Editor.Common
+﻿namespace Craiel.UnityGameData.Editor.Common
 {
     using System;
     using System.Collections.Generic;
     using Builder;
-    using Essentials;
     using NLog;
     using UnityEngine;
-
+    using UnityEssentials;
+    using UnityEssentials.IO;
 #if UNITY_EDITOR
     using UnityEditor;
 #endif

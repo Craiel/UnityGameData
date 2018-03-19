@@ -1,11 +1,9 @@
-﻿using GuiUtils = Craiel.UnityEssentials.Editor.UserInterface.GuiUtils;
-
-namespace Assets.Scripts.Craiel.GameData.Editor.Common
+﻿namespace Craiel.UnityGameData.Editor.Common
 {
     using System.Linq;
     using UnityEditor;
     using UnityEngine;
-    using UserInterface;
+    using UnityEssentials.Editor.UserInterface;
 
     [CustomPropertyDrawer(typeof(GameResourceRefBase), true)]
     public class StaticResourceRefEditor : BaseRefEditor
@@ -23,7 +21,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Common
         {
             this.SetParameters(property);
 
-            SerializedProperty valueProperty = GuiUtils.FindPropertyRelative<GameResourceRefBase>(property, x => x.Resource);
+            SerializedProperty valueProperty = property.FindPropertyRelative<GameResourceRefBase>(x => x.Resource);
             return valueProperty.objectReferenceValue;
         }
         
@@ -48,7 +46,7 @@ namespace Assets.Scripts.Craiel.GameData.Editor.Common
         // -------------------------------------------------------------------
         private void SetObject(SerializedProperty property, Object obj)
         {
-            GuiUtils.FindPropertyRelative<GameResourceRefBase>(property, x => x.Resource).objectReferenceValue = obj;
+            property.FindPropertyRelative<GameResourceRefBase>(x => x.Resource).objectReferenceValue = obj;
             property.serializedObject.ApplyModifiedProperties();
         }
 
