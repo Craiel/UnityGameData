@@ -3,7 +3,6 @@
     using System;
     using System.ComponentModel;
     using System.Globalization;
-    using Assets.Scripts.Craiel.GameData;
 
     public class GameDataIdTypeConverter : TypeConverter
     {

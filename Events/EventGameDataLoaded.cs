@@ -1,7 +1,7 @@
-﻿using IGameEvent = Craiel.UnityEssentials.Contracts.IGameEvent;
-
-namespace Craiel.UnityGameData.Events
+﻿namespace Craiel.UnityGameData.Events
 {
+    using UnityEssentials.Contracts;
+
     public class EventGameDataLoaded : IGameEvent
     {
     }

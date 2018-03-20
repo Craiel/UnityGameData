@@ -2,7 +2,6 @@
 {
     using System.Collections;
     using System.Collections.Generic;
-    using Assets.Scripts.Craiel.Editor.GameData;
 #if UNITY_EDITOR
     using UnityEditor;
 #endif

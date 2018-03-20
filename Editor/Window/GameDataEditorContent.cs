@@ -49,8 +49,7 @@
             this.workSpaces = new int[newWorkSpaces.Length];
             Array.Copy(newWorkSpaces, this.workSpaces, this.workSpaces.Length);
 
-            this.Icon = GameDataHelpers.GetIconForBaseType(this.dataObjectType);
-
+            this.Reload();
             this.Refresh();
         }
 
@@ -85,7 +84,12 @@
                 return;
             }
 
-            CollectionExtensions.AddRange(this.Entries, data.OrderBy(x => x.Name));
+            this.Entries.AddRange(data.OrderBy(x => x.Name));
+        }
+
+        public void Reload()
+        {
+            this.Icon = GameDataHelpers.GetIconForBaseType(this.dataObjectType);
         }
 
         public GameDataObject CreateEntry(string name)

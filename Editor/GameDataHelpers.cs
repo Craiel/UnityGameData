@@ -153,7 +153,7 @@ namespace Craiel.UnityGameData.Editor
                 
                 // If it's a direct texture use as is
                 var customIcon = value as Texture;
-                if (customIcon != null)
+                if (customIcon != null) 
                 {
                     return customIcon;
                 }
@@ -177,7 +177,14 @@ namespace Craiel.UnityGameData.Editor
 
         public static Texture GetIconForBaseType(Type type)
         {
-            return EditorGUIUtility.Load(string.Format("GameDataEditor/{0}.png", type.Name)) as Texture2D;
+            string path = string.Format("GameDataEditor/{0}.png", type.Name);
+            Texture2D result = EditorGUIUtility.Load(path) as Texture2D;
+            if (result == null)
+            {
+                UnityEngine.Debug.LogWarningFormat("Could not load Resource for GameData Type: {0}", path);
+            }
+            
+            return result;
         }
     }
 }

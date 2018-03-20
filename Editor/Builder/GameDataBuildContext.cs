@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Text;
-    using Assets.Scripts.Craiel.Editor.GameData;
     using Common;
     using NLog;
     using UnityEngine;

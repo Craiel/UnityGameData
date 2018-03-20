@@ -1,7 +1,6 @@
 namespace Craiel.UnityGameData.Editor.Common
 {
     using System.Linq;
-    using Assets.Scripts.Craiel.Editor.GameData;
     using UnityEditor;
     using UnityEngine;
     using UnityEssentials.Editor.UserInterface;

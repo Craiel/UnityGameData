@@ -1,7 +1,7 @@
-﻿using GameDataValidationFixDelegate = Craiel.UnityGameData.Contracts.GameDataValidationFixDelegate;
-
-namespace Assets.Scripts.Craiel.GameData.Editor.Builder
+﻿namespace Craiel.UnityGameData.Editor.Builder
 {
+    using UnityGameData.Contracts;
+
     public class GameDataBuildValidationResult
     {
         // -------------------------------------------------------------------

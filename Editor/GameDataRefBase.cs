@@ -1,12 +1,9 @@
-﻿using GameDataBuildValidationContext = Craiel.UnityGameData.Editor.Builder.GameDataBuildValidationContext;
-using GameDataBuildValidationFixers = Craiel.UnityGameData.Editor.Builder.GameDataBuildValidationFixers;
-
-namespace Assets.Scripts.Craiel.Editor.GameData
+﻿namespace Craiel.UnityGameData.Editor
 {
     using System.Collections.Generic;
-    using Craiel.GameData.Editor.Builder;
+    using Builder;
     using UnityEngine;
-    
+
     public abstract class GameDataRefBase
     {
         // -------------------------------------------------------------------

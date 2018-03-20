@@ -2,8 +2,6 @@ namespace Craiel.UnityGameData.Editor.Window
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Assets.Scripts.Craiel.Editor.GameData;
-    using Assets.Scripts.Craiel.GameData.Editor.Window;
     using Builder;
     using Common;
     using Enums;
@@ -106,6 +104,14 @@ namespace Craiel.UnityGameData.Editor.Window
                     var menu = new GenericMenu();
                     menu.AddItem(new GUIContent("Upgrade Data"), false, UpgradeGameData);
                     menu.AddItem(new GUIContent("Normalize Data Filenames"), false, this.NormalizeNames);
+                    menu.ShowAsContext();
+                    Event.current.Use();
+                }
+
+                if (EditorGUILayout.DropdownButton(new GUIContent("View"), FocusType.Passive, "ToolbarDropDown"))
+                {
+                    var menu = new GenericMenu();
+                    menu.AddItem(new GUIContent("Reload"), false, ReloadContent);
                     menu.ShowAsContext();
                     Event.current.Use();
                 }
@@ -274,6 +280,14 @@ namespace Craiel.UnityGameData.Editor.Window
             }
             
             WorkSpaces.Add(id, title);
+        }
+
+        public static void ReloadContent()
+        {
+            foreach (GameDataEditorContent content in Content)
+            {
+                content.Reload();
+            }
         }
 
         // -------------------------------------------------------------------
