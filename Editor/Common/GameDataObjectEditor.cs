@@ -62,8 +62,6 @@ namespace Craiel.UnityGameData.Editor.Common
         // -------------------------------------------------------------------
         // Protected
         // -------------------------------------------------------------------
-        
-
         protected virtual void DrawFull()
         {
             if (this.UseDefaultInspector)
@@ -79,6 +77,8 @@ namespace Craiel.UnityGameData.Editor.Common
                     this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.DisplayName));
                     this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Notes));
                     this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Description));
+                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.IconSmall));
+                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.IconLarge));
                 }
             }
         }

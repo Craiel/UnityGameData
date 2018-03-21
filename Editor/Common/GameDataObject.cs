@@ -31,6 +31,12 @@ namespace Craiel.UnityGameData.Editor.Common
         [Multiline]
         public string Description;
         
+        [SerializeField]
+        public GameResourceSpriteRef IconSmall;
+        
+        [SerializeField]
+        public GameResourceSpriteRef IconLarge;
+        
         public bool IsValid()
         {
             return !string.IsNullOrEmpty(this.Guid);
@@ -53,6 +59,16 @@ namespace Craiel.UnityGameData.Editor.Common
             if (string.IsNullOrEmpty(this.Name))
             {
                 context.Error(this, this, null, "Missing Name");
+            }
+            
+            if (this.IconSmall == null || !this.IconSmall.IsValid())
+            {
+                context.Warning(this, this, null, "Small Icon is not set");
+            }
+            
+            if (this.IconLarge == null || !this.IconLarge.IsValid())
+            {
+                context.Warning(this, this, null, "Large Icon is not set");
             }
         }
 
@@ -80,6 +96,16 @@ namespace Craiel.UnityGameData.Editor.Common
             target.Name = this.Name;
             target.DisplayName = this.DisplayName;
             target.Description = this.Description;
+            
+            if (this.IconSmall != null && this.IconSmall.IsValid())
+            {
+                target.IconSmallResourcePath = this.IconSmall.GetPath();
+            }
+
+            if (this.IconLarge != null && this.IconLarge.IsValid())
+            {
+                target.IconLargeResourcePath = this.IconLarge.GetPath();
+            }
         }
     }
 }
