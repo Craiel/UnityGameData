@@ -32,6 +32,7 @@ namespace Craiel.UnityGameData.Editor.Common
         public string Description;
         
         [SerializeField]
+        [GameDataIcon]
         public GameResourceSpriteRef IconSmall;
         
         [SerializeField]
@@ -61,15 +62,8 @@ namespace Craiel.UnityGameData.Editor.Common
                 context.Error(this, this, null, "Missing Name");
             }
             
-            if (this.IconSmall == null || !this.IconSmall.IsValid())
-            {
-                context.Warning(this, this, null, "Small Icon is not set");
-            }
-            
-            if (this.IconLarge == null || !this.IconLarge.IsValid())
-            {
-                context.Warning(this, this, null, "Large Icon is not set");
-            }
+            this.IconSmall.Validate(this, context, false);
+            this.IconLarge.Validate(this, context, false);
         }
 
         public virtual void Upgrade(GameDataBuildContext context)
