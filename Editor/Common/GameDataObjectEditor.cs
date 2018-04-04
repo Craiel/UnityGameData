@@ -56,7 +56,14 @@ namespace Craiel.UnityGameData.Editor.Common
 
         public void DrawProperty(string propName, bool includeChildren = true)
         {
-            EditorGUILayout.PropertyField(this.serializedObject.FindProperty(propName), includeChildren);
+            SerializedProperty property = this.serializedObject.FindProperty(propName);
+            if (property == null)
+            {
+                UnityEngine.Debug.LogErrorFormat("DrawProperty called with invalid property: {0} on {1}", propName, this.GetType());
+                return;
+            }
+            
+            EditorGUILayout.PropertyField(property, includeChildren);
         }
         
         // -------------------------------------------------------------------
