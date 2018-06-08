@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using Common;
+    using Runtime;
     using UnityEngine;
 
     public class GameDataBuildBaseContext

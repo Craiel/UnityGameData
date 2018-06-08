@@ -1,5 +1,5 @@
-﻿using GameDataCore = Craiel.UnityGameData.GameDataCore;
-using ManagedFile = Craiel.UnityEssentials.IO.ManagedFile;
+﻿using GameDataCore = Craiel.UnityGameData.Runtime.GameDataCore;
+using ManagedFile = Craiel.UnityEssentials.Runtime.IO.ManagedFile;
 
 namespace Craiel.UnityGameData.Editor
 {

@@ -1,4 +1,4 @@
-﻿using ManagedFile = Craiel.UnityEssentials.IO.ManagedFile;
+﻿using ManagedFile = Craiel.UnityEssentials.Runtime.IO.ManagedFile;
 
 #if UNITY_EDITOR
 namespace Craiel.UnityGameData.Editor.Builder

@@ -2,9 +2,10 @@
 {
     using Editor.Builder;
     using GameData.Editor.Contracts.VFXShared;
+    using Runtime.VFXShared;
     using UnityEngine;
 
-    public abstract class VFXEdiorComponentBase : IVFXEditorComponent
+    public abstract class VFXEditorComponentBase : IVFXEditorComponent
     {
         // -------------------------------------------------------------------
         // Public

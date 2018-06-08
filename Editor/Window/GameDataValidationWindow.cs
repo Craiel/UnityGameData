@@ -5,10 +5,10 @@
     using System.Linq;
     using Builder;
     using Common;
+    using Runtime.Contracts;
     using UnityEditor;
     using UnityEngine;
-    using UnityEssentials.Extensions;
-    using UnityGameData.Contracts;
+    using UnityEssentials.Runtime.Extensions;
 
     public class GameDataValidationWindow : EditorWindow
     {

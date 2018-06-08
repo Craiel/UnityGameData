@@ -1,6 +1,7 @@
 ﻿namespace Craiel.UnityGameData.Editor.Contracts.VFXShared
 {
     using Builder;
+    using Runtime.VFXShared;
     using UnityEngine;
     using UnityGameData.VFXShared;
 

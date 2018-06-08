@@ -6,7 +6,8 @@
     using NLog;
     using UnityEngine;
     using UnityEssentials;
-    using UnityEssentials.IO;
+    using UnityEssentials.Runtime;
+    using UnityEssentials.Runtime.IO;
 #if UNITY_EDITOR
     using UnityEditor;
 #endif

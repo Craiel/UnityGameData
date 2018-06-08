@@ -1,4 +1,4 @@
-﻿namespace Craiel.UnityGameData.Contracts
+﻿namespace Craiel.UnityGameData.Runtime.Contracts
 {
     public delegate bool GameDataValidationFixDelegate(object owner, object entry);
     

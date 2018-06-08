@@ -1,8 +1,8 @@
-﻿namespace Craiel.UnityGameData
+﻿namespace Craiel.UnityGameData.Runtime
 {
     using System;
     using UnityEngine;
-    using UnityEssentials.Resource;
+    using UnityEssentials.Runtime.Resource;
 
     [Serializable]
     public abstract class RuntimeGameData

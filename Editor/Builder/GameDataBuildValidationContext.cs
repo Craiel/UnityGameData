@@ -1,7 +1,7 @@
 ﻿namespace Craiel.UnityGameData.Editor.Builder
 {
     using System.Collections.Generic;
-    using UnityGameData.Contracts;
+    using Runtime.Contracts;
 
     public class GameDataBuildValidationContext : GameDataBuildBaseContext, IGameDataRuntimeValidationContext
     {

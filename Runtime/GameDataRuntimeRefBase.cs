@@ -1,4 +1,4 @@
-﻿namespace Craiel.UnityGameData
+﻿namespace Craiel.UnityGameData.Runtime
 {
     using System;
     using Contracts;

@@ -6,8 +6,9 @@
     using System.Text;
     using Common;
     using NLog;
+    using Runtime;
     using UnityEngine;
-    using UnityEssentials.IO;
+    using UnityEssentials.Runtime.IO;
 
     public class GameDataBuildContext : GameDataBuildBaseContext
     {

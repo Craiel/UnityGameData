@@ -7,9 +7,9 @@
     using UnityEditor;
     using UnityEditor.IMGUI.Controls;
     using UnityEngine;
-    using UnityEssentials.Collections;
     using UnityEssentials.Editor.UserInterface;
-    using UnityEssentials.Event.Editor;
+    using UnityEssentials.Runtime.Collections;
+    using UnityEssentials.Runtime.Event.Editor;
 
     public class GameDataTreeContentPresenter : TreeView, IGameDataContentPresenter
     {

@@ -5,8 +5,8 @@
     using System.Linq;
     using Common;
     using UnityEngine;
-    using UnityEssentials.Extensions;
-    using UnityEssentials.IO;
+    using UnityEssentials.Runtime.Extensions;
+    using UnityEssentials.Runtime.IO;
 
     public class GameDataEditorContent
     {

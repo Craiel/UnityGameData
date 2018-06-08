@@ -1,6 +1,6 @@
 ﻿namespace Craiel.UnityGameData.Editor.Builder
 {
-    using UnityGameData.Contracts;
+    using Runtime.Contracts;
 
     public class GameDataBuildValidationResult
     {

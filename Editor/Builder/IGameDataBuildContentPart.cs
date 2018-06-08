@@ -1,4 +1,4 @@
-﻿using RuntimeGameDataPart = Craiel.UnityGameData.RuntimeGameDataPart;
+﻿using RuntimeGameDataPart = Craiel.UnityGameData.Runtime.RuntimeGameDataPart;
 
 namespace Craiel.UnityGameData.Editor.Builder
 {

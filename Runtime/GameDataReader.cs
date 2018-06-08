@@ -1,4 +1,4 @@
-﻿namespace Craiel.UnityGameData
+﻿namespace Craiel.UnityGameData.Runtime
 {
     using System;
     using System.Collections.Generic;
@@ -9,9 +9,9 @@
     using LiteDB;
     using NLog;
     using UnityEngine;
-    using UnityEssentials.Collections;
-    using UnityEssentials.Extensions;
-    using UnityEssentials.IO;
+    using UnityEssentials.Runtime.Collections;
+    using UnityEssentials.Runtime.Extensions;
+    using UnityEssentials.Runtime.IO;
 
     public class GameDataReader : IGameDataRuntimeResolver
     {

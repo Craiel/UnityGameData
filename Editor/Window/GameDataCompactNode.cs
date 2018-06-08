@@ -1,5 +1,5 @@
 ﻿using EditorEventGameDataSelectionChanged = Craiel.GameData.Editor.Events.EditorEventGameDataSelectionChanged;
-using EditorEvents = Craiel.UnityEssentials.Event.Editor.EditorEvents;
+using EditorEvents = Craiel.UnityEssentials.Runtime.Event.Editor.EditorEvents;
 using ScriptableNodeBase = Craiel.UnityEssentials.Editor.NodeEditor.ScriptableNodeBase;
 
 namespace Craiel.UnityGameData.Editor.Window

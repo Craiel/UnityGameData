@@ -1,4 +1,4 @@
-﻿namespace Craiel.UnityGameData
+﻿namespace Craiel.UnityGameData.Runtime
 {
     using System;
     using System.Collections.Generic;
@@ -6,11 +6,11 @@
     using Events;
     using NLog;
     using UnityEngine;
-    using UnityEssentials.Enums;
-    using UnityEssentials.Event;
-    using UnityEssentials.Resource;
-    using UnityEssentials.Scene;
-    using UnityEssentials.Singletons;
+    using UnityEssentials.Runtime.Enums;
+    using UnityEssentials.Runtime.Event;
+    using UnityEssentials.Runtime.Resource;
+    using UnityEssentials.Runtime.Scene;
+    using UnityEssentials.Runtime.Singletons;
 
     public class GameRuntimeData : UnitySingletonBehavior<GameRuntimeData>
     {

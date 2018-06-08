@@ -1,7 +1,7 @@
 ﻿namespace Craiel.UnityGameData.Editor
 {
     using GameData.Editor.Contracts;
-    using UnityEssentials.Component;
+    using UnityEssentials.Runtime.Component;
 
     public static class GameDataEditorCore
     {

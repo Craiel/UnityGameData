@@ -1,4 +1,4 @@
-﻿using ManagedDirectory = Craiel.UnityEssentials.IO.ManagedDirectory;
+﻿using ManagedDirectory = Craiel.UnityEssentials.Runtime.IO.ManagedDirectory;
 using Styles = Craiel.UnityEssentials.Editor.UserInterface.Styles;
 using UnityObjectHelper = Craiel.UnityGameData.Editor.UnityObjectHelper;
 using UnityObjectIconSelectorDelegate = Craiel.UnityGameData.Editor.UnityObjectIconSelectorDelegate;

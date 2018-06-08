@@ -10,7 +10,7 @@ namespace Craiel.UnityGameData.Editor.Window
     using UnityEngine;
     using UnityEssentials.Editor;
     using UnityEssentials.Editor.UserInterface;
-    using UnityEssentials.IO;
+    using UnityEssentials.Runtime.IO;
 
     public class GameDataEditorWindow : EssentialEditorWindow<GameDataEditorWindow>
     {

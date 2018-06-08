@@ -6,6 +6,7 @@
     using UnityEditor;
     using UnityEngine;
     using UnityEssentials;
+    using UnityEssentials.Runtime;
     using Object = UnityEngine.Object;
 
     public class StaticResourceFinderPopUp : BaseFinderPopUp<Object>

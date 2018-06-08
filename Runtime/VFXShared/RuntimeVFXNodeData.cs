@@ -1,4 +1,4 @@
-﻿namespace Craiel.UnityGameData.VFXShared
+﻿namespace Craiel.UnityGameData.Runtime.VFXShared
 {
     public abstract class RuntimeVFXNodeData : RuntimeGameDataPart
     {

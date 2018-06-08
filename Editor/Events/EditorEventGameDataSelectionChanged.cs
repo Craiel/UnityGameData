@@ -1,6 +1,6 @@
 ﻿namespace Craiel.GameData.Editor.Events
 {
-    using UnityEssentials.Contracts.Editor;
+    using UnityEssentials.Runtime.Contracts.Editor;
     using UnityGameData.Editor.Common;
 
     public class EditorEventGameDataSelectionChanged : IEditorEvent

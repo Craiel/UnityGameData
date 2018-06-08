@@ -1,0 +1,12 @@
+{
+    "name": "Craiel.UnityGameData.Editor",
+    "references": [
+        "Craiel.UnityGameData.Runtime",
+        "Craiel.UnityEssentials.Runtime",
+        "Craiel.UnityEssentials.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": []
+}
