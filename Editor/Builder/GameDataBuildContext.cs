@@ -5,15 +5,12 @@
     using System.IO;
     using System.Text;
     using Common;
-    using NLog;
     using Runtime;
     using UnityEngine;
     using UnityEssentials.Runtime.IO;
 
     public class GameDataBuildContext : GameDataBuildBaseContext
     {
-        private static readonly NLog.Logger Logger = LogManager.GetCurrentClassLogger();
-
         private readonly GameDataWriter writer;
         
         // -------------------------------------------------------------------
@@ -60,7 +57,7 @@
             string stringData = JsonUtility.ToJson(data);
             if (string.IsNullOrEmpty(stringData))
             {
-                Logger.Warn("Empty data object Ignored: {0} - {1}", data.GetType(), data.Id);
+                GameDataEditorCore.Logger.Warn("Empty data object Ignored: {0} - {1}", data.GetType(), data.Id);
                 return;
             }
 
@@ -87,7 +84,7 @@
         {
             if (!objectData.IsValid())
             {
-                Logger.Warn("BuildGameDataId() called for invalid ref");
+                GameDataEditorCore.Logger.Warn("BuildGameDataId() called for invalid ref");
                 return GameDataId.Invalid;
             }
 
@@ -98,7 +95,7 @@
         {
             if (!refData.IsValid())
             {
-                Logger.Warn("BuildGameDataId() called for invalid ref");
+                GameDataEditorCore.Logger.Warn("BuildGameDataId() called for invalid ref");
                 return GameDataId.Invalid;
             }
 

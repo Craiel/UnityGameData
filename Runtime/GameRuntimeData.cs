@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.IO;
     using Events;
-    using NLog;
     using UnityEngine;
     using UnityEssentials.Runtime.Enums;
     using UnityEssentials.Runtime.Event;
@@ -14,8 +13,6 @@
 
     public class GameRuntimeData : UnitySingletonBehavior<GameRuntimeData>
     {
-        private static readonly NLog.Logger Logger = LogManager.GetCurrentClassLogger();
-
         private static readonly IList<Type> DataRegister = new List<Type>();
 
         private readonly GameDataReader reader;
@@ -67,7 +64,7 @@
             {
                 if (resource == null || resource.Data == null)
                 {
-                    Logger.Error("Could not load RuntimeData from resource {0}", resourceKey);
+                    GameDataCore.Logger.Error("Could not load RuntimeData from resource {0}", resourceKey);
                     return;
                 }
                 

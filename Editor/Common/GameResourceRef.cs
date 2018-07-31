@@ -1,7 +1,6 @@
 ﻿namespace Craiel.UnityGameData.Editor.Common
 {
     using System;
-    using NLog;
     using UnityEngine;
 
     // ---------------------------------------------------------------------------------------------
@@ -9,7 +8,6 @@
     // ---------------------------------------------------------------------------------------------
     internal static class GameResourceRefStatic
     {
-        internal static readonly NLog.Logger Logger = LogManager.GetCurrentClassLogger();
     }
 
     [Serializable]

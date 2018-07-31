@@ -1,6 +1,7 @@
 ﻿namespace Craiel.UnityGameData.Editor
 {
     using GameData.Editor.Contracts;
+    using NLog;
     using UnityEssentials.Runtime.Component;
 
     public static class GameDataEditorCore
@@ -8,6 +9,8 @@
         // -------------------------------------------------------------------
         // Public
         // -------------------------------------------------------------------
+        public static readonly NLog.Logger Logger = LogManager.GetLogger("CRAIEL_GAMEDATA_EDITOR");
+
         public static bool IsInitialized { get; private set; }
 
         public static GameDataEditorConfig Config { get; private set; }

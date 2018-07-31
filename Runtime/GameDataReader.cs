@@ -7,7 +7,6 @@
     using System.Text;
     using Contracts;
     using LiteDB;
-    using NLog;
     using UnityEngine;
     using UnityEssentials.Runtime.Collections;
     using UnityEssentials.Runtime.Extensions;
@@ -15,8 +14,6 @@
 
     public class GameDataReader : IGameDataRuntimeResolver
     {
-        private static readonly NLog.Logger Logger = LogManager.GetCurrentClassLogger();
-        
         private readonly IDictionary<GameDataId, object> gameDataRegister;
 
         private readonly ExtendedDictionary<string, uint> gameDataIdLookup;
@@ -59,7 +56,7 @@
         {
             if (!this.IsLoaded)
             {
-                Logger.Warn("Game Data Not loaded");
+                GameDataCore.Logger.Warn("Game Data Not loaded");
                 return GameDataId.Invalid.Guid;
             }
 
@@ -76,7 +73,7 @@
         {
             if (!this.IsLoaded)
             {
-                Logger.Warn("Game Data Not loaded");
+                GameDataCore.Logger.Warn("Game Data Not loaded");
                 return GameDataId.InvalidId;
             }
 
@@ -109,7 +106,7 @@
         {
             if (!this.IsLoaded)
             {
-                Logger.Warn("Game Data Not loaded");
+                GameDataCore.Logger.Warn("Game Data Not loaded");
             }
 
             IList<object> entries;
@@ -126,7 +123,7 @@
         {
             if (!this.IsLoaded)
             {
-                Logger.Warn("Game Data Not loaded");
+                GameDataCore.Logger.Warn("Game Data Not loaded");
             }
 
             object result;
@@ -140,7 +137,7 @@
         
         public void Load(Stream stream)
         {
-            Logger.Info("Loading Game Data");
+            GameDataCore.Logger.Info("Loading Game Data");
             
             this.Clear();
 
@@ -150,7 +147,7 @@
             stream.Read(this.RawData, 0, this.RawData.Length);
             stream.Seek(0, SeekOrigin.Begin);
 
-            Logger.Info(" - {0} bytes", this.RawData.Length);
+            GameDataCore.Logger.Info(" - {0} bytes", this.RawData.Length);
 
             using (var db = new LiteDatabase(stream))
             {
@@ -207,7 +204,7 @@
                     }
                 }
 
-                Logger.Info(" -> {0}: {1} Entries", type.Name, target.Count);
+                GameDataCore.Logger.Info(" -> {0}: {1} Entries", type.Name, target.Count);
 
                 this.IndexGameData(type, target);
             }
@@ -226,7 +223,7 @@
             {
                 if (entry.Id.Id == GameDataId.InvalidId || string.IsNullOrEmpty(entry.Id.Guid))
                 {
-                    Logger.Error("Game Data Entry has invalid id: {0}", entry.Id);
+                    GameDataCore.Logger.Error("Game Data Entry has invalid id: {0}", entry.Id);
                     continue;
                 }
 

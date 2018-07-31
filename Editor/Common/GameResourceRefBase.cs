@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using Builder;
-    using NLog;
     using UnityEngine;
     using UnityEssentials;
     using UnityEssentials.Runtime;
@@ -18,8 +17,6 @@
     [Serializable]
     public abstract class GameResourceRefBase
     {
-        private static readonly NLog.Logger Logger = LogManager.GetCurrentClassLogger();
-
         private string cachedAssetPath;
         private string cachedPath;
 
@@ -78,7 +75,7 @@
             var assetPath = AssetDatabase.GetAssetPath(this.Resource);
             if (string.IsNullOrEmpty(assetPath))
             {
-                Logger.Warn("StaticResourceRef did not return a valid asset path: {0}", this.Resource);
+                GameDataEditorCore.Logger.Warn("StaticResourceRef did not return a valid asset path: {0}", this.Resource);
                 return string.Empty;
             }
 

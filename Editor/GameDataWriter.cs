@@ -1,18 +1,14 @@
-﻿using GameDataCore = Craiel.UnityGameData.Runtime.GameDataCore;
-using ManagedFile = Craiel.UnityEssentials.Runtime.IO.ManagedFile;
-
-namespace Craiel.UnityGameData.Editor
+﻿namespace Craiel.UnityGameData.Editor
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using LiteDB;
-    using NLog;
+    using Runtime;
+    using UnityEssentials.Runtime.IO;
 
     public class GameDataWriter
     {
-        private static readonly NLog.Logger Logger = LogManager.GetCurrentClassLogger();
-
         private readonly IDictionary<ManagedFile, ManagedFile> customDataFiles;
         private readonly IDictionary<ManagedFile, Action<BinaryWriter>> customDataContent;
 
@@ -55,7 +51,7 @@ namespace Craiel.UnityGameData.Editor
                 {
                     if (fileCheck.Contains(fileInDb))
                     {
-                        Logger.Error("Duplicate file in game data: {0}", fileInDb);
+                        GameDataEditorCore.Logger.Error("Duplicate file in game data: {0}", fileInDb);
                         continue;
                     }
 
@@ -64,7 +60,7 @@ namespace Craiel.UnityGameData.Editor
                     ManagedFile dataFile = this.customDataFiles[fileInDb];
                     if (!dataFile.Exists)
                     {
-                        Logger.Error("Could not save data file {0}: does not exist", dataFile);
+                        GameDataEditorCore.Logger.Error("Could not save data file {0}: does not exist", dataFile);
                         continue;
                     }
 
@@ -79,7 +75,7 @@ namespace Craiel.UnityGameData.Editor
                 {
                     if (fileCheck.Contains(fileInDb))
                     {
-                        Logger.Error("Duplicate file in game data: {0}", fileInDb);
+                        GameDataEditorCore.Logger.Error("Duplicate file in game data: {0}", fileInDb);
                         continue;
                     }
 

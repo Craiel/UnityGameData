@@ -5,7 +5,6 @@ namespace Craiel.UnityGameData.Editor.Window
     using Builder;
     using Common;
     using Enums;
-    using NLog;
     using UnityEditor;
     using UnityEngine;
     using UnityEssentials.Editor;
@@ -16,8 +15,6 @@ namespace Craiel.UnityGameData.Editor.Window
     {
         private const int DefaultWorkSpaceId = 0;
         private const string DefaultWorkSpaceName = "None";
-
-        private static readonly NLog.Logger Logger = LogManager.GetCurrentClassLogger();
 
         private static readonly IList<GameDataEditorContent> Content = new List<GameDataEditorContent>();
 
@@ -275,7 +272,7 @@ namespace Craiel.UnityGameData.Editor.Window
         {
             if (WorkSpaces.ContainsKey(id))
             {
-                Logger.Error("Duplicate WorkSpace Registered: {0} {1} -> {2}", id, WorkSpaces[id], title);
+                GameDataEditorCore.Logger.Error("Duplicate WorkSpace Registered: {0} {1} -> {2}", id, WorkSpaces[id], title);
                 return;
             }
             
@@ -372,7 +369,7 @@ namespace Craiel.UnityGameData.Editor.Window
         {
             if (Content.Count <= index)
             {
-                Logger.Warn("SetCurrentPane called with index out of bounds, did you forget to add panel definitions?");
+                GameDataEditorCore.Logger.Warn("SetCurrentPane called with index out of bounds, did you forget to add panel definitions?");
                 return;
             }
 

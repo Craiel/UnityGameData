@@ -1,16 +1,12 @@
-﻿using ManagedFile = Craiel.UnityEssentials.Runtime.IO.ManagedFile;
-
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR
 namespace Craiel.UnityGameData.Editor.Builder
 {
     using Common;
-    using NLog;
     using UnityEditor;
+    using UnityEssentials.Runtime.IO;
 
     public static class GameDataBuilder
     {
-        private static readonly NLog.Logger Logger = LogManager.GetCurrentClassLogger();
-
         private const string BuildProgressTitle = "Building Static Data";
         private const string ValidateProgressTitle = "Validating Static Data";
         private const string UpgradeProgressTitle = "Upgrading Static Data";
@@ -30,7 +26,7 @@ namespace Craiel.UnityGameData.Editor.Builder
         {
             if (TargetFile == null || TargetFile.IsNull)
             {
-                Logger.Error("GameDataBuilder Target file is not set!");
+                GameDataEditorCore.Logger.Error("GameDataBuilder Target file is not set!");
                 return;
             }
 
