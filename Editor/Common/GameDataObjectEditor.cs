@@ -1,7 +1,10 @@
 namespace Craiel.UnityGameData.Editor.Common
 {
+    using System;
+    using System.Linq.Expressions;
     using UnityEditor;
     using UnityEngine;
+    using UnityEssentials.Editor.ReorderableList;
     using UnityEssentials.Editor.UserInterface;
 
     [CustomEditor(typeof(GameDataObject))]
@@ -43,29 +46,69 @@ namespace Craiel.UnityGameData.Editor.Common
             GUILayout.Label(typedTarget.Name, EditorStyles.boldLabel);
         }
 
-        public bool DrawFoldout(string title, ref bool toggle)
+        // -------------------------------------------------------------------
+        // Protected
+        // -------------------------------------------------------------------
+        protected bool DrawFoldout(string title, ref bool toggle)
         {
             toggle = Layout.DrawSectionHeaderToggleWithSection(title, toggle);
             return toggle;
         }
-        
-        public void DrawProperty(SerializedProperty prop, bool includeChildren = true)
+
+        protected virtual void DrawProperty<TSource>(Expression<Func<TSource, object>> expression, GUIContent content)
         {
-            EditorGUILayout.PropertyField(prop, includeChildren);
+            DrawProperty(this.serializedObject, expression, content);
         }
 
-        public void DrawProperty(string propName, bool includeChildren = true)
+        protected virtual void DrawProperty<TSource>(Expression<Func<TSource, object>> expression, bool includeChildren = true)
         {
-            SerializedProperty property = this.serializedObject.FindProperty(propName);
-            if (property == null)
-            {
-                UnityEngine.Debug.LogErrorFormat("DrawProperty called with invalid property: {0} on {1}", propName, this.GetType());
-                return;
-            }
-            
-            EditorGUILayout.PropertyField(property, includeChildren);
+            DrawProperty(this.serializedObject, expression, includeChildren);
         }
-        
+
+        protected virtual void DrawProperty<TSource>(Expression<Func<TSource, object>> expression, params GUILayoutOption[] options)
+        {
+            DrawProperty(this.serializedObject, expression, options);
+        }
+
+        protected virtual void DrawProperty<TSource>(SerializedObject property, Expression<Func<TSource, object>> expression, GUIContent content = null)
+        {
+            DrawProperty(property.FindProperty(expression), null, true);
+        }
+
+        protected virtual void DrawProperty<TSource>(SerializedObject property, Expression<Func<TSource, object>> expression, bool includeChildren = true)
+        {
+            DrawProperty(property.FindProperty(expression), null, includeChildren);
+        }
+
+        protected virtual void DrawProperty<TSource>(SerializedObject property, Expression<Func<TSource, object>> expression, params GUILayoutOption[] options)
+        {
+            DrawProperty(property.FindProperty(expression), null, true, options);
+        }
+
+        protected virtual void DrawPropertyRelative<TSource>(SerializedProperty property, Expression<Func<TSource, object>> expression, bool includeChildren = true)
+        {
+            DrawProperty(property.FindPropertyRelative(expression), null, includeChildren);
+        }
+
+        protected virtual void DrawPropertyRelative<TSource>(SerializedProperty property, Expression<Func<TSource, object>> expression, params GUILayoutOption[] options)
+        {
+            DrawProperty(property.FindPropertyRelative(expression), null, true, options);
+        }
+
+        protected virtual void DrawProperty(SerializedProperty prop, GUIContent content, bool includeChildren, params GUILayoutOption[] options)
+        {
+            EditorGUILayout.PropertyField(prop, content, includeChildren, options);
+        }
+
+        protected virtual void DrawReorderableList<TSource>(string title, Expression<Func<TSource, object>> expression)
+        {
+            if (!this.serializedObject.isEditingMultipleObjects)
+            {
+                ReorderableListGUI.Title(title);
+                ReorderableListGUI.ListField(this.serializedObject.FindProperty(expression));
+            }
+        }
+
         // -------------------------------------------------------------------
         // Protected
         // -------------------------------------------------------------------
@@ -79,13 +122,13 @@ namespace Craiel.UnityGameData.Editor.Common
             {
                 if (this.DrawFoldout("Object Properties", ref this.objectFoldout))
                 {
-                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Guid));
-                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Name));
-                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.DisplayName));
-                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Notes));
-                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.Description));
-                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.IconSmall));
-                    this.DrawProperty(this.serializedObject.FindProperty<GameDataObject>(x => x.IconLarge));
+                    this.DrawProperty<GameDataObject>(x => x.Guid);
+                    this.DrawProperty<GameDataObject>(x => x.Name);
+                    this.DrawProperty<GameDataObject>(x => x.DisplayName);
+                    this.DrawProperty<GameDataObject>(x => x.Notes);
+                    this.DrawProperty<GameDataObject>(x => x.Description);
+                    this.DrawProperty<GameDataObject>(x => x.IconSmall);
+                    this.DrawProperty<GameDataObject>(x => x.IconLarge);
                 }
             }
         }
