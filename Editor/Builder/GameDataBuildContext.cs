@@ -102,6 +102,29 @@
             return new GameDataId(refData.RefGuid, this.GetIdForGuid(refData.RefGuid));
         }
 
+        public GameDataId[] BuildGameDataIds<T>(T[] entries)
+            where T : GameDataRefBase
+        {
+            if (entries == null)
+            {
+                return new GameDataId[0];
+            }
+
+            List<GameDataId> result = new List<GameDataId>();
+            foreach (T entry in entries)
+            {
+                GameDataId tagId = this.BuildGameDataId(entry);
+                if (tagId == GameDataId.Invalid)
+                {
+                    continue;
+                }
+
+                result.Add(tagId);
+            }
+
+            return result.ToArray();
+        }
+
         // -------------------------------------------------------------------
         // Private
         // -------------------------------------------------------------------

@@ -1,9 +1,11 @@
 ﻿namespace Craiel.UnityGameData.Editor
 {
+    using System;
     using System.Collections.Generic;
     using Builder;
     using UnityEngine;
 
+    [Serializable]
     public abstract class GameDataRefBase
     {
         // -------------------------------------------------------------------

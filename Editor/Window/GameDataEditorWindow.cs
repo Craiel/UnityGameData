@@ -22,9 +22,7 @@ namespace Craiel.UnityGameData.Editor.Window
         {
             { DefaultWorkSpaceId, DefaultWorkSpaceName }
         };
-
-        private float buttonsTotalWidth;
-
+        
         private GameDataEditorContent[] contentSorted;
 
         private int selectedWorkSpace;
@@ -84,102 +82,9 @@ namespace Craiel.UnityGameData.Editor.Window
         
         public void OnGUI()
         {
-            // Menu Tool Bar
-            EditorGUILayout.BeginHorizontal("Toolbar");
-            {
-                if (EditorGUILayout.DropdownButton(new GUIContent("Data"), FocusType.Passive, "ToolbarDropDown"))
-                {
-                    var menu = new GenericMenu();
-                    menu.AddItem(new GUIContent("Validate"), false, ValidateGameData);
-                    menu.AddItem(new GUIContent("Export"), false, ExportGameData);
-                    menu.ShowAsContext();
-                    Event.current.Use();
-                }
-
-                if (EditorGUILayout.DropdownButton(new GUIContent("Tools"), FocusType.Passive, "ToolbarDropDown"))
-                {
-                    var menu = new GenericMenu();
-                    menu.AddItem(new GUIContent("Upgrade Data"), false, UpgradeGameData);
-                    menu.AddItem(new GUIContent("Normalize Data Filenames"), false, this.NormalizeNames);
-                    menu.ShowAsContext();
-                    Event.current.Use();
-                }
-
-                if (EditorGUILayout.DropdownButton(new GUIContent("View"), FocusType.Passive, "ToolbarDropDown"))
-                {
-                    var menu = new GenericMenu();
-                    menu.AddItem(new GUIContent("Reload"), false, ReloadContent);
-                    menu.ShowAsContext();
-                    Event.current.Use();
-                }
-
-                if (EditorGUILayout.DropdownButton(new GUIContent(string.Format("Workspace: {0}", WorkSpaces[this.selectedWorkSpace])), FocusType.Passive, "ToolbarDropDown"))
-                {
-                    var menu = new GenericMenu();
-
-                    foreach (int id in WorkSpaces.Keys)
-                    {
-                        int closure = id;
-                        menu.AddItem(new GUIContent(WorkSpaces[id]), this.selectedWorkSpace == id, () => this.SelectWorkSpace(closure));
-                    }
-                    
-                    menu.ShowAsContext();
-                    Event.current.Use();
-                }
-
-                if (EditorGUILayout.DropdownButton(new GUIContent(string.Format("ViewMode: {0}", this.selectedViewMode)), FocusType.Passive, "ToolbarDropDown"))
-                {
-                    var menu = new GenericMenu();
-
-                    foreach (GameDataEditorViewMode viewMode in GameDataEditorEnumValues.GameDataEditorViewModeValues)
-                    {
-                        var closure = viewMode;
-                        menu.AddItem(new GUIContent(viewMode.ToString()), this.selectedViewMode == viewMode, () => this.SelectViewMode(closure));
-                    }
-
-                    menu.ShowAsContext();
-                    Event.current.Use();
-                }
-                
-                GUILayout.FlexibleSpace();
-            }
-
-            EditorGUILayout.EndHorizontal();
-            
-            var style = this.buttonsTotalWidth > this.position.width ? this.ToolBarStyleSmall : this.ToolBarStyle;
-            this.buttonsTotalWidth = 0;
-
-            EditorGUILayout.BeginHorizontal();
-            {
-                // GameData Buttons
-                foreach (var content in this.contentSorted)
-                {
-                    Color currentContentColor = GUI.contentColor;
-                    GUI.contentColor = Styles.DefaulEditortTextColor;
-
-                    var active = GUILayout.Toggle(
-                        content.IsActive,
-                        new GUIContent(content.Title, content.Icon, content.Title),
-                        style);
-
-                    this.buttonsTotalWidth += this.ToolBarStyle.fixedWidth;
-
-                    GUI.contentColor = currentContentColor;
-                    if (active != content.IsActive)
-                    {
-                        this.SetActiveContent(content);
-                    }
-                }
-            }
-
-            EditorGUILayout.EndHorizontal();
-
-            // Content
-            if (this.activePresenter != null && Content.Count > 0 && this.CurrentPanelIndex != -1)
-            {
-                Rect contentRect = new Rect(10, 80, position.width - 20, position.height - 90);
-                this.activePresenter.Draw(contentRect, Content[this.CurrentPanelIndex]);
-            }
+            this.DrawToolbar();
+            this.DrawToolbarButtons();
+            this.DrawPanels();
 
             ProcessEvents(Event.current);
 
@@ -290,6 +195,105 @@ namespace Craiel.UnityGameData.Editor.Window
         // -------------------------------------------------------------------
         // Private
         // -------------------------------------------------------------------
+        private void DrawToolbar()
+        {
+            EditorGUILayout.BeginHorizontal("Toolbar");
+            {
+                if (EditorGUILayout.DropdownButton(new GUIContent("Data"), FocusType.Passive, "ToolbarDropDown"))
+                {
+                    var menu = new GenericMenu();
+                    menu.AddItem(new GUIContent("Validate"), false, ValidateGameData);
+                    menu.AddItem(new GUIContent("Export"), false, ExportGameData);
+                    menu.ShowAsContext();
+                    Event.current.Use();
+                }
+
+                if (EditorGUILayout.DropdownButton(new GUIContent("Tools"), FocusType.Passive, "ToolbarDropDown"))
+                {
+                    var menu = new GenericMenu();
+                    menu.AddItem(new GUIContent("Upgrade Data"), false, UpgradeGameData);
+                    menu.AddItem(new GUIContent("Normalize Data Filenames"), false, this.NormalizeNames);
+                    menu.ShowAsContext();
+                    Event.current.Use();
+                }
+
+                if (EditorGUILayout.DropdownButton(new GUIContent("View"), FocusType.Passive, "ToolbarDropDown"))
+                {
+                    var menu = new GenericMenu();
+                    menu.AddItem(new GUIContent("Reload"), false, ReloadContent);
+                    menu.ShowAsContext();
+                    Event.current.Use();
+                }
+
+                if (EditorGUILayout.DropdownButton(new GUIContent(string.Format("Workspace: {0}", WorkSpaces[this.selectedWorkSpace])), FocusType.Passive, "ToolbarDropDown"))
+                {
+                    var menu = new GenericMenu();
+
+                    foreach (int id in WorkSpaces.Keys)
+                    {
+                        int closure = id;
+                        menu.AddItem(new GUIContent(WorkSpaces[id]), this.selectedWorkSpace == id, () => this.SelectWorkSpace(closure));
+                    }
+
+                    menu.ShowAsContext();
+                    Event.current.Use();
+                }
+
+                if (EditorGUILayout.DropdownButton(new GUIContent(string.Format("ViewMode: {0}", this.selectedViewMode)), FocusType.Passive, "ToolbarDropDown"))
+                {
+                    var menu = new GenericMenu();
+
+                    foreach (GameDataEditorViewMode viewMode in GameDataEditorEnumValues.GameDataEditorViewModeValues)
+                    {
+                        var closure = viewMode;
+                        menu.AddItem(new GUIContent(viewMode.ToString()), this.selectedViewMode == viewMode, () => this.SelectViewMode(closure));
+                    }
+
+                    menu.ShowAsContext();
+                    Event.current.Use();
+                }
+
+                GUILayout.FlexibleSpace();
+            }
+
+            EditorGUILayout.EndHorizontal();
+        }
+
+        private void DrawToolbarButtons()
+        {
+            EditorGUILayout.BeginHorizontal();
+            {
+                // GameData Buttons
+                foreach (var content in this.contentSorted)
+                {
+                    Color currentContentColor = GUI.contentColor;
+                    GUI.contentColor = Styles.DefaulEditortTextColor;
+
+                    var active = GUILayout.Toggle(
+                        content.IsActive,
+                        new GUIContent(content.Title, content.Icon, content.Title),
+                        this.ToolBarStyle);
+
+                    GUI.contentColor = currentContentColor;
+                    if (active != content.IsActive)
+                    {
+                        this.SetActiveContent(content);
+                    }
+                }
+            }
+
+            EditorGUILayout.EndHorizontal();
+        }
+
+        private void DrawPanels()
+        {
+            if (this.activePresenter != null && Content.Count > 0 && this.CurrentPanelIndex != -1)
+            {
+                Rect contentRect = new Rect(10, 80, position.width - 20, position.height - 90);
+                this.activePresenter.Draw(contentRect, Content[this.CurrentPanelIndex]);
+            }
+        }
+
         private void SelectWorkSpace(int id)
         {
             this.selectedWorkSpace = id;
