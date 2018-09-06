@@ -11,7 +11,7 @@ namespace Craiel.UnityGameData.Editor.Common
     [CanEditMultipleObjects]
     public abstract class GameDataObjectEditor : Editor, IGameDataCompactEditor
     {
-        private bool objectFoldout = true;
+        private static bool objectFoldout;
 
         // -------------------------------------------------------------------
         // Public
@@ -120,7 +120,7 @@ namespace Craiel.UnityGameData.Editor.Common
             }
             else
             {
-                if (this.DrawFoldout("Object Properties", ref this.objectFoldout))
+                if (this.DrawFoldout("Object Properties", ref objectFoldout))
                 {
                     this.DrawProperty<GameDataObject>(x => x.Guid);
                     this.DrawProperty<GameDataObject>(x => x.Name);
