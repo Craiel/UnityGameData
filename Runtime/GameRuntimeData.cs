@@ -49,13 +49,23 @@
         
         public GameDataId GetRuntimeId(GameDataRuntimeRefBase refData)
         {
-            if (refData == null || string.IsNullOrEmpty(refData.RefGuid))
+            if (refData == null)
             {
                 return GameDataId.Invalid;
             }
 
-            uint runtimeId = this.reader.GetId(refData.RefGuid);
-            return new GameDataId(refData.RefGuid, runtimeId);
+            return GetRuntimeId(refData.RefGuid);
+        }
+        
+        public GameDataId GetRuntimeId(string guid)
+        {
+            if (string.IsNullOrEmpty(guid))
+            {
+                return GameDataId.Invalid;
+            }
+
+            uint runtimeId = this.reader.GetId(guid);
+            return new GameDataId(guid, runtimeId);
         }
         
         public void Load(ResourceKey resourceKey)
