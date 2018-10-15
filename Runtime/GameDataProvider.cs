@@ -1,12 +1,13 @@
 ﻿namespace Craiel.UnityGameData.Runtime
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using Events;
     using UnityEssentials.Runtime.Event;
     using UnityEssentials.Runtime.Extensions;
 
-    public abstract class GameDataProvider<T> : IEnumerable<GameDataId>
+    public abstract class GameDataProvider<T> : IEnumerable<GameDataId>, IDisposable
          where T : RuntimeGameData
     {
         private readonly IDictionary<GameDataId, T> idLookup;
@@ -24,7 +25,7 @@
             this.Values = new List<T>();
             this.FilteredList = new List<T>();
 
-            this.gameDataLoadedTicket = GameEvents.Instance.Subscribe<EventGameDataLoaded>(this.OnGameDataLoaded);
+            GameEvents.Subscribe<EventGameDataLoaded>(this.OnGameDataLoaded, out this.gameDataLoadedTicket);
         }
 
         public IList<T> Values { get; private set; }
@@ -94,9 +95,23 @@
             }
         }
 
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         // -------------------------------------------------------------------
         // Private
         // -------------------------------------------------------------------
+        private void Dispose(bool isDisposing)
+        {
+            if (isDisposing)
+            {
+                GameEvents.Unsubscribe(ref this.gameDataLoadedTicket);
+            }
+        }
+        
         private void OnGameDataLoaded(EventGameDataLoaded eventdata)
         {
             GameDataCore.Logger.Info("Game Data Changed, Reloading Monster Provider");

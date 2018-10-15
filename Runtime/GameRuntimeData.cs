@@ -91,7 +91,7 @@
             
             this.IsLoaded = true;
             
-            GameEvents.Instance.Send(new EventGameDataLoaded());
+            GameEvents.Send(new EventGameDataLoaded());
         }
 
         public static void RegisterData<T>()
