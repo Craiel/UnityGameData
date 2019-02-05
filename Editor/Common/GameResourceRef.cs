@@ -17,6 +17,11 @@
     }
 
     [Serializable]
+    public class GameResourceCustomRef : GameResourceRef<GameObject>
+    {
+    }
+
+    [Serializable]
     public class GameResourceGameObjectRef : GameResourceRef<GameObject>
     {
     }

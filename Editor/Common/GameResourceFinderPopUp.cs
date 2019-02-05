@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Reflection;
+    using Attributes;
     using UnityEditor;
     using UnityEngine;
     using UnityEssentials;
@@ -92,6 +94,27 @@
                 this.ObjectType = typeof(AnimationClip);
                 this.TypeFilter = this.ObjectType.Name;
                 this.NameSelector = UnityObjectHelper.AnimationNameSelector;
+                return;
+            }
+            
+            if (property.type == typeof(GameResourceCustomRef).Name)
+            {
+                // TODO
+                this.TypeFilter = "Prefab";
+                this.NameSelector = UnityObjectHelper.DefaultPathAndNameSelector;
+
+                if (property.serializedObject != null
+                    && property.serializedObject.targetObject != null)
+                {
+                    Type targetType = property.serializedObject.targetObject.GetType();
+                    FieldInfo targetField = targetType.GetField(property.propertyPath);
+                    var filterAttribute = targetField.GetCustomAttribute<GameDataResourceFinderFilterAttribute>();
+                    if (filterAttribute != null)
+                    {
+                        this.TypeFilter = filterAttribute.AttachedScript.Name;
+                    }
+                }
+
                 return;
             }
         }
