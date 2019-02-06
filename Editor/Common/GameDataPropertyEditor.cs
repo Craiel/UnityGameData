@@ -23,6 +23,16 @@ namespace Craiel.UnityGameData.Editor.Common
             this.Position = position;
             this.TargetProperty = property;
             this.Label = label;
+
+            GameDataObject targetDataObject = property.serializedObject.targetObject as GameDataObject;
+            if (targetDataObject != null)
+            {
+                this.GameDataParentType = targetDataObject.GetType();
+            }
+            else
+            {
+                throw new InvalidOperationException("GameDataPropertyEditor can only be used for properties inside of GameDataObjects");
+            }
             
             this.Target = fieldInfo.GetValue(property.serializedObject.targetObject);
             
@@ -36,6 +46,7 @@ namespace Craiel.UnityGameData.Editor.Common
         protected SerializedProperty TargetProperty;
         protected object Target;
         protected GUIContent Label;
+        protected Type GameDataParentType;
         
         protected bool DrawFoldout(string title, ref bool toggle)
         {
