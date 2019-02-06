@@ -59,14 +59,14 @@ namespace Craiel.UnityGameData.Editor.Common
                 // No object is selected
                 GUI.backgroundColor = SelectionColor;
                 Texture iconTexture = EditorGUIUtility.Load(SelectionIconPath) as Texture2D;
-                displayContent.text = "[PICK AN OBJECT]";
+                displayContent.text = "[Select Prefab]";
                 displayContent.image = iconTexture;
             }
             else if (activeObject == null)
             {
                 // Object is selected but no longer found
                 GUI.backgroundColor = MissingColor;
-                displayContent.text = string.Format("[MISSING REF: {0}]", activeObjectString);
+                displayContent.text = string.Format("[Missing: {0}]", activeObjectString);
             }
             else
             {
