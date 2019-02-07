@@ -15,12 +15,12 @@ namespace Craiel.UnityGameData.Editor
 
         public bool IsValid()
         {
-            return false;
+            return this.Ref.IsValid();
         }
 
         public string GetPath()
         {
-            return null;
+            return this.Ref.GetPath();
         }
     }
 }

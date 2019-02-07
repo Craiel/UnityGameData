@@ -31,6 +31,11 @@
             return this.Resource != null;
         }
 
+        public void Reset()
+        {
+            this.Resource = null;
+        }
+
         public void Validate(object owner, GameDataBuildValidationContext context, bool isOptional = true)
         {
             if (this.Resource == null && !isOptional)
@@ -108,6 +113,20 @@
 #else
             throw new InvalidOperationException();
 #endif
+        }
+        
+        public void SetByPath(ManagedFile file)
+        {
+            this.Reset();
+
+            UnityEngine.Object asset = AssetDatabase.LoadAssetAtPath<GameObject>(file.GetUnityPath());
+            if(asset == null)
+            {              
+                UnityEngine.Debug.LogErrorFormat("Could not set Ref via path: {0}", file);
+                return;
+            }
+
+            this.Resource = asset;
         }
     }
 }

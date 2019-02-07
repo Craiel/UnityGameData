@@ -12,6 +12,8 @@
 
         public const string GameDataListExtension = ".blst";
 
-        public static readonly ManagedDirectory GameDataPath = EssentialsCore.AssetsPath.ToDirectory("Data");
+        public const string GameDataDirectoryName = "Data";
+
+        public static readonly ManagedDirectory GameDataPath = EssentialsCore.AssetsPath.ToDirectory(GameDataDirectoryName);
     }
 }

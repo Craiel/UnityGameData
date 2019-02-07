@@ -3,7 +3,9 @@
     using System;
     using System.Collections.Generic;
     using Builder;
+    using UnityEditor;
     using UnityEngine;
+    using UnityEssentials.Runtime.IO;
 
     [Serializable]
     public abstract class GameDataRefBase
@@ -22,6 +24,20 @@
         public void Reset()
         {
             this.RefGuid = null;
+        }
+
+        public void SetByPath(ManagedFile file)
+        {
+            this.Reset();
+            
+            string guid = AssetDatabase.AssetPathToGUID(file.GetUnityPath());
+            if (string.IsNullOrEmpty(guid))
+            {
+                UnityEngine.Debug.LogErrorFormat("Could not set Ref via path: {0}", file);
+                return;
+            }
+
+            this.RefGuid = guid;
         }
         
         public static void ValidateRefList<T>(object owner, object source, IList<T> refList, GameDataBuildValidationContext context)

@@ -6,6 +6,7 @@ namespace Craiel.UnityGameData.Editor.Common
     using UnityEngine;
     using UnityEssentials.Editor.ReorderableList;
     using UnityEssentials.Editor.UserInterface;
+    using UnityEssentials.Runtime.IO;
 
     [CustomPropertyDrawer(typeof(GameDataProperty))]
     public abstract class GameDataPropertyEditor : PropertyDrawer
@@ -28,6 +29,8 @@ namespace Craiel.UnityGameData.Editor.Common
             if (targetDataObject != null)
             {
                 this.GameDataParentType = targetDataObject.GetType();
+                this.GameDataParent = targetDataObject;
+                this.GameDataParentAssetPath = new ManagedFile(AssetDatabase.GetAssetPath(targetDataObject));
             }
             else
             {
@@ -47,6 +50,8 @@ namespace Craiel.UnityGameData.Editor.Common
         protected object Target;
         protected GUIContent Label;
         protected Type GameDataParentType;
+        protected UnityEngine.Object GameDataParent;
+        protected ManagedFile GameDataParentAssetPath;
         
         protected bool DrawFoldout(string title, ref bool toggle)
         {
