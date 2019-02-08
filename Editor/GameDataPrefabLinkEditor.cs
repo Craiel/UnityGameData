@@ -79,6 +79,8 @@ namespace Craiel.UnityGameData.Editor
             ManagedFile prefabFile = this.GetPrefabFile(linkAttribute);
             if (!prefabFile.Exists)
             {
+                target.Ref.Resource = null;
+                
                 if (!warnIfMissing)
                 {
                     return;
