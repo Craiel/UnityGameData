@@ -46,6 +46,8 @@ namespace Craiel.UnityGameData.Editor.Common
 
         public void OnEnable()
         {
+            GameDataEditorCore.IsPopupActive = true;
+            
             this.entries = new List<T>();
             this.entryNames = new List<string>();
             this.entryPaths = new List<string>();
@@ -61,6 +63,8 @@ namespace Craiel.UnityGameData.Editor.Common
         public void OnDisable()
         {
             this.enabled = false;
+            
+            GameDataEditorCore.IsPopupActive = false;
         }
 
         public void Update()

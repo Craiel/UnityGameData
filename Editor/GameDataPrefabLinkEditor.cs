@@ -51,6 +51,10 @@ namespace Craiel.UnityGameData.Editor
             {
                 this.CheckPrefab(typedTarget);
             }
+            else
+            {
+                this.CheckPrefab(typedTarget, false);
+            }
             
             if (typedTarget.Ref == null || !typedTarget.Ref.IsValid())
             {
@@ -70,11 +74,16 @@ namespace Craiel.UnityGameData.Editor
             region.End();
         }
 
-        private void CheckPrefab(GameDataPrefabLink target)
+        private void CheckPrefab(GameDataPrefabLink target, bool warnIfMissing = true)
         {
             ManagedFile prefabFile = this.GetPrefabFile();
             if (!prefabFile.Exists)
             {
+                if (!warnIfMissing)
+                {
+                    return;
+                }
+                
                 EditorUtility.DisplayDialog("Check Linked Prefab", "Prefab Missing: " + prefabFile, "OK");
             }
             else

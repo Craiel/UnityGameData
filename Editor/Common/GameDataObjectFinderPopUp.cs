@@ -58,6 +58,16 @@ namespace Craiel.UnityGameData.Editor.Common
                 rawTypeName = rawTypeName.Replace("Runtime", string.Empty);
             }
 
+            if (property.serializedObject != null
+                && property.serializedObject.targetObject != null)
+            {
+                var virtualRefParent = property.serializedObject.targetObject as GameDataRefVirtualHolder;
+                if (virtualRefParent != null && !string.IsNullOrEmpty(virtualRefParent.TypeFilter))
+                {
+                    rawTypeName = virtualRefParent.TypeFilter;
+                }
+            }
+
             this.TypeFilter = rawTypeName;
         }
     }

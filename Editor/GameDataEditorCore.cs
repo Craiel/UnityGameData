@@ -14,6 +14,8 @@
         public static bool IsInitialized { get; private set; }
 
         public static GameDataEditorConfig Config { get; private set; }
+        
+        public static bool IsPopupActive { get; set; }
 
         public static void Initialize()
         {

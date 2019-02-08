@@ -8,7 +8,7 @@
     using UnityEssentials.Runtime.IO;
 
     [Serializable]
-    public abstract class GameDataRefBase
+    public class GameDataRefBase
     {
         // -------------------------------------------------------------------
         // Public
