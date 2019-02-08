@@ -6,13 +6,19 @@ namespace Craiel.UnityGameData.Editor.Attributes
     public class GameDataPrefabLinkAttribute : Attribute
     {
         // -------------------------------------------------------------------
-        // Public
+        // Constructor
         // -------------------------------------------------------------------
-        public GameDataPrefabLinkAttribute(Type rootScript)
+        public GameDataPrefabLinkAttribute(string name, Type rootScript)
         {
+            this.Name = name;
             this.RootScriptType = rootScript;
         }
+
+        // -------------------------------------------------------------------
+        // Public
+        // -------------------------------------------------------------------
+        public string Name { get; private set; }
         
-        public Type RootScriptType;
+        public Type RootScriptType { get; private set; }
     }
 }

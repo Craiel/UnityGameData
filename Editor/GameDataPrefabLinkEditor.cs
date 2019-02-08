@@ -42,7 +42,7 @@ namespace Craiel.UnityGameData.Editor
                 return;
             }
             
-            this.DrawProperty<GameDataPrefabLink>(x => x.Ref, new GUIContent("Linked Prefab"));
+            this.DrawProperty<GameDataPrefabLink>(x => x.Ref, new GUIContent(linkAttribute.Name));
             
             var region = LayoutRegion.StartAligned(isHorizontal: true);
             
