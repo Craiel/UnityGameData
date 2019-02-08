@@ -19,6 +19,8 @@ namespace Craiel.UnityGameData.Editor.Attributes
         // -------------------------------------------------------------------
         public string Name { get; private set; }
         
+        public string FileSuffix { get; set; }
+        
         public Type RootScriptType { get; private set; }
     }
 }

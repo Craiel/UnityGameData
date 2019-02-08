@@ -49,18 +49,18 @@ namespace Craiel.UnityGameData.Editor
             GUILayout.Space(EditorGUIUtility.labelWidth + 10);
             if (GUILayout.Button("Check", GUILayout.Width(100)))
             {
-                this.CheckPrefab(typedTarget);
+                this.CheckPrefab(linkAttribute, typedTarget);
             }
             else
             {
-                this.CheckPrefab(typedTarget, false);
+                this.CheckPrefab(linkAttribute, typedTarget, false);
             }
             
             if (typedTarget.Ref == null || !typedTarget.Ref.IsValid())
             {
                 if (GUILayout.Button("Create", GUILayout.Width(100)))
                 {
-                    this.CreatePrefab(typedTarget, linkAttribute);
+                    this.CreatePrefab(linkAttribute, typedTarget, linkAttribute);
                 }
             }
             else
@@ -74,9 +74,9 @@ namespace Craiel.UnityGameData.Editor
             region.End();
         }
 
-        private void CheckPrefab(GameDataPrefabLink target, bool warnIfMissing = true)
+        private void CheckPrefab(GameDataPrefabLinkAttribute linkAttribute, GameDataPrefabLink target, bool warnIfMissing = true)
         {
-            ManagedFile prefabFile = this.GetPrefabFile();
+            ManagedFile prefabFile = this.GetPrefabFile(linkAttribute);
             if (!prefabFile.Exists)
             {
                 if (!warnIfMissing)
@@ -100,9 +100,9 @@ namespace Craiel.UnityGameData.Editor
             }
         }
 
-        private void CreatePrefab(GameDataPrefabLink target, GameDataPrefabLinkAttribute attribute)
+        private void CreatePrefab(GameDataPrefabLinkAttribute linkAttribute, GameDataPrefabLink target, GameDataPrefabLinkAttribute attribute)
         {
-            ManagedFile prefabFile = this.GetPrefabFile();
+            ManagedFile prefabFile = this.GetPrefabFile(linkAttribute);
             if (prefabFile.Exists)
             {
                 EditorUtility.DisplayDialog("Create Prefab", "File exists: " + prefabFile, "OK");
@@ -123,7 +123,7 @@ namespace Craiel.UnityGameData.Editor
 
             directoryPlaceholder.DeleteIfExists();
             
-            this.CheckPrefab(target);
+            this.CheckPrefab(linkAttribute, target);
         }
 
         private void EditPrefab(GameDataPrefabLink target, GameDataPrefabLinkAttribute attribute)
@@ -136,14 +136,21 @@ namespace Craiel.UnityGameData.Editor
             PrefabUtility.InstantiatePrefab(target.Ref.Resource);
         }
 
-        private ManagedFile GetPrefabFile()
+        private ManagedFile GetPrefabFile(GameDataPrefabLinkAttribute attribute)
         {
-            return GameDataCore.GameDataPath
+            ManagedFile result = GameDataCore.GameDataPath
                 .ToDirectory(EssentialsCore.ResourcesFolderName)
                 .ToDirectory(GameDataCore.GameDataDirectoryName)
                 .ToDirectory(this.GameDataParentAssetPath.GetDirectory().DirectoryNameWithoutPath)
                 .ToFile(this.GameDataParentAssetPath.FileName)
                 .ChangeExtension(EssentialsCore.PrefabExtension);
+
+            if (!string.IsNullOrEmpty(attribute.FileSuffix))
+            {
+                result = result.GetDirectory().ToFile(string.Concat(result.FileNameWithoutExtension, attribute.FileSuffix, result.Extension));
+            }
+
+            return result;
         }
     }
 }
