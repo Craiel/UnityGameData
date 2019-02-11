@@ -2,6 +2,7 @@ namespace Craiel.UnityGameData.Editor.Common
 {
     using System;
     using System.Linq.Expressions;
+    using Runtime;
     using UnityEditor;
     using UnityEngine;
     using UnityEssentials.Editor.ReorderableList;
@@ -11,6 +12,11 @@ namespace Craiel.UnityGameData.Editor.Common
     [CustomPropertyDrawer(typeof(GameDataProperty))]
     public abstract class GameDataPropertyEditor : PropertyDrawer
     {
+        private const float FoldoutPropertyHeight = 25;
+        private const float FoldoutBoxMargin = 8;
+        
+        private const float ManagedLabelHeight = 25;
+        
         // -------------------------------------------------------------------
         // Public
         // -------------------------------------------------------------------
@@ -19,29 +25,66 @@ namespace Craiel.UnityGameData.Editor.Common
             get { return false; }
         }
 
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            this.SetLocalData(Rect.zero, property, label);
+
+            if (this.UseFoldoutInspector && !this.TargetProperty.isExpanded)
+            {
+                return FoldoutPropertyHeight;
+            }
+            
+            float result = this.GetPropertyHeight();
+            if (this.UseFoldoutInspector)
+            {
+                result += FoldoutPropertyHeight;
+                result += FoldoutBoxMargin * 2;
+            }
+
+            return result;
+        }
+
         public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
         {
-            this.Position = position;
-            this.TargetProperty = property;
-            this.Label = label;
+            this.SetLocalData(position, property, label);
+            
+            if (this.UseDefaultInspector)
+            {
+                base.OnGUI(this.Position, this.TargetProperty, this.Label);
+                return;
+            }
+            
+            if(this.UseFoldoutInspector)
+            {
+                this.TargetProperty.isExpanded = EditorGUI.Foldout(new Rect(this.Position.position, new Vector2(this.Position.width, 25)), this.TargetProperty.isExpanded, this.Label);
+                this.Position.y += 25;
 
-            GameDataObject targetDataObject = property.serializedObject.targetObject as GameDataObject;
-            if (targetDataObject != null)
-            {
-                this.GameDataParentType = targetDataObject.GetType();
-                this.GameDataParent = targetDataObject;
-                this.GameDataParentAssetPath = new ManagedFile(AssetDatabase.GetAssetPath(targetDataObject));
-            }
-            else
-            {
-                throw new InvalidOperationException("GameDataPropertyEditor can only be used for properties inside of GameDataObjects");
+                if (this.TargetProperty.isExpanded)
+                {
+                    this.Position.x += 20;
+                    
+                    EditorGUI.indentLevel++;
+                    this.Position = EditorGUI.IndentedRect(this.Position);
+                    this.Position.width -= 40;
+                    
+                    Rect bodyRect = new Rect(this.Position.position, new Vector2(this.Position.width, this.GetPropertyHeight() + (FoldoutBoxMargin * 2)));
+                    EditorGUI.HelpBox (bodyRect, "", MessageType.None);
+
+                    // Pad Position for some margins
+                    this.Position.y += FoldoutBoxMargin;
+                    this.Position.width -= FoldoutBoxMargin;
+
+                    this.DrawFull(this.Position);
+
+                    EditorGUI.indentLevel--;
+                }
+                
+                return;
             }
             
-            this.Target = fieldInfo.GetValue(property.serializedObject.targetObject);
-            
-            this.DrawFull();
+            this.DrawFull(this.Position);
         }
-        
+
         // -------------------------------------------------------------------
         // Protected
         // -------------------------------------------------------------------
@@ -52,51 +95,81 @@ namespace Craiel.UnityGameData.Editor.Common
         protected Type GameDataParentType;
         protected UnityEngine.Object GameDataParent;
         protected ManagedFile GameDataParentAssetPath;
-        
-        protected bool DrawFoldout(string title, ref bool toggle)
+
+        protected bool UseFoldoutInspector;
+
+        protected virtual float GetPropertyHeight()
         {
-            toggle = Layout.DrawSectionHeaderToggleWithSection(title, toggle);
-            return toggle;
+            return base.GetPropertyHeight(this.TargetProperty, this.Label);
         }
 
-        protected virtual void DrawProperty<TSource>(Expression<Func<TSource, object>> expression)
+        protected float GetPropertyHeight<TSource>(Expression<Func<TSource, object>> expression, GUIContent label = null)
         {
-            DrawPropertyRelative(this.TargetProperty, expression);
-        }
-
-        protected virtual void DrawProperty<TSource>(Expression<Func<TSource, object>> expression, bool includeChildren)
-        {
-            DrawPropertyRelative(this.TargetProperty, expression, includeChildren);
-        }
-
-        protected virtual void DrawProperty<TSource>(Expression<Func<TSource, object>> expression, params GUILayoutOption[] options)
-        {
-            DrawPropertyRelative(this.TargetProperty, expression, options);
+            return EditorGUI.GetPropertyHeight(this.TargetProperty.FindPropertyRelative<TSource>(expression), label);
         }
         
-        protected virtual void DrawProperty<TSource>(Expression<Func<TSource, object>> expression, GUIContent content)
+        protected virtual void DrawPropertyManaged<TSource>(Expression<Func<TSource, object>> expression)
         {
-            DrawPropertyRelative(this.TargetProperty, expression, content);
+            this.DrawPropertyManaged<TSource>(expression, null, true);
         }
         
-        protected virtual void DrawPropertyRelative<TSource>(SerializedProperty property, Expression<Func<TSource, object>> expression, bool includeChildren = true)
+        protected virtual void DrawPropertyManaged<TSource>(Expression<Func<TSource, object>> expression, bool includeChildren)
         {
-            DrawProperty(property.FindPropertyRelative(expression), null, includeChildren);
+            this.DrawPropertyManaged<TSource>(expression, null, includeChildren);
         }
         
-        protected virtual void DrawPropertyRelative<TSource>(SerializedProperty property, Expression<Func<TSource, object>> expression, GUIContent content, bool includeChildren = true)
+        protected virtual void DrawPropertyManaged<TSource>(Expression<Func<TSource, object>> expression, GUIContent content)
         {
-            DrawProperty(property.FindPropertyRelative(expression), content, includeChildren);
+            this.DrawPropertyManaged<TSource>(expression, content, true);
+        }
+        
+        protected virtual void DrawPropertyManaged<TSource>(Expression<Func<TSource, object>> expression, GUIContent content, bool includeChildren)
+        {
+            float propertyHeight = this.GetPropertyHeight<TSource>(expression);
+            DrawPropertyRelative(this.Position, this.TargetProperty, expression, content, includeChildren);
+            this.Position.y += propertyHeight;
         }
 
-        protected virtual void DrawPropertyRelative<TSource>(SerializedProperty property, Expression<Func<TSource, object>> expression, params GUILayoutOption[] options)
+        protected virtual void DrawLabelManaged(string label)
         {
-            DrawProperty(property.FindPropertyRelative(expression), null, true, options);
+            this.Position.y += 8;
+            EditorGUI.LabelField(this.Position, label, EditorStyles.boldLabel);
+            this.Position.y += ManagedLabelHeight - 8;
         }
 
-        protected virtual void DrawProperty(SerializedProperty prop, GUIContent content, bool includeChildren, params GUILayoutOption[] options)
+        protected float GetManagedLabelHeight()
         {
-            EditorGUILayout.PropertyField(prop, content, includeChildren, options);
+            return ManagedLabelHeight;
+        }
+
+        protected virtual void DrawProperty<TSource>(Rect rect, Expression<Func<TSource, object>> expression)
+        {
+            DrawPropertyRelative(rect, this.TargetProperty, expression);
+        }
+
+        protected virtual void DrawProperty<TSource>(Rect rect, Expression<Func<TSource, object>> expression, bool includeChildren)
+        {
+            DrawPropertyRelative(rect, this.TargetProperty, expression, includeChildren);
+        }
+        
+        protected virtual void DrawProperty<TSource>(Rect rect, Expression<Func<TSource, object>> expression, GUIContent content)
+        {
+            DrawPropertyRelative(rect, this.TargetProperty, expression, content);
+        }
+        
+        protected virtual void DrawPropertyRelative<TSource>(Rect rect, SerializedProperty property, Expression<Func<TSource, object>> expression, bool includeChildren = true)
+        {
+            DrawProperty(rect, property.FindPropertyRelative(expression), null, includeChildren);
+        }
+        
+        protected virtual void DrawPropertyRelative<TSource>(Rect rect, SerializedProperty property, Expression<Func<TSource, object>> expression, GUIContent content, bool includeChildren = true)
+        {
+            DrawProperty(rect, property.FindPropertyRelative(expression), content, includeChildren);
+        }
+
+        protected virtual void DrawProperty(Rect rect, SerializedProperty prop, GUIContent content, bool includeChildren)
+        {
+            EditorGUI.PropertyField(rect, prop, content, includeChildren);
         }
         
         protected virtual void DrawReorderableList<TSource>(string title, Expression<Func<TSource, object>> expression)
@@ -105,15 +178,24 @@ namespace Craiel.UnityGameData.Editor.Common
             ReorderableListGUI.ListField(this.TargetProperty.FindPropertyRelative(expression));
         }
 
-        // -------------------------------------------------------------------
-        // Protected
-        // -------------------------------------------------------------------
-        protected virtual void DrawFull()
+        protected virtual void DrawFull(Rect position)
         {
-            if (this.UseDefaultInspector)
-            {
-                base.OnGUI(this.Position, this.TargetProperty, this.Label);
-            }
+        }
+        
+        // -------------------------------------------------------------------
+        // Private
+        // -------------------------------------------------------------------
+        private void SetLocalData(Rect position, SerializedProperty property, GUIContent label)
+        {
+            this.Position = position;
+            this.TargetProperty = property;
+            this.Label = label;
+
+            this.GameDataParentType = property.serializedObject.targetObject.GetType();
+            this.GameDataParent = property.serializedObject.targetObject;
+            this.GameDataParentAssetPath = new ManagedFile(AssetDatabase.GetAssetPath(property.serializedObject.targetObject));
+            
+            this.Target = fieldInfo.GetValue(property.serializedObject.targetObject);
         }
     }
 }

@@ -1,4 +1,4 @@
-namespace Craiel.UnityGameData.Editor.Common
+namespace Craiel.UnityGameData.Runtime
 {
     using System;
 

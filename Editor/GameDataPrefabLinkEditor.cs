@@ -16,9 +16,14 @@ namespace Craiel.UnityGameData.Editor
         // -------------------------------------------------------------------
         // Protected
         // -------------------------------------------------------------------
-        protected override void DrawFull()
+        protected override float GetPropertyHeight()
         {
-            base.DrawFull();
+            return 30;
+        }
+
+        protected override void DrawFull(Rect rect)
+        {
+            base.DrawFull(rect);
 
             this.DrawProperties();
         }
@@ -42,7 +47,7 @@ namespace Craiel.UnityGameData.Editor
                 return;
             }
             
-            this.DrawProperty<GameDataPrefabLink>(x => x.Ref, new GUIContent(linkAttribute.Name));
+            this.DrawPropertyManaged<GameDataPrefabLink>(x => x.Ref, new GUIContent(linkAttribute.Name));
             
             var region = LayoutRegion.StartAligned(isHorizontal: true);
             
