@@ -14,6 +14,7 @@ namespace Craiel.UnityGameData.Editor.Common
     {
         private const float FoldoutPropertyHeight = 25;
         private const float FoldoutBoxMargin = 8;
+        private const float LabeledSectionIndent = 6;
         
         private const float ManagedLabelHeight = 25;
         
@@ -128,6 +129,19 @@ namespace Craiel.UnityGameData.Editor.Common
             float propertyHeight = this.GetPropertyHeight<TSource>(expression);
             DrawPropertyRelative(this.Position, this.TargetProperty, expression, content, includeChildren);
             this.Position.y += propertyHeight;
+        }
+
+        protected virtual void BeginManagedLabeledSection(string label)
+        {
+            this.DrawLabelManaged(label);
+            this.Position.x += LabeledSectionIndent;
+            this.Position.width -= LabeledSectionIndent;
+        }
+
+        protected virtual void EndManagedLabeledSection()
+        {
+            this.Position.x -= LabeledSectionIndent;
+            this.Position.width += LabeledSectionIndent;
         }
 
         protected virtual void DrawLabelManaged(string label)
