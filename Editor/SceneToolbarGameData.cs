@@ -10,9 +10,10 @@
         // -------------------------------------------------------------------
         // Public
         // -------------------------------------------------------------------
-        public override void OnGUi()
+        public override void DrawGUI()
         {
-            base.OnGUi();
+            base.DrawGUI();
+            
             if (EditorGUILayout.DropdownButton(new GUIContent("GameData"), FocusType.Passive, "ToolbarDropDown"))
             {
                 var menu = new GenericMenu();
