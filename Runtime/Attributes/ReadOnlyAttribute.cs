@@ -1,4 +1,4 @@
-﻿namespace Craiel.UnityGameData.Editor.Attributes
+﻿namespace Craiel.UnityGameData.Runtime.Attributes
 {
     using System;
     using UnityEngine;

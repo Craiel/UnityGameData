@@ -4,6 +4,7 @@ namespace Craiel.UnityGameData.Editor.Common
     using Attributes;
     using Builder;
     using Runtime;
+    using Runtime.Attributes;
     using Runtime.Contracts;
     using UnityEditor;
     using UnityEngine;
