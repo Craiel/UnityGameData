@@ -3,6 +3,8 @@ namespace Craiel.UnityGameData.Editor.Common
     using UnityEditor;
     using UnityEngine;
     using UnityEssentials.Editor;
+    using UnityEssentials.Editor.UserInterface;
+    using UnityEssentials.Runtime.Extensions;
 
     [CustomEditor(typeof(GameDataObject))]
     [CanEditMultipleObjects]
@@ -56,11 +58,14 @@ namespace Craiel.UnityGameData.Editor.Common
 
             if (typed.Deprecated)
             {
-                if (GUILayout.Button("Undo Deprecated"))
+                GUILayout.Space(8);
+                Layout.BeginBackgroundColor(Colors.OrangeRed);
+                if (GUILayout.Button("Undo Deprecated", GUILayout.Height(30)))
                 {
                     ((GameDataObject) this.target).Deprecated = false;
                     EditorUtility.SetDirty(this.target);
                 }
+                Layout.EndBackgroundColor();
                 
                 return;
             }
@@ -76,11 +81,14 @@ namespace Craiel.UnityGameData.Editor.Common
                 this.DrawProperty<GameDataObject>(x => x.IconSmall);
                 this.DrawProperty<GameDataObject>(x => x.IconLarge);
 
-                if (GUILayout.Button("Mark as Deprecated"))
+                GUILayout.Space(8);
+                Layout.BeginBackgroundColor(Colors.OrangeRed);
+                if (GUILayout.Button("Mark as Deprecated", GUILayout.Height(30)))
                 {
                     ((GameDataObject) this.target).Deprecated = true;
                     EditorUtility.SetDirty(this.target);
                 }
+                Layout.EndBackgroundColor();
             }
             
             this.DoDrawFull();

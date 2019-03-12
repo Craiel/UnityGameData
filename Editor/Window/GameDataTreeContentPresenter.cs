@@ -155,12 +155,15 @@
             {
                 this.treeViewEntryTempList.Clear();
 
-                foreach (GameDataObject entry in this.activeContent.Entries)
+                var orderedEntries = this.activeContent.Entries.OrderBy(x => x.Deprecated ? "XX - " + x.Name : x.Name);
+
+                foreach (GameDataObject entry in orderedEntries)
                 {
                     var item = new TreeViewItem(this.nextEntryId++, -1, entry.Name);
 
                     if (entry.Deprecated)
                     {
+                        item.displayName = "XX - " + item.displayName;
                         var icon = GameDataHelpers.GetIcon("Deprecated");
                         if (icon != null)
                         {
