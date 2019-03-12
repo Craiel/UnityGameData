@@ -1,6 +1,9 @@
 namespace Craiel.UnityGameData.Editor.Attributes
 {
     using System;
+    using UnityEngine;
+
+    public delegate void PrefabLinkPostCreateCallbackDelegate(GameObject instance);
     
     [AttributeUsage(AttributeTargets.Field)]
     public class GameDataPrefabLinkAttribute : Attribute
@@ -22,5 +25,7 @@ namespace Craiel.UnityGameData.Editor.Attributes
         public string FileSuffix { get; set; }
         
         public Type RootScriptType { get; private set; }
+
+        public PrefabLinkPostCreateCallbackDelegate PostCreateCallback { get; protected set; }
     }
 }

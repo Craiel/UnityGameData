@@ -11,6 +11,14 @@ namespace Craiel.UnityGameData.Editor.Common
         private static bool objectFoldout;
 
         // -------------------------------------------------------------------
+        // Constructor
+        // -------------------------------------------------------------------
+        protected GameDataObjectEditor()
+        {
+            this.DrawObjectProperties = true;
+        }
+
+        // -------------------------------------------------------------------
         // Public
         // -------------------------------------------------------------------
         public virtual int GetCompactWidth()
@@ -34,6 +42,8 @@ namespace Craiel.UnityGameData.Editor.Common
         // -------------------------------------------------------------------
         // Protected
         // -------------------------------------------------------------------
+        protected bool DrawObjectProperties { get; set; }
+        
         protected override void DrawFull()
         {
             if (this.UseDefaultInspector)
@@ -41,8 +51,20 @@ namespace Craiel.UnityGameData.Editor.Common
                 base.DrawFull();
                 return;
             }
+
+            var typed = (GameDataObject) this.target;
+
+            if (typed.Deprecated)
+            {
+                if (GUILayout.Button("Undo Deprecated"))
+                {
+                    ((GameDataObject) this.target).Deprecated = false;
+                }
+                return;
+            }
             
-            if (this.DrawFoldout("Object Properties", ref objectFoldout))
+            if (this.DrawObjectProperties 
+                && this.DrawFoldout("Object Properties", ref objectFoldout))
             {
                 this.DrawProperty<GameDataObject>(x => x.Guid);
                 this.DrawProperty<GameDataObject>(x => x.Name);
@@ -51,7 +73,16 @@ namespace Craiel.UnityGameData.Editor.Common
                 this.DrawProperty<GameDataObject>(x => x.Description);
                 this.DrawProperty<GameDataObject>(x => x.IconSmall);
                 this.DrawProperty<GameDataObject>(x => x.IconLarge);
+
+                if (GUILayout.Button("Mark as Deprecated"))
+                {
+                    ((GameDataObject) this.target).Deprecated = true;
+                }
             }
+            
+            this.DoDrawFull();
         }
+
+        protected abstract void DoDrawFull();
     }
 }

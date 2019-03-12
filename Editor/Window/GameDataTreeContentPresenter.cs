@@ -10,9 +10,13 @@
     using UnityEssentials.Editor.UserInterface;
     using UnityEssentials.Runtime.Collections;
     using UnityEssentials.Runtime.Event.Editor;
+    using UnityEssentials.Runtime.Utils;
 
     public class GameDataTreeContentPresenter : TreeView, IGameDataContentPresenter
     {
+        private const float MinWidth = 200;
+        private const float MaxWidth = 600;
+        
         private readonly SearchField searchField;
         private readonly ExtendedDictionary<int, GameDataObject> idObjectMap;
         private readonly IList<int> selection;
@@ -23,7 +27,7 @@
         private int nextEntryId;
 
         private Vector2 scrollPos;
-        private float treeViewWidth = 300;
+        private float treeViewWidth = MinWidth + 100;
 
         private SerializedObject copyObject;
 
@@ -33,6 +37,8 @@
 
         private bool createOnNextRepaint;
 
+        private bool isSplitterDragging;
+        
         // -------------------------------------------------------------------
         // Constructor
         // -------------------------------------------------------------------
@@ -53,6 +59,8 @@
         // -------------------------------------------------------------------
         public void Draw(Rect drawArea, GameDataEditorContent content)
         {
+            Rect splitterRect;
+            
             if (this.activeContent != content)
             {
                 this.activeContent = content;
@@ -83,6 +91,14 @@
                 }
 
                 EditorGUILayout.EndVertical();
+                
+                GUILayout.Box ("", 
+                    GUILayout.Width(2), 
+                    GUILayout.MaxWidth (2), 
+                    GUILayout.MinWidth(2),
+                    GUILayout.ExpandHeight(true));
+                splitterRect = GUILayoutUtility.GetLastRect ();
+                EditorGUIUtility.AddCursorRect(splitterRect, MouseCursor.ResizeHorizontal);
 
                 // Right
                 EditorGUILayout.BeginVertical("box");
@@ -105,8 +121,10 @@
             }
 
             EditorGUILayout.EndHorizontal();
-        }
 
+            this.HandleSplitter(splitterRect);
+        }
+        
         public bool ProcessEvent(Event eventData)
         {
             switch (eventData.type)
@@ -140,6 +158,31 @@
                 foreach (GameDataObject entry in this.activeContent.Entries)
                 {
                     var item = new TreeViewItem(this.nextEntryId++, -1, entry.Name);
+
+                    if (entry.Deprecated)
+                    {
+                        var icon = GameDataHelpers.GetIcon("Deprecated");
+                        if (icon != null)
+                        {
+                            item.icon = icon;
+                        }
+                    }
+                    else
+                    {
+                        if (entry.IconSmall != null && entry.IconSmall.IsValid())
+                        {
+                            var icon = AssetDatabase.LoadAssetAtPath<Texture2D>(entry.IconSmall.GetPath());
+                            if (icon != null)
+                            {
+                                item.icon = icon;
+                            }
+                        }
+                        else
+                        {
+                            item.icon = GameDataHelpers.GetIconForBaseType(entry.GetType());
+                        }
+                    }
+
                     this.idObjectMap.Add(item.id, entry);
                     this.treeViewEntryTempList.Add(item);
                 }
@@ -169,6 +212,49 @@
         // -------------------------------------------------------------------
         // Private
         // -------------------------------------------------------------------
+        private void HandleSplitter(Rect splitterRect)
+        {
+            if (Event.current != null) {
+                switch (Event.current.rawType) {
+                    case EventType.MouseDown:
+                    {
+                        if (splitterRect.Contains(Event.current.mousePosition))
+                        {
+                            this.isSplitterDragging = true;
+                        }
+
+                        Event.current.Use();
+                        break;
+                    }
+
+                    case EventType.MouseDrag:
+                    {
+                        if (this.isSplitterDragging)
+                        {
+                            this.treeViewWidth += Event.current.delta.x;
+                            this.treeViewWidth = this.treeViewWidth.Clamp(MinWidth, MaxWidth);
+                            
+                            Repaint();
+                        }
+
+                        Event.current.Use();
+                        break;
+                    }
+                    
+                    case EventType.MouseUp:
+                    {
+                        if (this.isSplitterDragging)
+                        {
+                            this.isSplitterDragging = false;
+                        }
+
+                        Event.current.Use();
+                        break;
+                    }
+                }
+            }
+        }
+        
         private void SendSelectedEvent()
         {
             if (this.selection.Count == 0)

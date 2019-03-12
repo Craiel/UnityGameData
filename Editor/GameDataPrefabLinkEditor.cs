@@ -119,6 +119,8 @@ namespace Craiel.UnityGameData.Editor
             var prefab = new GameObject(this.GameDataParent.name + " Prefab");
             prefab.AddComponent(attribute.RootScriptType);
 
+            attribute.PostCreateCallback?.Invoke(prefab);
+
             ManagedFile directoryPlaceholder = prefabFile.GetDirectory().ToFile("delete.me");
             if (!prefabFile.GetDirectory().Exists)
             {

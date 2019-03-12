@@ -16,7 +16,7 @@ namespace Craiel.UnityGameData.Editor
 
     public static class GameDataHelpers
     {
-        private static readonly IDictionary<Type, Texture> BaseTypeIconCache = new Dictionary<Type, Texture>();
+        private static readonly IDictionary<string, Texture2D> IconCache = new Dictionary<string, Texture2D>();
         
         // -------------------------------------------------------------------
         // Public
@@ -177,22 +177,27 @@ namespace Craiel.UnityGameData.Editor
             return GetIconForBaseType(sourceObjectType);
         }
 
-        public static Texture GetIconForBaseType(Type type)
+        public static Texture2D GetIconForBaseType(Type type)
         {
-            Texture result;
-            if (BaseTypeIconCache.TryGetValue(type, out result))
+            return GetIcon(type.Name);
+        }
+        
+        public static Texture2D GetIcon(string name)
+        {
+            Texture2D result;
+            if (IconCache.TryGetValue(name, out result))
             {
                 return result;
             }
             
-            string path = string.Format("GameDataEditor/{0}.png", type.Name);
+            string path = string.Format("GameDataEditor/{0}.png", name);
             result = EditorGUIUtility.Load(path) as Texture2D;
             if (result == null)
             {
                 UnityEngine.Debug.LogWarningFormat("Could not load Resource for GameData Type: {0}", path);
             }
             
-            BaseTypeIconCache.Add(type, result);
+            IconCache.Add(name, result);
             return result;
         }
     }
