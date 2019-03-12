@@ -171,11 +171,7 @@
                     {
                         if (entry.IconSmall != null && entry.IconSmall.IsValid())
                         {
-                            var icon = AssetDatabase.LoadAssetAtPath<Texture2D>(entry.IconSmall.GetPath());
-                            if (icon != null)
-                            {
-                                item.icon = icon;
-                            }
+                            item.icon = ((Sprite) entry.IconSmall.Resource).texture;
                         }
                         else
                         {
