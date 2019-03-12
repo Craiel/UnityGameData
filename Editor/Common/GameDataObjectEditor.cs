@@ -59,7 +59,9 @@ namespace Craiel.UnityGameData.Editor.Common
                 if (GUILayout.Button("Undo Deprecated"))
                 {
                     ((GameDataObject) this.target).Deprecated = false;
+                    EditorUtility.SetDirty(this.target);
                 }
+                
                 return;
             }
             
@@ -77,10 +79,13 @@ namespace Craiel.UnityGameData.Editor.Common
                 if (GUILayout.Button("Mark as Deprecated"))
                 {
                     ((GameDataObject) this.target).Deprecated = true;
+                    EditorUtility.SetDirty(this.target);
                 }
             }
             
             this.DoDrawFull();
+
+            this.serializedObject.ApplyModifiedProperties();
         }
 
         protected abstract void DoDrawFull();
