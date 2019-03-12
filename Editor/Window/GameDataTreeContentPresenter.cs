@@ -357,15 +357,6 @@
                 }
             }
             EditorGUILayout.EndHorizontal();
-            
-
-            if (this.copyObject != null)
-            {
-                if (GUILayout.Button(string.Format("Paste ({0})", this.copyObject.FindProperty("Name").stringValue)))
-                {
-                    this.PastCopyObjectToSelected();
-                }
-            }
         }
 
         private void ResetSelection()
