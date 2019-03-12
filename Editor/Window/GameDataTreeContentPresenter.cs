@@ -22,7 +22,7 @@
         private readonly IList<int> selection;
         private readonly IList<TreeViewItem> treeViewEntryTempList;
         private readonly IList<GameDataObject> entryTempList;
-
+        
         private TreeViewItem root;
         private int nextEntryId;
 
@@ -38,6 +38,8 @@
         private bool createOnNextRepaint;
 
         private bool isSplitterDragging;
+        
+        private GUIStyle toolBarStyle;
         
         // -------------------------------------------------------------------
         // Constructor
@@ -59,6 +61,15 @@
         // -------------------------------------------------------------------
         public void Draw(Rect drawArea, GameDataEditorContent content)
         {
+            if (this.toolBarStyle == null)
+            {
+                this.toolBarStyle = new GUIStyle(GameDataEditorWindow.Instance.ToolBarStyle)
+                {
+                    fixedWidth = 32, 
+                    fixedHeight = 32
+                };
+            }
+            
             Rect splitterRect;
             
             if (this.activeContent != content)
@@ -67,7 +78,7 @@
                 this.Reload();
                 this.RebuildEditor();
             }
-
+            
             if (this.createOnNextRepaint)
             {
                 this.createOnNextRepaint = false;
@@ -277,16 +288,24 @@
         
         private void DrawToolBar(GameDataEditorContent content)
         {
+            GUIContent guiContent = new GUIContent();
+            
             EditorGUILayout.BeginHorizontal();
             {
-                if (GUILayout.Button("Add (F2)", "button", GUILayout.Height(30)))
+                GUILayout.Space(4);
+                
+                guiContent.tooltip = "Add (F2)";
+                guiContent.image = EditorGUIUtility.Load("icons/d_Collab.FileAdded.png") as Texture2D;
+                if (GUILayout.Button(guiContent, this.toolBarStyle))
                 {
                     this.OpenCreateItemDialog(content);
                 }
-
-                if (GUILayout.Button("Delete Selected", "button", GUILayout.Height(30)))
+                
+                guiContent.tooltip = "Delete Selection";
+                guiContent.image = EditorGUIUtility.Load("icons/d_TreeEditor.Trash.png") as Texture2D;
+                if (GUILayout.Button(guiContent, this.toolBarStyle))
                 {
-                    if (EditorUtility.DisplayDialog("Delete Selection", "This operation can not be undone, continue?", "yes", "no"))
+                    if (EditorUtility.DisplayDialog("Confirm Delete", "This operation can not be undone, continue?", "yes", "no"))
                     {
                         this.currentEditor = null;
                         foreach (int id in this.selection)
@@ -301,31 +320,44 @@
                         this.Reload();
                     }
                 }
-
-            }
-
-            EditorGUILayout.EndHorizontal();
-
-            if (GUILayout.Button("Clone Selected"))
-            {
-                this.OpenCreateItemDialog(content, true);
-            }
-
-            GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Copy"))
-            {
-                this.CopySelectedObject();
-            }
-
-            if (this.copyObject != null)
-            {
-                if (GUILayout.Button("Cancel"))
+                
+                guiContent.tooltip = "Clone Selected";
+                guiContent.image = EditorGUIUtility.Load("icons/d_TreeEditor.Duplicate.png") as Texture2D;
+                if (GUILayout.Button(guiContent, this.toolBarStyle))
                 {
-                    this.copyObject = null;
+                    this.OpenCreateItemDialog(content, true);
+                }
+                
+                GUILayout.Space(8);
+
+                if (this.copyObject == null)
+                {
+                    guiContent.tooltip = "Copy";
+                    guiContent.image = EditorGUIUtility.Load("icons/Clipboard.png") as Texture2D;
+                    if (GUILayout.Button(guiContent, this.toolBarStyle))
+                    {
+                        this.CopySelectedObject();
+                    }
+                }
+                else
+                {
+                    guiContent.tooltip = "Paste";
+                    guiContent.image = EditorGUIUtility.Load("icons/d_Collab.FileUpdated.png") as Texture2D;
+                    if (GUILayout.Button(guiContent, this.toolBarStyle))
+                    {
+                        this.PastCopyObjectToSelected();
+                    }
+                    
+                    guiContent.tooltip = "Cancel Copy";
+                    guiContent.image = EditorGUIUtility.Load("icons/d_LookDevClose.png") as Texture2D;
+                    if (GUILayout.Button(guiContent, this.toolBarStyle))
+                    {
+                        this.copyObject = null;
+                    }
                 }
             }
-
-            GUILayout.EndHorizontal();
+            EditorGUILayout.EndHorizontal();
+            
 
             if (this.copyObject != null)
             {
