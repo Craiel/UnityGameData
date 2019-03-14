@@ -4,10 +4,10 @@ namespace Craiel.UnityGameData.Editor.Common
     using Attributes;
     using Builder;
     using Runtime;
-    using Runtime.Attributes;
     using Runtime.Contracts;
     using UnityEditor;
     using UnityEngine;
+    using UnityEssentials.Runtime.Attributes;
 
     [Serializable]
     public abstract class GameDataObject : ScriptableObject, IGameDataBuildContent, IGameDataObject
