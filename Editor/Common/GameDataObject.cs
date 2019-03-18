@@ -3,6 +3,7 @@ namespace Craiel.UnityGameData.Editor.Common
     using System;
     using Attributes;
     using Builder;
+    using Enums;
     using Runtime;
     using Runtime.Contracts;
     using UnityEditor;
@@ -35,9 +36,11 @@ namespace Craiel.UnityGameData.Editor.Common
         
         [SerializeField]
         [GameDataIcon]
+        [GameDataResourceFinderSettings(Style = FinderPopUpStyle.Cards)]
         public GameResourceSpriteRef IconSmall;
         
         [SerializeField]
+        [GameDataResourceFinderSettings(Style = FinderPopUpStyle.Cards)]
         public GameResourceSpriteRef IconLarge;
 
         [SerializeField]

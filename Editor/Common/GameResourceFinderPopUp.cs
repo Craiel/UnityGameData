@@ -60,6 +60,20 @@
         // -------------------------------------------------------------------
         private void SetParameters(SerializedProperty property)
         {
+            GameDataResourceFinderSettingsAttribute settings = null;
+            if (property.serializedObject != null
+                && property.serializedObject.targetObject != null)
+            {
+                Type targetType = property.serializedObject.targetObject.GetType();
+                FieldInfo targetField = targetType.GetField(property.propertyPath);
+                settings = targetField?.GetCustomAttribute<GameDataResourceFinderSettingsAttribute>();
+            }
+
+            if (settings != null)
+            {
+                this.Style = settings.Style;
+            }
+            
             if (property.type == typeof(GameResourceGameObjectRef).Name)
             {
                 this.ObjectType = typeof(GameObject);
@@ -100,20 +114,8 @@
             if (property.type == typeof(GameResourceCustomRef).Name)
             {
                 // TODO
-                this.TypeFilter = "Prefab";
+                this.TypeFilter = settings == null ? "Prefab" : settings.AttachedScript?.Name;
                 this.NameSelector = UnityObjectHelper.DefaultPathAndNameSelector;
-
-                if (property.serializedObject != null
-                    && property.serializedObject.targetObject != null)
-                {
-                    Type targetType = property.serializedObject.targetObject.GetType();
-                    FieldInfo targetField = targetType.GetField(property.propertyPath);
-                    var filterAttribute = targetField.GetCustomAttribute<GameDataResourceFinderFilterAttribute>();
-                    if (filterAttribute != null)
-                    {
-                        this.TypeFilter = filterAttribute.AttachedScript.Name;
-                    }
-                }
 
                 return;
             }
