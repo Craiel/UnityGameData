@@ -77,14 +77,14 @@
             if (property.type == typeof(GameResourceGameObjectRef).Name)
             {
                 this.ObjectType = typeof(GameObject);
-                this.TypeFilter = this.ObjectType.Name;
+                this.TypeFilters = new []{this.ObjectType.Name};
                 return;
             }
 
             if (property.type == typeof(GameResourceSpriteRef).Name)
             {
                 this.ObjectType = typeof(Sprite);
-                this.TypeFilter = this.ObjectType.Name;
+                this.TypeFilters = new []{this.ObjectType.Name};
                 this.IconSelector = UnityObjectHelper.SpriteIconSelector;
                 return;
             }
@@ -92,13 +92,13 @@
             if (property.type == typeof(GameResourceAudioClipRef).Name)
             {
                 this.ObjectType = typeof(AudioClip);
-                this.TypeFilter = this.ObjectType.Name;
+                this.TypeFilters = new []{this.ObjectType.Name};
                 return;
             }
 
             if (property.type == typeof(GameResourcePrefabRef).Name)
             {
-                this.TypeFilter = "Prefab";
+                this.TypeFilters = new []{"Prefab"};
                 this.NameSelector = UnityObjectHelper.DefaultPathAndNameSelector;
                 return;
             }
@@ -106,7 +106,7 @@
             if (property.type == typeof(GameResourceAnimationClipRef).Name)
             {
                 this.ObjectType = typeof(AnimationClip);
-                this.TypeFilter = this.ObjectType.Name;
+                this.TypeFilters = new []{this.ObjectType.Name};
                 this.NameSelector = UnityObjectHelper.AnimationNameSelector;
                 return;
             }
@@ -114,7 +114,7 @@
             if (property.type == typeof(GameResourceCustomRef).Name)
             {
                 // TODO
-                this.TypeFilter = settings == null ? "Prefab" : settings.AttachedScript?.Name;
+                this.TypeFilters = new []{settings == null ? "Prefab" : settings.AttachedScript?.Name};
                 this.NameSelector = UnityObjectHelper.DefaultPathAndNameSelector;
 
                 return;

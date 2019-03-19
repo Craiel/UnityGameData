@@ -89,26 +89,18 @@
                 return this.cachedPath;
             }
 
-            var path = new ManagedFile(assetPath);
-
-            // Format the path for better processing
-            path = new ManagedDirectory(path.GetDirectory().GetPathUsingDefaultSeparator()).ToFile(path.FileNameWithoutExtension);
-
-            // Contains check first since the FindParent call is somewhat heavy
-            if (path.GetPath().Contains(EssentialsCore.ResourcesFolderName))
+            int extensionIndex = assetPath.LastIndexOf(".", StringComparison.Ordinal);
+            int resourceIndex = assetPath.IndexOf(EssentialsCore.ResourcesFolderName, StringComparison.Ordinal);
+            if (resourceIndex < 0)
             {
-                var resourceParent = path.GetDirectory().FindParent(EssentialsCore.ResourcesFolderName);
-                if (resourceParent != null)
-                {
-                    // This file is a resource, we only save the relative path from there
-                    var relativePath = path.GetPath().Replace(resourceParent.GetPath(), string.Empty);
-                    path = new ManagedFile(relativePath);
-                }
+                resourceIndex = 0;
             }
-
-            this.cachedAssetPath = assetPath;
-            this.cachedPath = path.GetUnityPath();
-
+            else
+            {
+                resourceIndex += EssentialsCore.ResourceFolderNameSize + 1;
+            }
+            
+            this.cachedPath = assetPath.Substring(resourceIndex, extensionIndex - resourceIndex);
             return this.cachedPath;
 #else
             throw new InvalidOperationException();

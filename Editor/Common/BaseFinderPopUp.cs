@@ -14,9 +14,6 @@
     public abstract class BaseFinderPopUp<T> : EditorWindow
         where T : UnityEngine.Object
     {
-        private const int MaxEntriesDisplayedInDefault = 10;
-        private const int MaxEntriesDisplayedInCards = 13;
-        private const int CardsPerRow = 4;
         private const int CardSize = 80;
         private const int CardMaxLabelSize = 8;
         
@@ -34,8 +31,16 @@
         private bool refreshRequired = true;
         private bool enabled;
 
-        private int lastFilteredCount = 0;
+        private int lastFilteredCount;
+        
+        private int cardsPerRow = 4;
+        private int cardsPerColumn = 4;
+        private int maxEntriesDisplayedInDefault = 10;
+        private int maxEntriesDisplayedInCards = 13;
 
+        private Vector2 finderContentArea;
+
+        private GUIStyle defaultButtonStyle;
         private GUIStyle cardButtonStyle;
 
         // -------------------------------------------------------------------
@@ -44,9 +49,10 @@
         protected BaseFinderPopUp()
         {
             this.ObjectType = typeof(UnityEngine.Object);
-            this.TypeFilter = this.ObjectType.Name;
+            this.TypeFilters = new []{this.ObjectType.Name};
             this.NameSelector = UnityObjectHelper.DefaultNameSelector;
             this.IconSelector = UnityObjectHelper.DefaultIconSelector;
+            this.ContentMargin = new Vector2(120, 50);
         }
 
         // -------------------------------------------------------------------
@@ -58,8 +64,6 @@
         
         public void OnEnable()
         {
-            GameDataEditorCore.IsPopupActive = true;
-            
             this.entries = new List<T>();
             this.entryNames = new List<string>();
             this.entryNamesInvariant = new List<string>();
@@ -72,43 +76,26 @@
             this.filterField.SetFocus();
 
             this.enabled = true;
+
+            this.finderContentArea = GameDataStyles.FinderPopupSize - this.ContentMargin;
+            
+            this.cardsPerRow = Mathf.FloorToInt(finderContentArea.x / CardSize);
+            this.cardsPerColumn = Mathf.FloorToInt(this.finderContentArea.y / (CardSize + 20f));
+            
+            this.maxEntriesDisplayedInDefault = Mathf.FloorToInt(this.finderContentArea.x / 30f);
+            this.maxEntriesDisplayedInCards = 1 + (this.cardsPerRow * this.cardsPerColumn);
         }
 
         public void OnDisable()
         {
             this.enabled = false;
-            
-            GameDataEditorCore.IsPopupActive = false;
         }
 
         public void Update()
         {
             if (this.refreshRequired)
             {
-                this.refreshRequired = false;
-                
-                this.entries.Clear();
-                this.entryNames.Clear();
-                this.entryNamesInvariant.Clear();
-                this.entryPaths.Clear();
-
-                string[] candidateGuids;
-                if (this.Root == null)
-                {
-                    candidateGuids = AssetDatabase.FindAssets("t:" + this.TypeFilter);
-                }
-                else
-                {
-                    candidateGuids = AssetDatabase.FindAssets("t:" + this.TypeFilter, new[] {this.Root.GetUnityPath()});
-                }
-
-                if (this.TypeFilter.Equals("Animation", StringComparison.OrdinalIgnoreCase) ||
-                    this.TypeFilter.Equals("AnimationClip", StringComparison.OrdinalIgnoreCase))
-                {
-                    RefreshAssetsAnimationSpecial(candidateGuids);
-                }
-
-                RefreshAssets(candidateGuids);
+                this.DoRefresh();
             }
         }
 
@@ -129,6 +116,16 @@
                 };
             }
 
+            if (this.defaultButtonStyle == null)
+            {
+                this.defaultButtonStyle = new GUIStyle(GUI.skin.button)
+                {
+                    fixedWidth = GameDataStyles.FinderPopupWidth - 60,
+                    fixedHeight = 30,
+                    alignment = TextAnchor.MiddleLeft
+                };
+            }
+
             if (this.HandleInput())
             {
                 return;
@@ -140,6 +137,8 @@
             {
                 return;
             }
+            
+            this.DrawCustomOptions();
 
             GUILayout.Space(5);
 
@@ -168,13 +167,15 @@
         // -------------------------------------------------------------------
         protected Type ObjectType { get; set; }
 
-        protected string TypeFilter { get; set; }
+        protected string[] TypeFilters { get; set; }
 
         protected ManagedDirectory Root { get; set; }
 
         protected UnityObjectNameSelectorDelegate NameSelector { get; set; }
 
         protected UnityObjectIconSelectorDelegate IconSelector { get; set; }
+        
+        protected Vector2 ContentMargin { get; set; }
 
         protected abstract bool RefreshEntry(string path, out T entry);
         
@@ -192,10 +193,62 @@
                 this.EndSelection();
             }
         }
+        
+        protected virtual void DrawCustomOptions()
+        {
+        }
+
+        protected void ForceRefresh()
+        {
+            this.refreshRequired = true;
+        }
 
         // -------------------------------------------------------------------
         // Private
         // -------------------------------------------------------------------
+        private void DoRefresh()
+        {
+            this.refreshRequired = false;
+                
+            this.entries.Clear();
+            this.entryNames.Clear();
+            this.entryNamesInvariant.Clear();
+            this.entryPaths.Clear();
+
+            IList<string> lookupStrings = new List<string>();
+            foreach (string typeFilter in this.TypeFilters)
+            {
+                lookupStrings.Add(string.Concat("t: ", typeFilter));
+            }
+
+            string lookupString = string.Join(" ", lookupStrings);
+            
+            string[] candidateGuids;
+            if (this.Root == null)
+            {
+                candidateGuids = AssetDatabase.FindAssets(lookupString);
+            }
+            else
+            {
+                candidateGuids = AssetDatabase.FindAssets(lookupString, new[] {this.Root.GetUnityPath()});
+            }
+                
+            if (candidateGuids == null || candidateGuids.Length == 0)
+            {
+                return; 
+            }
+
+            if (this.TypeFilters.Contains("Animation") ||
+                this.TypeFilters.Contains("AnimationClip"))
+            {
+                RefreshAssetsAnimationSpecial(candidateGuids);
+            }
+            else
+            {
+                RefreshAssets(candidateGuids);
+            }
+        }
+        
         private void RefreshAssets(string[] guids)
         {
             foreach (string guid in guids)
@@ -296,7 +349,7 @@
             GUILayout.FlexibleSpace();
 
             string label;
-            if (string.IsNullOrEmpty(this.filter))
+            if (string.IsNullOrEmpty(this.filterInvariant))
             {
                 label = string.Format("{0} Assets", this.entries.Count);
             }
@@ -324,7 +377,7 @@
                 case FinderPopUpStyle.Default:
                 {
                     GUIContent content = new GUIContent(entryName, this.IconSelector(entry, this.ObjectType), entryPath);
-                    if (GUILayout.Button(content, GUILayout.Height(30), GUILayout.Width(350)))
+                    if (GUILayout.Button(content, this.defaultButtonStyle))
                     {
                         this.ToggleEntry(entry);
                     }
@@ -365,7 +418,7 @@
             IList<int> filteredEntryIndizes = new List<int>();
             for (var i = 0; i < this.entryNamesInvariant.Count; i++)
             {
-                if (!this.entryNamesInvariant[i].Contains(this.filter))
+                if (!this.entryNamesInvariant[i].Contains(this.filterInvariant))
                 {
                     continue;
                 }
@@ -381,13 +434,13 @@
 
             EditorGUILayout.BeginVertical();
 
-            int maxEntriesDisplayed = MaxEntriesDisplayedInDefault;
+            int maxEntriesDisplayed = this.maxEntriesDisplayedInDefault;
             switch (this.Style)
             {
                 case FinderPopUpStyle.Cards:
                 {
                     EditorGUILayout.BeginHorizontal();
-                    maxEntriesDisplayed = MaxEntriesDisplayedInCards;
+                    maxEntriesDisplayed = this.maxEntriesDisplayedInCards;
                     break;
                 }
             }
@@ -425,7 +478,7 @@
                     {
                         this.DrawScrollViewEntry(entry, entryName, entryPath);
                         rowCount++;
-                        if (rowCount >= CardsPerRow)
+                        if (rowCount >= this.cardsPerRow)
                         {
                             EditorGUILayout.EndHorizontal();
                             GUILayout.Space(2);
@@ -495,12 +548,12 @@
 
         private bool HandleInput()
         {
-            int maxEntriesDisplayed = MaxEntriesDisplayedInDefault - 1;
+            int maxEntriesDisplayed = this.maxEntriesDisplayedInDefault - 1;
             switch (this.Style)
             {
                 case FinderPopUpStyle.Cards:
                 {
-                    maxEntriesDisplayed = MaxEntriesDisplayedInCards - 1;
+                    maxEntriesDisplayed = this.maxEntriesDisplayedInCards - 1;
                     break;
                 }
             }

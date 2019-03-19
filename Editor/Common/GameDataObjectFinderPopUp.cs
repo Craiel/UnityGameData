@@ -68,7 +68,7 @@ namespace Craiel.UnityGameData.Editor.Common
                 }
             }
 
-            this.TypeFilter = rawTypeName;
+            this.TypeFilters = new []{rawTypeName};
         }
     }
 }

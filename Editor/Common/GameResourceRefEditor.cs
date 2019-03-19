@@ -38,7 +38,7 @@
         {
             var popup = ScriptableObject.CreateInstance<StaticResourceFinderPopUp>();
             popup.Initialize(property, selected => this.SetObject(property, selected.FirstOrDefault()));
-            popup.ShowAsDropDown(displayRect, new Vector2(400, 400));
+            popup.ShowAsDropDown(displayRect, GameDataStyles.FinderPopupSize);
         }
 
         // -------------------------------------------------------------------

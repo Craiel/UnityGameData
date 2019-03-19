@@ -4,6 +4,11 @@
 
     public static class GameDataStyles
     {
+        public const int FinderPopupWidth = 530;
+        public const int FinderPopupHeight = 530;
+        
+        public static readonly Vector2 FinderPopupSize = new Vector2(FinderPopupWidth, FinderPopupHeight);
+            
         public static readonly GUIContent EmptyGuiContent = new GUIContent(string.Empty);
 
         private static GUIStyle finderButton;
