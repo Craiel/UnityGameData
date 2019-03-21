@@ -1,6 +1,7 @@
-﻿namespace Craiel.UnityGameData.VFXShared
+﻿namespace Craiel.UnityGameData.Editor.VFXShared
 {
-    using Editor.Builder;
+    using Builder;
+    using Common;
     using GameData.Editor.Contracts.VFXShared;
     using Runtime.VFXShared;
     using UnityEngine;
@@ -14,11 +15,11 @@
         
         public Vector2 Position { get; set; }
         
-        public void Validate(object owner, GameDataBuildValidationContext context)
+        public void Validate(GameDataObject owner, GameDataBuildValidationContext context)
         {
         }
 
-        public RuntimeVFXNodeData Build(object owner, GameDataBuildContext context)
+        public RuntimeVFXNodeData Build(GameDataObject owner, GameDataBuildContext context)
         {
             return null;
         }

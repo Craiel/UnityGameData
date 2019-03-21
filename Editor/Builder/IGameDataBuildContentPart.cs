@@ -1,12 +1,13 @@
-﻿using RuntimeGameDataPart = Craiel.UnityGameData.Runtime.RuntimeGameDataPart;
-
-namespace Craiel.UnityGameData.Editor.Builder
+﻿namespace Craiel.UnityGameData.Editor.Builder
 {
+    using Common;
+    using Runtime;
+
     public interface IGameDataBuildContentPart<out T>
         where T : RuntimeGameDataPart
     {
-        void Validate(object owner, GameDataBuildValidationContext context);
+        void Validate(GameDataObject owner, GameDataBuildValidationContext context);
 
-        T Build(object owner, GameDataBuildContext context);
+        T Build(GameDataObject owner, GameDataBuildContext context);
     }
 }

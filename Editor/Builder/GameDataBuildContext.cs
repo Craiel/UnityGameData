@@ -35,16 +35,6 @@
         
         public IDictionary<Type, IList<byte[]>> BuildData { get; private set; }
 
-        public uint GetIdForRef(GameDataRefBase refData)
-        {
-            if (!refData.IsValid())
-            {
-                return GameDataId.InvalidId;
-            }
-
-            return GetIdForGuid(refData.RefGuid);
-        }
-
         public void AddBuildResult(RuntimeGameData data)
         {
             IList<byte[]> entryList;
@@ -80,7 +70,7 @@
             this.writer.Save(this.TargetFile);
         }
 
-        public GameDataId BuildGameDataId(GameDataObject objectData)
+        public GameDataId BuildGameDataId(GameDataObject owner, GameDataObject objectData)
         {
             if (!objectData.IsValid())
             {
@@ -91,7 +81,7 @@
             return new GameDataId(objectData.Guid, this.GetIdForGuid(objectData.Guid));
         }
 
-        public GameDataId BuildGameDataId(GameDataRefBase refData)
+        public GameDataId BuildGameDataId(GameDataObject owner, GameDataRefBase refData)
         {
             if (!refData.IsValid())
             {
@@ -102,7 +92,7 @@
             return new GameDataId(refData.RefGuid, this.GetIdForGuid(refData.RefGuid));
         }
 
-        public GameDataId[] BuildGameDataIds<T>(T[] entries)
+        public GameDataId[] BuildGameDataIds<T>(GameDataObject owner, T[] entries)
             where T : GameDataRefBase
         {
             if (entries == null)
@@ -113,7 +103,7 @@
             List<GameDataId> result = new List<GameDataId>();
             foreach (T entry in entries)
             {
-                GameDataId tagId = this.BuildGameDataId(entry);
+                GameDataId tagId = this.BuildGameDataId(owner, entry);
                 if (tagId == GameDataId.Invalid)
                 {
                     continue;

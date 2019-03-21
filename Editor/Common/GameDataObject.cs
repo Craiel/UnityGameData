@@ -130,7 +130,7 @@ namespace Craiel.UnityGameData.Editor.Common
                 return;
             }
             
-            target.Id = context.BuildGameDataId(this);
+            target.Id = context.BuildGameDataId(this, this);
             target.Name = this.Name;
             target.DisplayName = this.DisplayName;
             target.Description = this.Description;
