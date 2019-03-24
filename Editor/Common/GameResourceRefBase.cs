@@ -89,6 +89,8 @@
                 return this.cachedPath;
             }
 
+            this.cachedAssetPath = assetPath;
+            
             int extensionIndex = assetPath.LastIndexOf(".", StringComparison.Ordinal);
             int resourceIndex = assetPath.IndexOf(EssentialsCore.ResourcesFolderName, StringComparison.Ordinal);
             if (resourceIndex < 0)
