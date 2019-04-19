@@ -6,9 +6,10 @@
     using System.Linq;
     using System.Text;
     using Contracts;
-    using LiteDB;
     using UnityEngine;
     using UnityEssentials.Runtime.Collections;
+    using UnityEssentials.Runtime.Data.SBT;
+    using UnityEssentials.Runtime.Data.SBT.Nodes;
     using UnityEssentials.Runtime.Extensions;
     using UnityEssentials.Runtime.IO;
 
@@ -149,13 +150,11 @@
 
             GameDataCore.Logger.Info(" - {0} bytes", this.RawData.Length);
 
-            using (var db = new LiteDatabase(stream))
+            var db = SBTDictionary.Deserialize(stream);
+            // Now we process what we know
+            foreach (Type type in this.data.Keys)
             {
-                // Now we process what we know
-                foreach (Type type in this.data.Keys)
-                {
-                    this.LoadBinaryList(type, db, this.data[type]);
-                }
+                this.LoadBinaryList(type, db, this.data[type]);
             }
             
             this.IsLoaded = true;
@@ -178,29 +177,27 @@
             }
         }
         
-        private void LoadBinaryList(Type type, LiteDatabase db, IList<RuntimeGameData> target)
+        private void LoadBinaryList(Type type, SBTDictionary db, IList<RuntimeGameData> target)
         {
             target.Clear();
             ManagedFile listProtoFile = GameDataCore.GameDataListPath.ToFile(type.Name + GameDataCore.GameDataListExtension);
             string id = listProtoFile.GetPathUsingAlternativeSeparator();
-            if (db.FileStorage.Exists(id))
+            if (db.Contains(id))
             {
-                using (var stream = db.FileStorage.OpenRead(id))
+                SBTNodeStream stream = db.ReadStream(id);
+                using (BinaryReader reader = stream.BeginRead())
                 {
-                    using (var reader = new BinaryReader(stream))
+                    int count = reader.ReadInt32();
+                    for (var i = 0; i < count; i++)
                     {
-                        int count = reader.ReadInt32();
-                        for (var i = 0; i < count; i++)
-                        {
-                            byte[] entryData = new byte[reader.ReadInt32()];
-                            reader.Read(entryData, 0, entryData.Length);
-                            string stringData = Encoding.UTF8.GetString(entryData);
+                        byte[] entryData = new byte[reader.ReadInt32()];
+                        reader.Read(entryData, 0, entryData.Length);
+                        string stringData = Encoding.UTF8.GetString(entryData);
 
-                            RuntimeGameData entry = (RuntimeGameData)JsonUtility.FromJson(stringData, type);
-                            entry.PostLoad();
+                        RuntimeGameData entry = (RuntimeGameData)JsonUtility.FromJson(stringData, type);
+                        entry.PostLoad();
 
-                            target.Add(entry);
-                        }
+                        target.Add(entry);
                     }
                 }
 

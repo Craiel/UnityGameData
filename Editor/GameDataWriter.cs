@@ -3,8 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using LiteDB;
     using Runtime;
+    using UnityEssentials.Runtime.Data.SBT;
+    using UnityEssentials.Runtime.Data.SBT.Nodes;
     using UnityEssentials.Runtime.IO;
 
     public class GameDataWriter
@@ -42,57 +43,51 @@
         public void Save(ManagedFile file)
         {
             file.DeleteIfExists();
-            using (var db = new LiteDatabase(file.GetPath()))
+            var db = new SBTDictionary();
+
+            IList<ManagedFile> fileCheck = new List<ManagedFile>();
+
+            // Store the custom files
+            foreach (ManagedFile fileInDb in this.customDataFiles.Keys)
             {
-                IList<ManagedFile> fileCheck = new List<ManagedFile>();
-
-                // Store the custom files
-                foreach (ManagedFile fileInDb in this.customDataFiles.Keys)
+                if (fileCheck.Contains(fileInDb))
                 {
-                    if (fileCheck.Contains(fileInDb))
-                    {
-                        GameDataEditorCore.Logger.Error("Duplicate file in game data: {0}", fileInDb);
-                        continue;
-                    }
-
-                    fileCheck.Add(fileInDb);
-
-                    ManagedFile dataFile = this.customDataFiles[fileInDb];
-                    if (!dataFile.Exists)
-                    {
-                        GameDataEditorCore.Logger.Error("Could not save data file {0}: does not exist", dataFile);
-                        continue;
-                    }
-
-                    using (var stream = dataFile.OpenRead())
-                    {
-                        db.FileStorage.Upload(fileInDb.GetPath(), fileInDb.FileName, stream);
-                    }
+                    GameDataEditorCore.Logger.Error("Duplicate file in game data: {0}", fileInDb);
+                    continue;
                 }
 
-                // Store custom content
-                foreach (ManagedFile fileInDb in this.customDataContent.Keys)
-                {
-                    if (fileCheck.Contains(fileInDb))
-                    {
-                        GameDataEditorCore.Logger.Error("Duplicate file in game data: {0}", fileInDb);
-                        continue;
-                    }
+                fileCheck.Add(fileInDb);
 
-                    fileCheck.Add(fileInDb);
-                    using (var stream = db.FileStorage.OpenWrite(fileInDb.GetUnityPath(), fileInDb.FileName))
-                    {
-                        using (var writer = new BinaryWriter(stream))
-                        {
-                            this.customDataContent[fileInDb].Invoke(writer);
-                            writer.Flush();
-                            stream.Flush();
-                        }
-                    }
+                ManagedFile dataFile = this.customDataFiles[fileInDb];
+                if (!dataFile.Exists)
+                {
+                    GameDataEditorCore.Logger.Error("Could not save data file {0}: does not exist", dataFile);
+                    continue;
                 }
-                
-                db.Shrink();
+
+                db.AddArray(fileInDb.GetPath(), dataFile.ReadAsByte());
             }
+
+            // Store custom content
+            foreach (ManagedFile fileInDb in this.customDataContent.Keys)
+            {
+                if (fileCheck.Contains(fileInDb))
+                {
+                    GameDataEditorCore.Logger.Error("Duplicate file in game data: {0}", fileInDb);
+                    continue;
+                }
+
+                fileCheck.Add(fileInDb);
+                SBTNodeStream stream = db.AddStream(fileInDb.GetUnityPath());
+                using (var writer = stream.BeginWrite())
+                {
+                    this.customDataContent[fileInDb].Invoke(writer);
+                    writer.Flush();
+                    stream.Flush();
+                }
+            }
+            
+            db.SerializeToFileCompressed(file);
         }
     }
 }
