@@ -150,7 +150,7 @@
 
             GameDataCore.Logger.Info(" - {0} bytes", this.RawData.Length);
 
-            var db = SBTDictionary.Deserialize(stream);
+            var db = SBTDictionary.DeserializeCompressed(stream);
             // Now we process what we know
             foreach (Type type in this.data.Keys)
             {
