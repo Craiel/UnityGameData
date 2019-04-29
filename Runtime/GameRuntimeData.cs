@@ -70,16 +70,14 @@
         
         public void Load(ResourceKey resourceKey)
         {
-            using (var resource = ResourceProvider.Instance.AcquireOrLoadResource<TextAsset>(resourceKey))
+            var asset = resourceKey.LoadManaged<TextAsset>();
+            if (asset == null)
             {
-                if (resource == null || resource.Data == null)
-                {
-                    GameDataCore.Logger.Error("Could not load RuntimeData from resource {0}", resourceKey);
-                    return;
-                }
-                
-                this.Load(resource.Data.bytes);
+                GameDataCore.Logger.Error("Could not load RuntimeData from resource {0}", resourceKey);
+                return;
             }
+            
+            this.Load(asset.bytes);
         }
 
         public void Load(byte[] data)
