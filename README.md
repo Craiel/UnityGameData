@@ -1,7 +1,17 @@
-# Craiel Unity Essentials
+# Craiel Unity GameData
 
 GameData Library for Unity to facilitate editing and iteration on game related data.
 
+### Features
+
+Plug + Play Editor with several features to facilitate editing (Copy, Paste, Clone, Search, Batch editing etc)
+![Alt text](./doc/GDE_MainView.png)
+
+Data Validation
+![Alt text](./doc/GDE_Validate.png)
+
+Custom Pickers with support for most Asset types including Animations (also supports multiple animation clips per fbx)
+![Alt text](./doc/GDE_Picker.png)
 
 ## Getting Started
 
