@@ -1,0 +1,15 @@
+{
+    "description": "GameData library and editor.", 
+    "displayName": "Craiel GameData", 
+    "keywords": [
+        "craiel", 
+        "game",
+        "data"
+    ], 
+    "name": "com.craiel.unity.gamedata",
+    "unity": "2019.2", 
+    "version": "1.0.0",
+    "dependencies": {
+        "com.craiel.unity.essentials": "1.0.0"
+    }
+}
