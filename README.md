@@ -8,6 +8,7 @@ Plug + Play Editor with several features to facilitate editing (Copy, Paste, Clo
 ![Alt text](./doc/GDE_MainView.png)
 
 Data Validation
+
 ![Alt text](./doc/GDE_Validate.png)
 
 Custom Pickers with support for most Asset types including Animations (also supports multiple animation clips per fbx)
