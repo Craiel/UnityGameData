@@ -40,7 +40,7 @@
         public static void OpenWindow()
         {
             var window = (GameDataValidationWindow)GetWindow(typeof(GameDataValidationWindow));
-            window.titleContent = new GUIContent("Static Data Validation");
+            window.titleContent = new GUIContent("Game Data Validation");
             window.Show();
         }
 
