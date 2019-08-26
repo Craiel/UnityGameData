@@ -8,7 +8,7 @@ namespace Craiel.UnityGameData.Editor.Common
 
     [CustomEditor(typeof(GameDataObject))]
     [CanEditMultipleObjects]
-    public abstract class GameDataObjectEditor : EssentialCustomEditor, IGameDataCompactEditor
+    public abstract class GameDataObjectEditor : EssentialEditorIM, IGameDataCompactEditor
     {
         private static bool objectFoldout;
 
