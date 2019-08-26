@@ -10,6 +10,6 @@
     "unity": "2019.2", 
     "version": "1.0.0",
     "dependencies": {
-        "com.craiel.unity.essentials": "1.0.0"
+        "com.craiel.unity.essentials": "https://github.com/Craiel/UnityEssentials.git"
     }
 }
