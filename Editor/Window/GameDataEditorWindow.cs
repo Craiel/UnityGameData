@@ -49,7 +49,7 @@ namespace Craiel.UnityGameData.Editor.Window
         {
             base.OnEnable();
             
-            GameDataEditorCore.Initialize();
+            GameDataEditorCore.Configure();
 
             this.SetActiveContent(this.CurrentPanelIndex);
 
@@ -173,6 +173,11 @@ namespace Craiel.UnityGameData.Editor.Window
             Content.Add(content);
         }
 
+        public static void ClearContent()
+        {
+            Content.Clear();
+        }
+
         public static void AddWorkSpace(int id, string title)
         {
             if (WorkSpaces.ContainsKey(id))
@@ -182,6 +187,12 @@ namespace Craiel.UnityGameData.Editor.Window
             }
             
             WorkSpaces.Add(id, title);
+        }
+
+        public static void ClearWorkspaces()
+        {
+            WorkSpaces.Clear();
+            WorkSpaces.Add(DefaultWorkSpaceId, DefaultWorkSpaceName);
         }
 
         public static void ReloadContent()

@@ -17,9 +17,9 @@
         
         public static bool IsPopupActive { get; set; }
 
-        public static void Initialize()
+        public static void Configure(bool reconfigure = false)
         {
-            if (IsInitialized)
+            if (IsInitialized && !reconfigure)
             {
                 return;
             }
