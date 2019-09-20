@@ -5,6 +5,7 @@
     using System.IO;
     using Events;
     using UnityEngine;
+    using UnityEssentials.Runtime;
     using UnityEssentials.Runtime.Enums;
     using UnityEssentials.Runtime.Event;
     using UnityEssentials.Runtime.Resource;
@@ -16,7 +17,7 @@
         private static readonly IList<Type> DataRegister = new List<Type>();
 
         private readonly GameDataReader reader;
-        
+
         // -------------------------------------------------------------------
         // Constructor
         // -------------------------------------------------------------------
@@ -36,7 +37,7 @@
 
             base.Initialize();
         }
-        
+
         public bool GetAll<T>(IList<T> target)
         {
             return this.reader.GetAll(target);
@@ -46,7 +47,7 @@
         {
             return this.reader.Get<T>(dataId);
         }
-        
+
         public GameDataId GetRuntimeId(GameDataRuntimeRefBase refData)
         {
             if (refData == null)
@@ -56,7 +57,7 @@
 
             return GetRuntimeId(refData.RefGuid);
         }
-        
+
         public GameDataId GetRuntimeId(string guid)
         {
             if (string.IsNullOrEmpty(guid))
@@ -67,7 +68,7 @@
             uint runtimeId = this.reader.GetId(guid);
             return new GameDataId(guid, runtimeId);
         }
-        
+
         public void Load(ResourceKey resourceKey)
         {
             var asset = resourceKey.LoadManaged<TextAsset>();
@@ -76,7 +77,7 @@
                 GameDataCore.Logger.Error("Could not load RuntimeData from resource {0}", resourceKey);
                 return;
             }
-            
+
             this.Load(asset.bytes);
         }
 
@@ -86,16 +87,16 @@
             {
                 this.reader.Load(stream);
             }
-            
+
             this.IsLoaded = true;
-            
+
             GameEvents.Send(new EventGameDataLoaded());
         }
 
         public static void RegisterData<T>()
             where T : RuntimeGameData
         {
-            DataRegister.Add(typeof(T));
+            DataRegister.Add(TypeCache<T>.Value);
         }
 
         public static GameDataReader InitializeReader()

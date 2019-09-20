@@ -4,6 +4,7 @@
     using UnityEditor;
     using UnityEngine;
     using UnityEssentials.Editor.UserInterface;
+    using UnityEssentials.Runtime;
 
     [CustomPropertyDrawer(typeof(GameResourceRefBase), true)]
     public class StaticResourceRefEditor : BaseRefEditor
@@ -24,7 +25,7 @@
             SerializedProperty valueProperty = property.FindPropertyRelative<GameResourceRefBase>(x => x.Resource);
             return valueProperty.objectReferenceValue;
         }
-        
+
         protected override void SelectObject(Object activeObject, SerializedProperty property)
         {
             if (activeObject != null)
@@ -55,13 +56,13 @@
         // -------------------------------------------------------------------
         private void SetParameters(SerializedProperty property)
         {
-            if (property.type == typeof(GameResourceSpriteRef).Name)
+            if (property.type == TypeCache<GameResourceSpriteRef>.Value.Name)
             {
                 this.IconSelector = UnityObjectHelper.SpriteIconSelector;
                 return;
             }
 
-            if (property.type == typeof(GameResourceAnimationClipRef).Name)
+            if (property.type == TypeCache<GameResourceAnimationClipRef>.Value.Name)
             {
                 this.NameSelector = UnityObjectHelper.AnimationNameSelector;
                 return;

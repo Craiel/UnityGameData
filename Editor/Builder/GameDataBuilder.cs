@@ -3,6 +3,7 @@ namespace Craiel.UnityGameData.Editor.Builder
 {
     using Common;
     using UnityEditor;
+    using UnityEssentials.Runtime;
     using UnityEssentials.Runtime.IO;
 
     public static class GameDataBuilder
@@ -101,14 +102,14 @@ namespace Craiel.UnityGameData.Editor.Builder
 
         private static void FindStaticScriptableObjects(GameDataBuildBaseContext context)
         {
-            string[] guids = AssetDatabase.FindAssets("t:" + typeof(GameDataObject).Name);
+            string[] guids = AssetDatabase.FindAssets("t:" + TypeCache<GameDataObject>.Value.Name);
             for (var i = 0; i < guids.Length; i++)
             {
                 if (i % ProgressUpdateInterval == 0)
                 {
                     UpdateProgress(i, guids.Length, string.Format("Locating {0} Data Entries", guids.Length));
                 }
-                
+
                 string path = AssetDatabase.GUIDToAssetPath(guids[i]);
                 GameDataObject obj = AssetDatabase.LoadAssetAtPath<GameDataObject>(path);
                 context.Add(obj);
@@ -123,7 +124,7 @@ namespace Craiel.UnityGameData.Editor.Builder
                 {
                     UpdateProgress(i, context.Content.Count, string.Format("Processing {0} Data Entries", context.Content.Count));
                 }
-                
+
                 context.Content[i].Build(context);
             }
         }
@@ -136,7 +137,7 @@ namespace Craiel.UnityGameData.Editor.Builder
                 {
                     UpdateProgress(i, context.Content.Count, string.Format("Validating {0} Data Entries", context.Content.Count));
                 }
-                
+
                 context.Content[i].Validate(context);
             }
         }
@@ -149,7 +150,7 @@ namespace Craiel.UnityGameData.Editor.Builder
                 {
                     UpdateProgress(i, context.Content.Count, string.Format("Upgrading {0} Data Entries", context.Content.Count));
                 }
-                
+
                 context.Content[i].Upgrade(context);
             }
         }

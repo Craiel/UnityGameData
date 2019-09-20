@@ -8,6 +8,7 @@
     using UnityEditor.IMGUI.Controls;
     using UnityEngine;
     using UnityEssentials.Editor.UserInterface;
+    using UnityEssentials.Runtime;
     using UnityEssentials.Runtime.IO;
     using UnityEssentials.Runtime.Utils;
 
@@ -16,7 +17,7 @@
     {
         private const int CardSize = 80;
         private const int CardMaxLabelSize = 8;
-        
+
         private IList<T> entries;
         private IList<string> entryNames;
         private IList<string> entryNamesInvariant;
@@ -32,7 +33,7 @@
         private bool enabled;
 
         private int lastFilteredCount;
-        
+
         private int cardsPerRow = 4;
         private int cardsPerColumn = 4;
         private int maxEntriesDisplayedInDefault = 10;
@@ -48,7 +49,7 @@
         // -------------------------------------------------------------------
         protected BaseFinderPopUp()
         {
-            this.ObjectType = typeof(UnityEngine.Object);
+            this.ObjectType = TypeCache<UnityEngine.Object>.Value;
             this.TypeFilters = new []{this.ObjectType.Name};
             this.NameSelector = UnityObjectHelper.DefaultNameSelector;
             this.IconSelector = UnityObjectHelper.DefaultIconSelector;
@@ -59,9 +60,9 @@
         // Public
         // -------------------------------------------------------------------
         public bool AllowMultiSelect { get; protected set; }
-        
+
         public FinderPopUpStyle Style { get; protected set; }
-        
+
         public void OnEnable()
         {
             this.entries = new List<T>();
@@ -78,10 +79,10 @@
             this.enabled = true;
 
             this.finderContentArea = GameDataStyles.FinderPopupSize - this.ContentMargin;
-            
+
             this.cardsPerRow = Mathf.FloorToInt(finderContentArea.x / CardSize);
             this.cardsPerColumn = Mathf.FloorToInt(this.finderContentArea.y / (CardSize + 20f));
-            
+
             this.maxEntriesDisplayedInDefault = Mathf.FloorToInt(this.finderContentArea.x / 30f);
             this.maxEntriesDisplayedInCards = 1 + (this.cardsPerRow * this.cardsPerColumn);
         }
@@ -137,7 +138,7 @@
             {
                 return;
             }
-            
+
             this.DrawCustomOptions();
 
             GUILayout.Space(5);
@@ -174,11 +175,11 @@
         protected UnityObjectNameSelectorDelegate NameSelector { get; set; }
 
         protected UnityObjectIconSelectorDelegate IconSelector { get; set; }
-        
+
         protected Vector2 ContentMargin { get; set; }
 
         protected abstract bool RefreshEntry(string path, out T entry);
-        
+
         protected abstract void Select(IList<T> entries);
 
         protected virtual void SelectEntry(T entry)
@@ -193,7 +194,7 @@
                 this.EndSelection();
             }
         }
-        
+
         protected virtual void DrawCustomOptions()
         {
         }
@@ -209,7 +210,7 @@
         private void DoRefresh()
         {
             this.refreshRequired = false;
-                
+
             this.entries.Clear();
             this.entryNames.Clear();
             this.entryNamesInvariant.Clear();
@@ -222,7 +223,7 @@
             }
 
             string lookupString = string.Join(" ", lookupStrings);
-            
+
             string[] candidateGuids;
             if (this.Root == null)
             {
@@ -232,10 +233,10 @@
             {
                 candidateGuids = AssetDatabase.FindAssets(lookupString, new[] {this.Root.GetUnityPath()});
             }
-                
+
             if (candidateGuids == null || candidateGuids.Length == 0)
             {
-                return; 
+                return;
             }
 
             if (this.TypeFilters.Contains("Animation") ||
@@ -248,7 +249,7 @@
                 RefreshAssets(candidateGuids);
             }
         }
-        
+
         private void RefreshAssets(string[] guids)
         {
             foreach (string guid in guids)
@@ -287,7 +288,7 @@
                 }
 
                 IList<AnimationClip> clips = AssetDatabase.LoadAllAssetsAtPath(path)
-                    .Where(x => x.GetType() == typeof(AnimationClip))
+                    .Where(x => x.GetType() == TypeCache<AnimationClip>.Value)
                     .Cast<AnimationClip>()
                     .ToList();
 
@@ -357,7 +358,7 @@
             {
                 label = string.Format("{0} / {1} Assets", this.lastFilteredCount, this.entries.Count);
             }
-            
+
             GUILayout.Box(label, GUILayout.ExpandWidth(true));
         }
 
@@ -371,7 +372,7 @@
             {
                 GUI.backgroundColor = Styles.DefaulEditortSelectedTextColor;
             }
-            
+
             switch (this.Style)
             {
                 case FinderPopUpStyle.Default:
@@ -381,7 +382,7 @@
                     {
                         this.ToggleEntry(entry);
                     }
-                    
+
                     break;
                 }
 
@@ -398,17 +399,17 @@
                     {
                         entryName = entryName.Substring(0, CardMaxLabelSize) + " ...";
                     }
-                    
+
                     GUILayout.Label(entryName);
                     GUILayout.EndVertical();
-                    
+
                     break;
                 }
             }
 
             GUI.backgroundColor = Styles.DefaulEditortSelectedTextColor;
         }
-        
+
         private bool DrawScrollView()
         {
             bool acceptFirstEntry = Event.current.type == EventType.KeyUp
@@ -422,12 +423,12 @@
                 {
                     continue;
                 }
-                
+
                 filteredEntryIndizes.Add(i);
             }
 
             this.lastFilteredCount = filteredEntryIndizes.Count;
-            
+
             GameDataStyles.BeginStyle(GameDataStyles.FinderSkin);
 
             EditorGUILayout.BeginHorizontal();
@@ -444,7 +445,7 @@
                     break;
                 }
             }
-            
+
             int rowCount = 0;
             int startPosition = (int) this.scrollPosition.Clamp(0, filteredEntryIndizes.Count);
             for (int i = startPosition; i < startPosition + maxEntriesDisplayed - 1; i++)
@@ -456,13 +457,13 @@
 
                 int entryIndex = filteredEntryIndizes[i];
                 T entry = this.entries[entryIndex];
-                
+
                 if (acceptFirstEntry)
                 {
                     this.SelectEntry(entry);
                     break;
                 }
-                
+
                 string entryName = this.entryNames[entryIndex];
                 string entryPath = this.entryPaths[entryIndex];
 
@@ -485,12 +486,12 @@
                             EditorGUILayout.BeginHorizontal();
                             rowCount = 0;
                         }
-                        
+
                         break;
                     }
                 }
             }
-            
+
             switch (this.Style)
             {
                 case FinderPopUpStyle.Cards:
@@ -499,9 +500,9 @@
                     break;
                 }
             }
-            
+
             EditorGUILayout.EndVertical();
-            
+
             GUILayout.FlexibleSpace();
 
             if (this.scrollPosition > filteredEntryIndizes.Count)
@@ -562,7 +563,7 @@
             {
                 return false;
             }
-            
+
             if (Event.current.rawType == EventType.ScrollWheel)
             {
                 if (Event.current.delta.y > 0)
@@ -576,7 +577,7 @@
                         this.scrollPosition -= maxEntriesDisplayed;
                     }
                 }
-                
+
                 this.Repaint();
                 return true;
             }

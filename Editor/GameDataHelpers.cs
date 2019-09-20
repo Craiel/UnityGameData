@@ -13,11 +13,12 @@ namespace Craiel.UnityGameData.Editor
     using Common;
     using UnityEditor;
     using UnityEngine;
+    using UnityEssentials.Runtime;
 
     public static class GameDataHelpers
     {
         private static readonly IDictionary<string, Texture2D> IconCache = new Dictionary<string, Texture2D>();
-        
+
         // -------------------------------------------------------------------
         // Public
         // -------------------------------------------------------------------
@@ -69,7 +70,7 @@ namespace Craiel.UnityGameData.Editor
             ManagedDirectory directory = subFolder == null
                 ? GameDataCore.GameDataPath
                 : GameDataCore.GameDataPath.ToDirectory(subFolder);
-            
+
             var asset = CreateScriptableObject(assetType, directory, forceName, createUniqueIfExists);
 
             asset.Guid = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(asset));
@@ -81,11 +82,11 @@ namespace Craiel.UnityGameData.Editor
 
             return asset;
         }
-        
+
         public static GameDataObject CreateScriptableObject(Type assetType, ManagedDirectory directory, string forceName = null, bool createUniqueIfExists = true)
         {
             var newObject = ScriptableObject.CreateInstance(assetType);
-            
+
             string name = forceName;
 
             if (string.IsNullOrEmpty(name))
@@ -108,7 +109,7 @@ namespace Craiel.UnityGameData.Editor
                     return (GameDataObject)existingAsset;
                 }
             }
-            
+
             var newObjectPath = AssetDatabase.GenerateUniqueAssetPath(finalFilePath);
 
             AssetDatabase.CreateAsset(newObject, newObjectPath);
@@ -124,7 +125,7 @@ namespace Craiel.UnityGameData.Editor
 
             return (GameDataObject)asset;
         }
-        
+
         public static void DeleteAsset(GameDataObject item)
         {
             if (item == null)
@@ -141,21 +142,21 @@ namespace Craiel.UnityGameData.Editor
 
             AssetDatabase.DeleteAsset(path);
         }
-        
+
         public static Texture DefaultIconSelector(UnityEngine.Object sourceObject, Type objectType)
         {
             Type sourceObjectType = sourceObject.GetType();
-            
+
             FieldInfo customIconField = sourceObjectType.GetFields()
-                .FirstOrDefault(prop => Attribute.IsDefined(prop, typeof(GameDataIconAttribute)));
+                .FirstOrDefault(prop => Attribute.IsDefined(prop, TypeCache<GameDataIconAttribute>.Value));
             if (customIconField != null)
             {
                 // Get the field value
                 var value = customIconField.GetValue(sourceObject);
-                
+
                 // If it's a direct texture use as is
                 var customIcon = value as Texture;
-                if (customIcon != null) 
+                if (customIcon != null)
                 {
                     return customIcon;
                 }
@@ -172,7 +173,7 @@ namespace Craiel.UnityGameData.Editor
                     }
                 }
             }
-            
+
             // Fallback to the base icon selector
             return GetIconForBaseType(sourceObjectType);
         }
@@ -181,7 +182,7 @@ namespace Craiel.UnityGameData.Editor
         {
             return GetIcon(type.Name);
         }
-        
+
         public static Texture2D GetIcon(string name)
         {
             Texture2D result;
@@ -189,14 +190,14 @@ namespace Craiel.UnityGameData.Editor
             {
                 return result;
             }
-            
+
             string path = string.Format("GameDataEditor/{0}.png", name);
             result = EditorGUIUtility.Load(path) as Texture2D;
             if (result == null)
             {
                 UnityEngine.Debug.LogWarningFormat("Could not load Resource for GameData Type: {0}", path);
             }
-            
+
             IconCache.Add(name, result);
             return result;
         }

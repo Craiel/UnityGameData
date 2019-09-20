@@ -8,6 +8,7 @@
     using Runtime.Contracts;
     using UnityEditor;
     using UnityEngine;
+    using UnityEssentials.Runtime;
     using UnityEssentials.Runtime.Extensions;
 
     public class GameDataValidationWindow : EditorWindow
@@ -39,7 +40,7 @@
         // -------------------------------------------------------------------
         public static void OpenWindow()
         {
-            var window = (GameDataValidationWindow)GetWindow(typeof(GameDataValidationWindow));
+            var window = (GameDataValidationWindow)GetWindow(TypeCache<GameDataValidationWindow>.Value);
             window.titleContent = new GUIContent("Game Data Validation");
             window.Show();
         }
@@ -49,7 +50,7 @@
             this.issueGroups.Clear();
             this.fixableIssuesCount = 0;
         }
-        
+
         public void OnGUI()
         {
             this.errorIcon = EditorGUIUtility.FindTexture("d_console.erroricon.sml");
@@ -81,7 +82,7 @@
             {
                 this.ProcessResultEntry(processingDictionary, result, false);
             }
-            
+
             CollectionExtensions.AddRange(this.issueGroups, processingDictionary.Values);
 
             foreach (ValidationIssueGroup issueGroup in this.issueGroups)
@@ -181,7 +182,7 @@
 
             var lastRect = GUILayoutUtility.GetLastRect();
             issueGroup.IsFoldout = GUI.Toggle(lastRect, issueGroup.IsFoldout, string.Empty);
-            
+
             if (issueGroup.IsFoldout)
             {
                 GUILayout.Space(10);
@@ -190,7 +191,7 @@
                     GUILayout.BeginHorizontal();
 
                     GUILayout.Space(20);
-                    
+
                     ValidationIssue issue = issueGroup.GetInfo(i);
                     GUILayout.Label(string.Format("[{0}]", issue.Source.GetType().Name), GUILayout.Width(200));
                     GUILayout.Label(issue.Message);
@@ -202,7 +203,7 @@
                             this.FixIssue(issue);
                         }
                     }
-                    
+
                     if (issue.Owner == null)
                     {
                         GUILayout.Label("Unknown Owner", SelectWidth);
@@ -214,11 +215,11 @@
                             GUILayout.Label(issue.Owner.GetType().Name);
                         }
                     }
-                    
+
 
                     GUILayout.EndHorizontal();
                 }
-                
+
                 GUILayout.Space(10);
             }
         }
@@ -252,7 +253,7 @@
                         window.SelectRef(staticDataRef);
                     }
                 }
-                
+
 
                 return true;
             }
@@ -329,11 +330,11 @@
             public string RawMessage { get; private set; }
 
             public int Count { get; private set; }
-            
+
             public bool IsFoldout { get; set; }
 
             public bool CanFix { get; private set; }
-            
+
             public ValidationIssue GetInfo(int index)
             {
                 return this.issues[index];

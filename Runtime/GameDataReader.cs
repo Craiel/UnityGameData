@@ -7,6 +7,7 @@
     using System.Text;
     using Contracts;
     using UnityEngine;
+    using UnityEssentials.Runtime;
     using UnityEssentials.Runtime.Collections;
     using UnityEssentials.Runtime.Data.SBT;
     using UnityEssentials.Runtime.Data.SBT.Nodes;
@@ -22,7 +23,7 @@
         private readonly IDictionary<Type, IList<object>> gameDataTypeLookup;
 
         private readonly IDictionary<Type, IList<RuntimeGameData>> data;
-        
+
         // -------------------------------------------------------------------
         // Constructor
         // -------------------------------------------------------------------
@@ -41,13 +42,13 @@
         public bool IsLoaded { get; private set; }
 
         public byte[] RawData { get; private set; }
-        
+
         public void RegisterData<T>()
             where T : RuntimeGameData
         {
-            this.data.Add(typeof(T), new List<RuntimeGameData>());
+            this.data.Add(TypeCache<T>.Value, new List<RuntimeGameData>());
         }
-        
+
         public void RegisterData(Type dataType)
         {
             this.data.Add(dataType, new List<RuntimeGameData>());
@@ -86,7 +87,7 @@
 
             return GameDataId.InvalidId;
         }
-        
+
         public GameDataId GetRuntimeId(GameDataRuntimeRefBase runtimeRef)
         {
             if (!runtimeRef.IsValid())
@@ -102,7 +103,7 @@
 
             return new GameDataId(runtimeRef.RefGuid, internalId);
         }
-        
+
         public bool GetAll<T>(IList<T> target)
         {
             if (!this.IsLoaded)
@@ -111,7 +112,7 @@
             }
 
             IList<object> entries;
-            if (this.gameDataTypeLookup.TryGetValue(typeof(T), out entries))
+            if (this.gameDataTypeLookup.TryGetValue(TypeCache<T>.Value, out entries))
             {
                 target.AddRange(entries.Cast<T>());
                 return target.Count > 0;
@@ -135,11 +136,11 @@
 
             return default(T);
         }
-        
+
         public void Load(Stream stream)
         {
             GameDataCore.Logger.Info("Loading Game Data");
-            
+
             this.Clear();
 
             // Read the raw data for later use
@@ -156,14 +157,14 @@
             {
                 this.LoadBinaryList(type, db, this.data[type]);
             }
-            
+
             this.IsLoaded = true;
         }
-        
+
         public void AddManual<T>(T entry, Func<T, GameDataId> baseRetriever)
             where T : RuntimeGameData
         {
-            this.IndexGameData(typeof(T), new List<RuntimeGameData> { entry });
+            this.IndexGameData(TypeCache<T>.Value, new List<RuntimeGameData> { entry });
         }
 
         // -------------------------------------------------------------------
@@ -176,7 +177,7 @@
                 this.data[type].Clear();
             }
         }
-        
+
         private void LoadBinaryList(Type type, SBTDictionary db, IList<RuntimeGameData> target)
         {
             target.Clear();

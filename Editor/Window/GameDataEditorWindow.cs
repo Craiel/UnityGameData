@@ -9,6 +9,7 @@ namespace Craiel.UnityGameData.Editor.Window
     using UnityEngine;
     using UnityEssentials.Editor;
     using UnityEssentials.Editor.UserInterface;
+    using UnityEssentials.Runtime;
     using UnityEssentials.Runtime.IO;
 
     public class GameDataEditorWindow : EssentialEditorWindow<GameDataEditorWindow>
@@ -22,7 +23,7 @@ namespace Craiel.UnityGameData.Editor.Window
         {
             { DefaultWorkSpaceId, DefaultWorkSpaceName }
         };
-        
+
         private GameDataEditorContent[] contentSorted;
 
         private int selectedWorkSpace;
@@ -39,7 +40,7 @@ namespace Craiel.UnityGameData.Editor.Window
 
         [SerializeField]
         public int CurrentPanelIndex;
-        
+
         public static void OpenWindow()
         {
             OpenWindow("GameData Editor");
@@ -48,7 +49,7 @@ namespace Craiel.UnityGameData.Editor.Window
         public override void OnEnable()
         {
             base.OnEnable();
-            
+
             GameDataEditorCore.Configure();
 
             this.SetActiveContent(this.CurrentPanelIndex);
@@ -65,7 +66,7 @@ namespace Craiel.UnityGameData.Editor.Window
                     wordWrap = true
                 };
             }
-            
+
             this.selectedWorkSpace = GameDataEditorCore.Config.GetWorkspace(DefaultWorkSpaceId);
             this.selectedViewMode = GameDataEditorCore.Config.GetViewMode();
             this.SortContent();
@@ -76,10 +77,10 @@ namespace Craiel.UnityGameData.Editor.Window
         {
             GameDataEditorCore.Config.SetWorkspace(this.selectedWorkSpace);
             GameDataEditorCore.Config.SetViewMode(this.selectedViewMode);
-            
+
             base.OnDisable();
         }
-        
+
         public void OnGUI()
         {
             this.DrawToolbar();
@@ -103,7 +104,7 @@ namespace Craiel.UnityGameData.Editor.Window
 
             return Content[this.CurrentPanelIndex].Title.Equals(pane);
         }
-        
+
         public bool SelectRef(GameDataObject refObject)
         {
             string typeName = refObject.GetType().Name;
@@ -117,7 +118,7 @@ namespace Craiel.UnityGameData.Editor.Window
             this.SetActiveContent(editorContent);
             return editorContent.SelectEntry(refObject);
         }
-        
+
         public void SelectRef(GameDataRefBase refData)
         {
             SelectRef(refData.RefGuid);
@@ -152,13 +153,13 @@ namespace Craiel.UnityGameData.Editor.Window
 
             this.SelectRef(dataObject);
         }
-        
+
         public static void AddContent<T>(string contentTitle, params int[] workSpaces)
             where T : GameDataObject
         {
             AddContent<T>(contentTitle, null, workSpaces);
         }
-        
+
         public static void AddContent<T>(string contentTitle, ManagedDirectory subFolder, params int[] workSpaces)
             where T : GameDataObject
         {
@@ -167,8 +168,8 @@ namespace Craiel.UnityGameData.Editor.Window
             {
                 workSpaceList.Add(DefaultWorkSpaceId);
             }
-            
-            var content = new GameDataEditorContent(typeof(T));
+
+            var content = new GameDataEditorContent(TypeCache<T>.Value);
             content.Initialize(contentTitle, subFolder, workSpaceList.ToArray());
             Content.Add(content);
         }
@@ -185,7 +186,7 @@ namespace Craiel.UnityGameData.Editor.Window
                 GameDataEditorCore.Logger.Error("Duplicate WorkSpace Registered: {0} {1} -> {2}", id, WorkSpaces[id], title);
                 return;
             }
-            
+
             WorkSpaces.Add(id, title);
         }
 
@@ -354,7 +355,7 @@ namespace Craiel.UnityGameData.Editor.Window
             {
                 this.SetActiveContent(this.contentSorted[0]);
             }
-            
+
             this.Repaint();
         }
 
@@ -364,11 +365,11 @@ namespace Craiel.UnityGameData.Editor.Window
             {
                 return;
             }
-            
+
             this.DisposeContent(Content[this.CurrentPanelIndex]);
             this.CurrentPanelIndex = -1;
         }
-        
+
         private void SetActiveContent(GameDataEditorContent panel)
         {
             for (var i = 0; i < Content.Count; i++)
@@ -389,7 +390,7 @@ namespace Craiel.UnityGameData.Editor.Window
             }
 
             this.ClearActiveContent();
-            
+
             Content[index].SetActive();
 
             this.CurrentPanelIndex = index;
@@ -421,7 +422,7 @@ namespace Craiel.UnityGameData.Editor.Window
         {
             GameDataBuilder.Upgrade();
         }
-        
+
         private void NormalizeNames()
         {
             if (!EditorUtility.DisplayDialog(
@@ -453,7 +454,7 @@ namespace Craiel.UnityGameData.Editor.Window
                     Debug.LogErrorFormat("Can't rename file {0} to {1}, path already exists", oldPath, newPath);
                     continue;
                 }
-                
+
                 var rename = AssetDatabase.RenameAsset(oldPath.GetUnityPath(), newPath.FileNameWithoutExtension);
 
                 if (!string.IsNullOrEmpty(rename))

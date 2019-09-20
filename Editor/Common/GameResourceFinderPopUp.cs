@@ -46,7 +46,7 @@
             asset = AssetDatabase.LoadAssetAtPath(assetPath, this.ObjectType);
             return asset != null;
         }
-        
+
         protected override void Select(IList<Object> entries)
         {
             if (this.selectCallback != null)
@@ -73,45 +73,45 @@
             {
                 this.Style = settings.Style;
             }
-            
-            if (property.type == typeof(GameResourceGameObjectRef).Name)
+
+            if (property.type == TypeCache<GameResourceGameObjectRef>.Value.Name)
             {
-                this.ObjectType = typeof(GameObject);
+                this.ObjectType = TypeCache<GameObject>.Value;
                 this.TypeFilters = new []{this.ObjectType.Name};
                 return;
             }
 
-            if (property.type == typeof(GameResourceSpriteRef).Name)
+            if (property.type == TypeCache<GameResourceSpriteRef>.Value.Name)
             {
-                this.ObjectType = typeof(Sprite);
+                this.ObjectType = TypeCache<Sprite>.Value;
                 this.TypeFilters = new []{this.ObjectType.Name};
                 this.IconSelector = UnityObjectHelper.SpriteIconSelector;
                 return;
             }
 
-            if (property.type == typeof(GameResourceAudioClipRef).Name)
+            if (property.type == TypeCache<GameResourceAudioClipRef>.Value.Name)
             {
-                this.ObjectType = typeof(AudioClip);
+                this.ObjectType = TypeCache<AudioClip>.Value;
                 this.TypeFilters = new []{this.ObjectType.Name};
                 return;
             }
 
-            if (property.type == typeof(GameResourcePrefabRef).Name)
+            if (property.type == TypeCache<GameResourcePrefabRef>.Value.Name)
             {
                 this.TypeFilters = new []{"Prefab"};
                 this.NameSelector = UnityObjectHelper.DefaultPathAndNameSelector;
                 return;
             }
 
-            if (property.type == typeof(GameResourceAnimationClipRef).Name)
+            if (property.type == TypeCache<GameResourceAnimationClipRef>.Value.Name)
             {
-                this.ObjectType = typeof(AnimationClip);
+                this.ObjectType = TypeCache<AnimationClip>.Value;
                 this.TypeFilters = new []{this.ObjectType.Name};
                 this.NameSelector = UnityObjectHelper.AnimationNameSelector;
                 return;
             }
-            
-            if (property.type == typeof(GameResourceCustomRef).Name)
+
+            if (property.type == TypeCache<GameResourceCustomRef>.Value.Name)
             {
                 // TODO
                 this.TypeFilters = new []{settings == null ? "Prefab" : settings.AttachedScript?.Name};
