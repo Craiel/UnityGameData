@@ -12,7 +12,7 @@ namespace Craiel.UnityGameData.Editor.Window
     using UnityEssentials.Runtime;
     using UnityEssentials.Runtime.IO;
 
-    public class GameDataEditorWindow : EssentialEditorWindow<GameDataEditorWindow>
+    public class GameDataEditorWindow : EssentialEditorWindowIM<GameDataEditorWindow>
     {
         private const int DefaultWorkSpaceId = 0;
         private const string DefaultWorkSpaceName = "None";
