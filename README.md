@@ -2,6 +2,8 @@
 
 GameData Library for Unity to facilitate editing and iteration on game related data.
 
+A Sample Project can be found here: https://github.com/Craiel/UnityGameDataExample
+
 ### Features
 
 Plug + Play Editor with several features to facilitate editing (Copy, Paste, Clone, Search, Batch editing etc)
