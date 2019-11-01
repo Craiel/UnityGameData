@@ -35,6 +35,8 @@
         // -------------------------------------------------------------------
         // Public
         // -------------------------------------------------------------------
+        public int Count => this.idLookup.Count;
+        
         IEnumerator<GameDataId> IEnumerable<GameDataId>.GetEnumerator()
         {
             return this.idLookup.Keys.GetEnumerator();
@@ -72,6 +74,16 @@
             this.FilteredList.AddRange(this.Values);
 
             return this;
+        }
+
+        public virtual T GetRandom()
+        {
+            if (this.FilteredList.Count == 0)
+            {
+                return default;
+            }
+
+            return this.FilteredList[UnityEngine.Random.Range(0, this.FilteredList.Count)];
         }
 
         public virtual void Reload()

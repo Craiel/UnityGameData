@@ -19,6 +19,7 @@
                 var menu = new GenericMenu();
                 menu.AddItem(new GUIContent("GameData Editor"), false, GameDataEditorWindow.OpenWindow);
                 menu.AddSeparator("");
+                menu.AddItem(new GUIContent("Reconfigure"), false, x => GameDataEditorCore.Configure(true), null);
                 menu.ShowAsContext();
                 Event.current.Use();
             }
