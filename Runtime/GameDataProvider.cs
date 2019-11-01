@@ -105,6 +105,8 @@
                 T data = this.Values[i];
                 this.idLookup.Add(data.Id, data);
             }
+            
+            this.PostLoad();
         }
 
         public void Dispose()
